@@ -18,6 +18,11 @@ check() {
 check 'sway config' sway --validate -c "$ROOT/sway/config"
 check 'foot config' foot --check-config -c "$ROOT/foot/foot.ini"
 
+scheme_data_ok() {
+    jq -e 'length > 1000' "$ROOT/sway/schemes/gogh-themes-min.json" >/dev/null
+}
+check 'scheme data (gogh json)' scheme_data_ok
+
 if command -v checkbashisms >/dev/null 2>&1; then
     HAVE_CB=1
 else

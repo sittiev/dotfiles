@@ -35,6 +35,7 @@ link_path() {
 
 link_path "$ROOT/sway/config" "$HOME/.config/sway/config"
 link_path "$ROOT/sway/scripts" "$HOME/.config/sway/scripts"
+link_path "$ROOT/sway/schemes" "$HOME/.config/sway/schemes"
 link_path "$ROOT/foot/foot.ini" "$HOME/.config/foot/foot.ini"
 link_path "$ROOT/yambar/config.yml" "$HOME/.config/yambar/config.yml"
 link_path "$ROOT/tofi/config" "$HOME/.config/tofi/config"
