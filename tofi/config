@@ -1,0 +1,32 @@
+anchor = top
+width = 100%
+height = 18
+horizontal = true
+font-size = 10
+prompt-text = ""
+min-input-width = 120
+result-spacing = 15
+padding-top = 0
+padding-bottom = 0
+padding-left = 0
+padding-right = 0
+# tofi-colors-begin (gerado por tofi-apply.sh — nao editar este bloco)
+# fonte por nome Pango (nao caminho direto): fontconfig resolve JetBrainsMono
+# e faz fallback p/ Noto Color Emoji nos glifos coloridos
+font = /usr/share/fonts/noto/NotoSansMono-Regular.ttf
+text-color = #353635
+background-color = #e0e6e2
+selection-color = #fafafa
+selection-background = #75847b
+selection-match-color = #000000
+placeholder-color = #353635A8
+prompt-background = #00000000
+input-background = #00000000
+input-color = #353635
+alternate-result-background = #00000000
+default-result-background = #00000000
+prompt-color = #353635
+border-color = #75847b
+outline-width = 0
+corner-radius = 0
+border-width = 0

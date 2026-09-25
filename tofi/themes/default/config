@@ -1,0 +1,78 @@
+# padrao — layout-only (geometria/fontes/comportamento). Cores via tofi-apply.sh (pywal low-contrast).
+# outline-width/corner-radius sempre 0 (moldura preta sem alfa).
+# tofi atual-centrado — caixa central 400x250 (pywal16; ver wal-theme.sh seção 9)
+# Formato: man 5 tofi. Switch: ~/.config/hypr/scripts/tofi-themes.sh
+
+### Fonts
+# Fonte via tofi-apply.sh (nome Pango p/ fallback emoji Noto Color Emoji).
+font-size = 12
+font-features = ""
+font-variations = ""
+hint-font = false
+
+### Text theming
+
+# prompt vazio = fundo transparente (senao o box do prompt vira uma barra antes do input)
+prompt-background-padding = 0
+
+placeholder-background-padding = 0
+
+# fundo transparente: padding só dá respiro (ordem: top,right,bottom,left)
+input-background-padding = 0,0,4,0
+
+default-result-background-padding = 0
+
+selection-background-padding = 6,8
+
+
+### Text cursor
+text-cursor-style = bar
+
+### Text layout
+# prompt vazio
+prompt-text = ""
+prompt-padding = 0
+placeholder-text = ""
+num-results = 0
+result-spacing = 2
+horizontal = false
+min-input-width = 0
+
+### Window theming
+# caixa central 400x250
+width = 400
+height = 250
+border-width = 2
+padding-top = 8
+padding-bottom = 8
+padding-left = 8
+padding-right = 8
+clip-to-padding = true
+scale = true
+
+### Window positioning
+output = ""
+anchor = center
+exclusive-zone = -1
+margin-top = 0
+margin-bottom = 0
+margin-left = 0
+margin-right = 0
+
+### Behaviour
+hide-cursor = false
+text-cursor = true
+history = true
+# substring ponderada (alternativas: prefix/fuzzy)
+fuzzy-match = false
+require-match = true
+auto-accept-single = false
+hide-input = false
+hidden-character = "*"
+# drun executa direto
+drun-launch = true
+# terminal para apps .desktop com Terminal=true
+terminal = foot
+late-keyboard-init = false
+multi-instance = false
+ascii-input = false

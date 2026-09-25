@@ -1,0 +1,204 @@
+# Default config for sway
+#
+# This configuration preserves the current CachyOS workspace and output
+# management. It replaces only the previous bar and launcher integration.
+# Read `man 5 sway` for a complete reference.
+
+### Variables
+#
+# Logo key. Use Mod1 for Alt.
+set $mod Mod4
+# Home row direction keys, like vim
+set $left h
+set $down j
+set $up k
+set $right l
+# Your preferred terminal emulator
+set $term foot
+# Your preferred application launcher
+set $menu ~/.config/sway/scripts/tofi-safe.sh --drun --drun-launch=true
+
+# Collapse Sway's native titlebar without changing workspace layout.
+font pango:monospace 0.001
+
+### Output configuration
+#
+# No resolution, scale, position, or monitor-assignment overrides.
+output * bg #dbe2e8 solid_color
+# Waypaper is the only owner of swaybg; disable Sway's fallback helper.
+swaybg_command -
+
+### Input configuration
+#
+# Keep the current CachyOS input behavior.
+input type:keyboard {
+    xkb_layout "br"
+    xkb_variant "abnt2"
+}
+input type:pointer {
+    accel_profile flat
+}
+
+### Key bindings
+#
+# Basics:
+    # Start a terminal
+    bindsym $mod+Return exec $term
+    bindsym $mod+t exec $term
+
+    # Kill focused window
+    bindsym $mod+q kill
+    bindsym $mod+Shift+q kill
+
+    # Start the launcher
+    bindsym $mod+d exec $menu
+
+    # Tofi tools restored from the Sway backup.
+    bindsym $mod+o exec ~/.config/sway/scripts/tofi-themes.sh
+    bindsym $mod+period exec ~/.config/sway/scripts/emoji.sh
+    bindsym $mod+Shift+v exec ~/.config/sway/scripts/clipboard.sh
+    bindsym $mod+Shift+x exec ~/.config/sway/scripts/tofi-menu.sh
+    bindsym $mod+x exec ~/.config/sway/scripts/yambar-toggle.sh
+    bindsym $mod+n exec ~/.config/sway/scripts/nightlight.sh
+    bindsym $mod+Shift+n exec ~/.config/sway/scripts/nightmenu.sh
+
+    # Drag floating windows by holding down $mod and left mouse button.
+    floating_modifier $mod normal
+
+    # Reload the configuration file
+    bindsym $mod+Shift+c reload
+
+    # Exit sway
+    bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+
+# Moving around:
+    bindsym $mod+$left focus left
+    bindsym $mod+$down focus down
+    bindsym $mod+$up focus up
+    bindsym $mod+$right focus right
+    bindsym $mod+Left focus left
+    bindsym $mod+Down focus down
+    bindsym $mod+Up focus up
+    bindsym $mod+Right focus right
+
+    # Move the focused window with the same, but add Shift
+    bindsym $mod+Shift+$left move left
+    bindsym $mod+Shift+$down move down
+    bindsym $mod+Shift+$up move up
+    bindsym $mod+Shift+$right move right
+    bindsym $mod+Shift+Left move left
+    bindsym $mod+Shift+Down move down
+    bindsym $mod+Shift+Up move up
+    bindsym $mod+Shift+Right move right
+
+# Workspaces: kept identical to the current CachyOS Sway configuration.
+    bindsym $mod+1 workspace number 1
+    bindsym $mod+2 workspace number 2
+    bindsym $mod+3 workspace number 3
+    bindsym $mod+4 workspace number 4
+    bindsym $mod+5 workspace number 5
+    bindsym $mod+6 workspace number 6
+    bindsym $mod+7 workspace number 7
+    bindsym $mod+8 workspace number 8
+    bindsym $mod+9 workspace number 9
+    bindsym $mod+0 workspace number 10
+    bindsym $mod+Shift+1 move container to workspace number 1
+    bindsym $mod+Shift+2 move container to workspace number 2
+    bindsym $mod+Shift+3 move container to workspace number 3
+    bindsym $mod+Shift+4 move container to workspace number 4
+    bindsym $mod+Shift+5 move container to workspace number 5
+    bindsym $mod+Shift+6 move container to workspace number 6
+    bindsym $mod+Shift+7 move container to workspace number 7
+    bindsym $mod+Shift+8 move container to workspace number 8
+    bindsym $mod+Shift+9 move container to workspace number 9
+    bindsym $mod+Shift+0 move container to workspace number 10
+
+# Layout:
+    bindsym $mod+b splith
+    bindsym $mod+v splitv
+    bindsym $mod+s layout stacking
+    bindsym $mod+w layout tabbed
+    bindsym $mod+e exec pcmanfm
+    bindsym $mod+Shift+s layout toggle split
+    bindsym $mod+f fullscreen
+    bindsym $mod+Shift+space floating toggle
+    bindsym $mod+space focus mode_toggle
+    bindsym $mod+a focus parent
+
+# Scratchpad:
+    bindsym $mod+Shift+minus move scratchpad
+    bindsym $mod+minus scratchpad show
+
+# Resize:
+mode "resize" {
+    bindsym $left resize shrink width 10px
+    bindsym $down resize grow height 10px
+    bindsym $up resize shrink height 10px
+    bindsym $right resize grow width 10px
+    bindsym Left resize shrink width 10px
+    bindsym Down resize grow height 10px
+    bindsym Up resize shrink height 10px
+    bindsym Right resize grow width 10px
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+}
+bindsym $mod+r mode "resize"
+
+# Utilities:
+    # Audio uses PipeWire plus the Mako OSD from the rice backup.
+    bindsym --locked XF86AudioMute exec ~/.config/sway/scripts/volume.sh toggle
+    bindsym --locked XF86AudioLowerVolume exec ~/.config/sway/scripts/volume.sh down
+    bindsym --locked XF86AudioRaiseVolume exec ~/.config/sway/scripts/volume.sh up
+    bindsym --locked XF86AudioMicMute exec ~/.config/sway/scripts/volume.sh mic_toggle
+
+    bindsym --locked XF86AudioPlay exec playerctl play-pause
+    bindsym --locked XF86AudioPause exec playerctl play-pause
+    bindsym --locked XF86AudioPrev exec playerctl previous
+    bindsym --locked XF86AudioNext exec playerctl next
+    bindsym --locked XF86AudioStop exec playerctl stop
+
+    bindsym --locked XF86MonBrightnessDown exec ~/.config/sway/scripts/brightness.sh down
+    bindsym --locked XF86MonBrightnessUp exec ~/.config/sway/scripts/brightness.sh up
+
+    # Screenshots go directly to the Wayland clipboard.
+    bindsym Print exec dash -c 'grim - | wl-copy'
+    bindsym Shift+Print exec dash -c 'grim -g "$(slurp)" - | wl-copy'
+
+include /etc/sway/config.d/*
+
+# --- Rice visual layer -------------------------------------------------
+# Workspace and monitor management above is intentionally unchanged.
+focus_follows_mouse yes
+mouse_warping output
+seat * hide_cursor when-typing enable
+
+gaps inner 6
+gaps outer 0
+# Use 1px pixel borders instead of titlebars; --i3 hides single-child tab/stack bars.
+titlebar_border_thickness 0
+titlebar_padding 0
+default_border pixel 1
+default_floating_border pixel 1
+hide_edge_borders --i3 smart
+
+client.focused   #F5F7F5 #ECF0ED #353635 #F5F7F5 #ECF0ED
+client.unfocused #ACB1AE #e0e6e2 #656765 #e0e6e2 #ACB1AE
+client.focused_inactive #ACB1AE #e0e6e2 #656765 #e0e6e2 #ACB1AE
+client.placeholder      #ACB1AE #e0e6e2 #656765 #e0e6e2 #ACB1AE
+client.background       #e0e6e2
+client.urgent           #F5F7F5 #CBCFCD #353635 #F5F7F5 #CBCFCD
+
+for_window [window_type="dialog"] floating enable, move position center
+for_window [window_type="utility"] floating enable, move position center
+for_window [app_id="pavucontrol"] floating enable, move position center
+for_window [app_id="blueman-manager"] floating enable, move position center
+
+# Native lightweight Wayland clients; wallpaper and theme are refreshed by Waypaper.
+exec ~/.config/sway/scripts/theme.sh
+exec dash -c 'command -v waypaper >/dev/null 2>&1 && command -v swaybg >/dev/null 2>&1 && ~/.config/sway/scripts/wallpaper.sh --restore >/dev/null 2>&1'
+exec_always dash -c 'pgrep -x yambar >/dev/null 2>&1 || LC_TIME=C yambar >/dev/null 2>&1'
+exec_always dash -c 'pgrep -x mako >/dev/null 2>&1 || mako >/dev/null 2>&1'
+exec_always ~/.config/sway/scripts/cliphist-watch.sh
+exec /usr/bin/lxqt-policykit-agent
+
+# Cursor theme and size are intentionally not configured here.

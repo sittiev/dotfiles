@@ -1,0 +1,24 @@
+# fullscreen — layout-only (geometria/fontes/comportamento). Cores via tofi-apply.sh (pywal low-contrast).
+# outline-width/corner-radius sempre 0 (moldura preta sem alfa).
+# tofi fullscreen — tela cheia (baseado em themes/fullscreen upstream)
+font-size = 14
+hint-font = false
+prompt-text = ""
+selection-background-padding = 6,8
+width = 100%
+height = 100%
+border-width = 0
+padding-left = 35%
+padding-top = 35%
+result-spacing = 25
+num-results = 5
+anchor = center
+exclusive-zone = -1
+scale = true
+clip-to-padding = true
+text-cursor = true
+history = true
+fuzzy-match = false
+require-match = true
+drun-launch = true
+terminal = foot

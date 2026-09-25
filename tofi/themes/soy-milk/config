@@ -1,0 +1,34 @@
+# soy-milk — layout-only (geometria/fontes/comportamento). Cores via tofi-apply.sh (pywal low-contrast).
+# outline-width/corner-radius sempre 0 (moldura preta sem alfa).
+# tofi soy-milk — barra horizontal clara (baseado em themes/soy-milk upstream)
+# Mostra o box model completo: prompt/input/alternate/selection com backgrounds arredondados.
+# Upstream usa font = Fredoka One; aqui JetBrainsMono (nome Pango p/ fallback emoji).
+font-size = 14
+hint-font = false
+horizontal = true
+anchor = top
+width = 100%
+height = 48
+border-width = 0
+min-input-width = 120
+result-spacing = 30
+padding-top = 8
+padding-bottom = 0
+padding-left = 20
+padding-right = 0
+prompt-text = "Can I have a"
+prompt-padding = 30
+prompt-background-padding = 4, 10
+input-background-padding = 4, 10
+alternate-result-background-padding = 4, 10
+selection-background-padding = 4, 10
+clip-to-padding = false
+scale = true
+exclusive-zone = 0
+num-results = 0
+text-cursor = true
+history = true
+fuzzy-match = false
+require-match = true
+drun-launch = true
+terminal = foot
