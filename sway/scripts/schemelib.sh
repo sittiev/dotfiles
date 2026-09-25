@@ -34,7 +34,7 @@ _scheme_unset() {
     for _r in BG FG ACC MUT BRI; do
         unset "ENV_${_r}_S_MIN" "ENV_${_r}_S_MAX" "ENV_${_r}_L_MIN" "ENV_${_r}_L_MAX" "ENV_${_r}_H"
     done
-    unset SCHEME_NAME SCHEME_VARIANT SCHEME_MATCH SCHEME_BG_HEX SCHEME_FG_HEX
+    unset SCHEME_NAME SCHEME_VARIANT SCHEME_MATCH SCHEME_BG_HEX SCHEME_FG_HEX SCHEME_ACC_CAND
 }
 
 _scheme_slug() { # "1984 Light" → "1984-light"
@@ -178,6 +178,11 @@ EOF
     fi
     SCHEME_BG_HEX=${_bgx#\#} SCHEME_FG_HEX=${_fgx#\#}
     export SCHEME_BG_HEX SCHEME_FG_HEX
+    # Candidatos de accent (color_02..07) pro python escolher quando o scheme é
+    # quase acromático (sem ENV_ACC_H): sem isso o accent fica no hue do
+    # wallpaper e a seleção do GTK/terminal não muda entre schemes.
+    SCHEME_ACC_CAND=$(printf '%s' "$_acc" | tr 'A-F' 'a-f' | tr -d '#')
+    export SCHEME_ACC_CAND
 
     # ---- override por modo (precedência sobre derivação) ----
     _slug=$(_scheme_slug "$_name")

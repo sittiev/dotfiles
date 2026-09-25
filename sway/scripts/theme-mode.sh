@@ -308,11 +308,34 @@ def _env_role(hexs, role):
             pass
     return _rgb_of(h, min(max(s, smin), smax), min(max(l, lmin), lmax))
 
+def _scheme_accent(hexs):
+    # Scheme cromático (ENV_ACC_H já escolhido no scheme_init pelo hue do bg,
+    # envelope estreito derivado dele): o caminho antigo. Scheme quase
+    # acromático não tem hue de bg — sem esta ramo o accent ficava no hue do
+    # wallpaper e TODOS os schemes escuros davam a mesma seleção (o wallpaper
+    # trocava de cor, o accent não): agora é o candidato do próprio scheme mais
+    # próximo do hue do accent do wallpaper — identidade do scheme, humor do
+    # wallpaper preservado.
+    if "ENV_ACC_H" in os.environ or not os.environ.get("SCHEME_ACC_CAND"):
+        return _env_role(hexs, "ACC")
+    _wh = _hsl_of(hexs)[0]
+    _best = None
+    for _c in os.environ["SCHEME_ACC_CAND"].split(","):
+        _c = _c.strip()
+        if len(_c) != 6:
+            continue
+        _d = abs(_hsl_of(_c)[0] - _wh)
+        if _d > 180:
+            _d = 360 - _d
+        if _best is None or _d < _best[0]:
+            _best = (_d, _c)
+    return _best[1] if _best else _env_role(hexs, "ACC")
+
 if "ENV_ACC_S_MIN" in os.environ:
     # Dicts primeiro: _write_pal persiste _dark/_light/P (não as locais);
     # depois refresh das locais pro CSS/GTK que vem em seguida.
     for _p in (_dark, _light):
-        _p["accent"] = _env_role(_p["accent"], "ACC")
+        _p["accent"] = _scheme_accent(_p["accent"])
         _p["muted"] = _env_role(_p["muted"], "MUT")
     accent, muted = P["accent"], P["muted"]
 
