@@ -4,9 +4,11 @@
 #   scheme_init <dark|light>
 #
 # Contrato: exporta ENV_<PAPEL>_{S,L}_{MIN,MAX} (0 ≤ min ≤ max ≤ 100) para os
-# papéis BG FG ACC MUT BRI, mais SCHEME_NAME/SCHEME_VARIANT/SCHEME_MATCH.
-# Sem estado / jq ausente / JSON ausente / esquema desconhecido ⇒ exporta
-# NADA: o colorlib cai nas constantes Apprentice atuais (${ENV_*:-default}).
+# papéis BG FG ACC MUT BRI. SCHEME_NAME/SCHEME_VARIANT/SCHEME_MATCH são
+# exportados SÓ quando as ENV_* estão completas — presença de SCHEME_NAME é
+# marcador confiável de sucesso. Sem estado / jq ausente / JSON ausente /
+# esquema desconhecido ⇒ exporta NADA: o colorlib cai nas constantes
+# Apprentice atuais (${ENV_*:-default}).
 #
 # Derivação: cores do esquema → rgb2hsl_hex (colorlib) → min/max por papel
 # com pad S±4 L±3, clamp 0..100. Override (sway/schemes/overrides/<slug>[.light].env)
@@ -89,12 +91,12 @@ scheme_init() {
     _json="${SCHEME_JSON:-$HOME/.config/sway/schemes/gogh-themes-min.json}"
     _ovr="${SCHEME_OVERRIDE_DIR:-$HOME/.config/sway/schemes/overrides}"
 
-    SCHEME_NAME=$(cat "$_state" 2>/dev/null) || SCHEME_NAME=''
-    [ -n "$SCHEME_NAME" ] || return 0
+    _name=$(cat "$_state" 2>/dev/null) || _name=''
+    [ -n "$_name" ] || return 0
     command -v jq >/dev/null 2>&1 || return 0
     [ -f "$_json" ] || return 0
 
-    _rows=$(jq -r --arg n "$SCHEME_NAME" '
+    _rows=$(jq -r --arg n "$_name" '
         .[] | select(.name == $n) |
         ["VARIANT=" + .variant,
          "BG=" + .background,
@@ -121,12 +123,10 @@ EOF
     case "$_v" in dark|light) ;; *) return 0 ;; esac
     [ -n "$_bg$_fg$_acc$_mut$_bri" ] || return 0
 
-    SCHEME_VARIANT=$_v
-    if [ "$_v" = "$_mode" ]; then SCHEME_MATCH=1; else SCHEME_MATCH=0; fi
-    export SCHEME_NAME SCHEME_VARIANT SCHEME_MATCH
+    if [ "$_v" = "$_mode" ]; then _match=1; else _match=0; fi
 
     # ---- override por modo (precedência sobre derivação) ----
-    _slug=$(_scheme_slug "$SCHEME_NAME")
+    _slug=$(_scheme_slug "$_name")
     if [ "$_mode" = light ]; then
         _ov="$_ovr/$_slug.light.env"
     else
@@ -135,9 +135,13 @@ EOF
     if [ -f "$_ov" ]; then
         # shellcheck disable=SC1090
         . "$_ov" || return 0
+        # override sem envelope ACC ⇒ arquivo ruim, ignora inteiro (fallback)
+        [ -n "${ENV_ACC_S_MIN:-}${ENV_ACC_S_MAX:-}${ENV_ACC_L_MIN:-}${ENV_ACC_L_MAX:-}" ] || return 0
         for _r in BG FG ACC MUT BRI; do
             eval "export ENV_${_r}_S_MIN ENV_${_r}_S_MAX ENV_${_r}_L_MIN ENV_${_r}_L_MAX" 2>/dev/null || true
         done
+        SCHEME_NAME=$_name SCHEME_VARIANT=$_v SCHEME_MATCH=$_match
+        export SCHEME_NAME SCHEME_VARIANT SCHEME_MATCH
         return 0
     fi
 
@@ -147,7 +151,7 @@ EOF
     _e_acc=$(_env1 "$_acc") || return 0
     _e_mut=$(_env1 "$_mut") || return 0
     _e_bri=$(_env1 "$_bri") || return 0
-    if [ "$SCHEME_MATCH" -eq 0 ]; then
+    if [ "$_match" -eq 0 ]; then
         _e_bg=$(_mirror "$_e_bg")
         _e_fg=$(_mirror "$_e_fg")
         _e_acc=$(_mirror "$_e_acc")
@@ -159,5 +163,7 @@ EOF
     _set_env ACC $_e_acc
     _set_env MUT $_e_mut
     _set_env BRI $_e_bri
+    SCHEME_NAME=$_name SCHEME_VARIANT=$_v SCHEME_MATCH=$_match
+    export SCHEME_NAME SCHEME_VARIANT SCHEME_MATCH
     return 0
 }

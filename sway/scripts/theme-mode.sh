@@ -156,6 +156,24 @@ apply() {
     # theme.sh filtra igual em awk — mesma constante, mesmo resultado.
     export LOWC_SAT="${LOWC_SAT:-45}"
 
+    # Esquema ativo (schemelib): desatura AQUI e trava no envelope do esquema
+    # (papéis ACC/MUT) antes do python; LOWC_SAT=100 faz o desat de lá dentro
+    # virar identidade (k=1) — senão a dessaturação comeria o clamp. Sem
+    # esquema, o bloco é pulado e o caminho continua byte-idêntico ao antigo.
+    . "$HOME/.config/sway/scripts/schemelib.sh"
+    scheme_init "$mode"
+    # guard na ENV_* (exportada só em sucesso — SCHEME_NAME sozinho não
+    # prova lookup OK: JSON ausente/ nome desconhecido saem sem ENV)
+    if [ -n "${ENV_ACC_S_MIN:-}" ]; then
+        C0="$(lowc_hex "$C0")"; C1="$(lowc_hex "$C1")"; C2="$(lowc_hex "$C2")"
+        C3="$(lowc_hex "$C3")"; C5="$(lowc_hex "$C5")"; C8="$(lowc_hex "$C8")"
+        C1="$(apprentice_accent "$C1")"; C2="$(apprentice_accent "$C2")"
+        C3="$(apprentice_accent "$C3")"; C5="$(apprentice_accent "$C5")"
+        C8="$(apprentice_muted "$C8")"
+        LOWC_SAT=100
+        export LOWC_SAT
+    fi
+
     # gera gtk colors.css, colorscheme KDE e tema Discord (cores derivadas da paleta)
     python3 - "$mode" "$BACKGROUND" "$FG" "$C0" "$C1" "$C2" "$C3" "$C5" "$C8" "$HOME" <<'PY'
 import os, sys, shutil, configparser, re

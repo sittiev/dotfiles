@@ -94,14 +94,14 @@ else
     bad "4: espelhamento incorreto no papel ${_why4:-?}"
 fi
 
-# ---- 5. esquema desconhecido ⇒ exit 0 e fallback ----
+# ---- 5. esquema desconhecido ⇒ exit 0, fallback e SCHEME_NAME limpo ----
 printf '%s' 'Esquema Que Nao Existe' > "$SCHEME_STATE"
 scheme_init dark
 _rc=$?
-if [ "$_rc" -eq 0 ] && ! env_isset; then
-    ok '5: esquema desconhecido ⇒ exit 0 + fallback'
+if [ "$_rc" -eq 0 ] && ! env_isset && [ -z "${SCHEME_NAME:-}" ]; then
+    ok '5: esquema desconhecido ⇒ exit 0 + fallback + SCHEME_NAME limpo'
 else
-    bad "5: desconhecido não degradou graciosamente (rc=$_rc, env=$(env_isset && echo sim || echo nao))"
+    bad "5: desconhecido não degradou graciosamente (rc=$_rc, env=$(env_isset && echo sim || echo nao), name=${SCHEME_NAME:-<vazio>})"
 fi
 
 exit "$FAILED"
