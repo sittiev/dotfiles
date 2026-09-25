@@ -13,6 +13,10 @@ PAL="$HOME/.cache/theme-palette.$MODE"
 . "$PAL"
 # shellcheck disable=SC1091
 . "$HOME/.config/sway/scripts/colorlib.sh"
+# Esquema ativo? (idem theme-mode; o pai já exporta ENV_*, aqui cobre execução
+# standalone do render) Sem estado ⇒ exporta nada ⇒ output byte-idêntico.
+. "$HOME/.config/sway/scripts/schemelib.sh"
+scheme_init "$MODE"
 : "${BASE:=$BG}"
 : "${FAIL:=$ACCENT}"
 
