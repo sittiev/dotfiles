@@ -25,7 +25,7 @@ fi
 
 _scheme_unset() {
     for _r in BG FG ACC MUT BRI; do
-        unset "ENV_${_r}_S_MIN" "ENV_${_r}_S_MAX" "ENV_${_r}_L_MIN" "ENV_${_r}_L_MAX"
+        unset "ENV_${_r}_S_MIN" "ENV_${_r}_S_MAX" "ENV_${_r}_L_MIN" "ENV_${_r}_L_MAX" "ENV_${_r}_H"
     done
     unset SCHEME_NAME SCHEME_VARIANT SCHEME_MATCH
 }
@@ -80,6 +80,21 @@ _set_env() { # <PAPEL> <smin smax lmin lmax>
     _r=$1 _smin=$2 _smax=$3 _lmin=$4 _lmax=$5
     eval "ENV_${_r}_S_MIN=\$_smin ENV_${_r}_S_MAX=\$_smax ENV_${_r}_L_MIN=\$_lmin ENV_${_r}_L_MAX=\$_lmax"
     eval "export ENV_${_r}_S_MIN ENV_${_r}_S_MAX ENV_${_r}_L_MIN ENV_${_r}_L_MAX"
+}
+
+_hue_chroma() { # <hex> → "H" se S>=6 (scheme cromático), vazio se quase cinza
+    # O clamp de papel preserva o hue do wallpaper; num envelope saturado
+    # (ex.: Aardvark Blue, S56-64) isso pintava verde num scheme azul.
+    # Esquema quase acromático (Apprentice #262626) não exporta nada — aí o
+    # humor do wallpaper segue como antes.
+    _hc=${1#\#}
+    [ -n "$_hc" ] || return 0
+    _hcl=$(rgb2hsl_hex "$_hc")
+    _hcs=${_hcl#* }; _hcs=${_hcs%% *}
+    if LC_ALL=C awk -v s="$_hcs" 'BEGIN { exit !(s + 0 < 6) }'; then
+        return 0
+    fi
+    printf '%s' "${_hcl%% *}"
 }
 
 scheme_init() {
@@ -163,6 +178,10 @@ EOF
     _set_env ACC $_e_acc
     _set_env MUT $_e_mut
     _set_env BRI $_e_bri
+    _hbg=$(_hue_chroma "$_bg") || true
+    if [ -n "$_hbg" ]; then ENV_BG_H=$_hbg; export ENV_BG_H; fi
+    _hfg=$(_hue_chroma "$_fg") || true
+    if [ -n "$_hfg" ]; then ENV_FG_H=$_hfg; export ENV_FG_H; fi
     SCHEME_NAME=$_name SCHEME_VARIANT=$_v SCHEME_MATCH=$_match
     export SCHEME_NAME SCHEME_VARIANT SCHEME_MATCH
     return 0

@@ -294,6 +294,17 @@ def _env_role(hexs, role):
     except KeyError:
         return hexs
     h, s, l = _hsl_of(hexs)
+    # Hue do scheme quando cromático (ENV_<papel>_H, ver _hue_chroma): sem ele
+    # o envelope saturado pintava o hue do wallpaper — verde forte num scheme
+    # azul (Aardvark Blue), que era a "cor nada a ver" no pcmanfm/yambar.
+    # Ausente (scheme quase cinza, p.ex. Apprentice) ⇒ hue do wallpaper, como
+    # antes. Só BG/FG exportam _H; ACC/MUT mantêm o humor do wallpaper.
+    _eh = os.environ.get("ENV_%s_H" % role)
+    if _eh:
+        try:
+            h = float(_eh)
+        except ValueError:
+            pass
     return _rgb_of(h, min(max(s, smin), smax), min(max(l, lmin), lmax))
 
 if "ENV_ACC_S_MIN" in os.environ:
@@ -316,6 +327,12 @@ if "ENV_BG_S_MIN" in os.environ:
     bg, fg = P["bg"], P["fg"]
     P["border"] = mix(bg, fg, 0.25)
     border = P["border"]
+    if mode == "dark":
+        # Superfícies (campos, lista de arquivos) na família do scheme: vinham
+        # do C0 do wallpaper (cinza 6e7b73) e pintavam a lista do pcmanfm de
+        # cinza-sálvia num scheme azul. Dark: pouco mais clara que a janela.
+        P["base"] = mix(bg, fg, 0.10)
+        base = P["base"]
 
 # ---- GTK colors.css (paleta; backup da versao anterior) ----
 # theme_base_color = base (campo) — corrige contraste light (base mais clara que window).
