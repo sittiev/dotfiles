@@ -22,6 +22,7 @@ scheme_data_ok() {
     jq -e 'length > 1000' "$ROOT/sway/schemes/gogh-themes-min.json" >/dev/null
 }
 check 'scheme data (gogh json)' scheme_data_ok
+check 'scheme tests' dash "$ROOT/scripts/test-schemelib.sh"
 
 if command -v checkbashisms >/dev/null 2>&1; then
     HAVE_CB=1
