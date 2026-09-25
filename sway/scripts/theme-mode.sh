@@ -298,7 +298,8 @@ def _env_role(hexs, role):
     # o envelope saturado pintava o hue do wallpaper — verde forte num scheme
     # azul (Aardvark Blue), que era a "cor nada a ver" no pcmanfm/yambar.
     # Ausente (scheme quase cinza, p.ex. Apprentice) ⇒ hue do wallpaper, como
-    # antes. Só BG/FG exportam _H; ACC/MUT mantêm o humor do wallpaper.
+    # antes. BG/FG sempre; ACC quando cromático (candidato mais próximo do
+    # hue do bg, ver _acc_pick); MUT/BRI seguem o humor do wallpaper.
     _eh = os.environ.get("ENV_%s_H" % role)
     if _eh:
         try:

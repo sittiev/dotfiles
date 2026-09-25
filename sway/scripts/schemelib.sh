@@ -4,7 +4,11 @@
 #   scheme_init <dark|light>
 #
 # Contrato: exporta ENV_<PAPEL>_{S,L}_{MIN,MAX} (0 ≤ min ≤ max ≤ 100) para os
-# papéis BG FG ACC MUT BRI. SCHEME_NAME/SCHEME_VARIANT/SCHEME_MATCH são
+# papéis BG FG ACC MUT BRI. Scheme cromático (bg com S≥6) também exporta
+# ENV_BG_H/ENV_FG_H/ENV_ACC_H (hue em graus) — o clamp de papel preserva o hue
+# do wallpaper, e sem isso um envelope saturado pintava o verde do wallpaper
+# num scheme azul. Scheme quase acromático não exporta _H: o humor do
+# wallpaper segue como antes. SCHEME_NAME/SCHEME_VARIANT/SCHEME_MATCH são
 # exportados SÓ quando as ENV_* estão completas — presença de SCHEME_NAME é
 # marcador confiável de sucesso. Sem estado / jq ausente / JSON ausente /
 # esquema desconhecido ⇒ exporta NADA: o colorlib cai nas constantes
@@ -97,6 +101,17 @@ _hue_chroma() { # <hex> → "H" se S>=6 (scheme cromático), vazio se quase cinz
     printf '%s' "${_hcl%% *}"
 }
 
+_acc_pick() { # "hex,hex,..." <hue-bg> → hex do accent de menor distância circular
+    _ap_h=$2
+    printf '%s\n' "$1" | tr ',' '\n' | while IFS= read -r _ap_c; do
+        [ -n "$_ap_c" ] || continue
+        _ap_hl=$(rgb2hsl_hex "${_ap_c#\#}")
+        LC_ALL=C awk -v a="${_ap_hl%% *}" -v b="$_ap_h" -v c="$_ap_c" 'BEGIN {
+            d = a - b; if (d < 0) d = -d; if (d > 180) d = 360 - d
+            printf "%d\t%s\n", d, c }'
+    done | sort -n | head -1 | cut -f2
+}
+
 scheme_init() {
     _mode=${1:-dark}
     case "$_mode" in dark|light) ;; *) _mode=dark ;; esac
@@ -161,11 +176,24 @@ EOF
     fi
 
     # ---- derivação + espelhamento (variante ≠ modo) ----
+    _hbg=$(_hue_chroma "$_bg") || true
+    _hfg=$(_hue_chroma "$_fg") || true
     _e_bg=$(_env1 "$_bg")   || return 0
     _e_fg=$(_env1 "$_fg")   || return 0
     _e_acc=$(_env1 "$_acc") || return 0
     _e_mut=$(_env1 "$_mut") || return 0
     _e_bri=$(_env1 "$_bri") || return 0
+    # Scheme cromático: accent vem do próprio scheme (o candidato mais
+    # próximo do hue do bg) em vez do hue do wallpaper — seleção verde num
+    # scheme azul era a última cor fora da família. Scheme quase cinza
+    # (_hbg vazio, ex.: Apprentice/Ayu) mantém o humor do wallpaper.
+    _acc_sel=''
+    if [ -n "$_hbg" ]; then
+        _acc_sel=$(_acc_pick "$_acc" "$_hbg") || return 0
+        if [ -n "$_acc_sel" ]; then
+            _e_acc=$(_env1 "$_acc_sel") || return 0
+        fi
+    fi
     if [ "$_match" -eq 0 ]; then
         _e_bg=$(_mirror "$_e_bg")
         _e_fg=$(_mirror "$_e_fg")
@@ -178,10 +206,12 @@ EOF
     _set_env ACC $_e_acc
     _set_env MUT $_e_mut
     _set_env BRI $_e_bri
-    _hbg=$(_hue_chroma "$_bg") || true
     if [ -n "$_hbg" ]; then ENV_BG_H=$_hbg; export ENV_BG_H; fi
-    _hfg=$(_hue_chroma "$_fg") || true
     if [ -n "$_hfg" ]; then ENV_FG_H=$_hfg; export ENV_FG_H; fi
+    if [ -n "$_acc_sel" ]; then
+        _hac=$(_hue_chroma "$_acc_sel") || true
+        if [ -n "$_hac" ]; then ENV_ACC_H=$_hac; export ENV_ACC_H; fi
+    fi
     SCHEME_NAME=$_name SCHEME_VARIANT=$_v SCHEME_MATCH=$_match
     export SCHEME_NAME SCHEME_VARIANT SCHEME_MATCH
     return 0
