@@ -249,6 +249,61 @@ P = _dark if mode == "dark" else _light
 bg, fg, base, accent, muted, border = P["bg"], P["fg"], P["base"], P["accent"], P["muted"], P["border"]
 C1 = P["fail"]
 
+# Re-clamp de identidade: as misturas pós-apprentice (light: mix 15% p/ preto;
+# ensure de contraste do muted) derrubavam S/L para fora do envelope do esquema
+# (bug real: ACCENT S=30.6 com ENV_ACC_S>=41). Sem ENV_* exportada o bloco não
+# roda — sem esquema a saída continua byte-idêntica.
+def _hsl_of(hexs):
+    hexs = hexs.lstrip("#")
+    r, g, b = [int(hexs[i:i + 2], 16) / 255 for i in (0, 2, 4)]
+    mx, mn = max(r, g, b), min(r, g, b)
+    l = (mx + mn) / 2
+    if mx == mn:
+        return 0.0, 0.0, l * 100
+    d = mx - mn
+    s = d / (2 - mx - mn) if l > 0.5 else d / (mx + mn)
+    if mx == r:
+        h = ((g - b) / d + (6 if g < b else 0)) / 6
+    elif mx == g:
+        h = ((b - r) / d + 2) / 6
+    else:
+        h = ((r - g) / d + 4) / 6
+    return h * 360, s * 100, l * 100
+
+def _rgb_of(h, s, l):
+    h = h % 360
+    s = min(max(s, 0.0), 100.0) / 100
+    l = min(max(l, 0.0), 100.0) / 100
+    c = (1 - abs(2 * l - 1)) * s
+    x = c * (1 - abs((h / 60) % 2 - 1))
+    m = l - c / 2
+    if h < 60: r1, g1, b1 = c, x, 0
+    elif h < 120: r1, g1, b1 = x, c, 0
+    elif h < 180: r1, g1, b1 = 0, c, x
+    elif h < 240: r1, g1, b1 = 0, x, c
+    elif h < 300: r1, g1, b1 = x, 0, c
+    else: r1, g1, b1 = c, 0, x
+    return "".join("%02x" % round((v + m) * 255) for v in (r1, g1, b1))
+
+def _env_role(hexs, role):
+    try:
+        smin = float(os.environ["ENV_%s_S_MIN" % role])
+        smax = float(os.environ["ENV_%s_S_MAX" % role])
+        lmin = float(os.environ["ENV_%s_L_MIN" % role])
+        lmax = float(os.environ["ENV_%s_L_MAX" % role])
+    except KeyError:
+        return hexs
+    h, s, l = _hsl_of(hexs)
+    return _rgb_of(h, min(max(s, smin), smax), min(max(l, lmin), lmax))
+
+if "ENV_ACC_S_MIN" in os.environ:
+    # Dicts primeiro: _write_pal persiste _dark/_light/P (não as locais);
+    # depois refresh das locais pro CSS/GTK que vem em seguida.
+    for _p in (_dark, _light):
+        _p["accent"] = _env_role(_p["accent"], "ACC")
+        _p["muted"] = _env_role(_p["muted"], "MUT")
+    accent, muted = P["accent"], P["muted"]
+
 # ---- GTK colors.css (paleta; backup da versao anterior) ----
 # theme_base_color = base (campo) — corrige contraste light (base mais clara que window).
 # Inclui tokens libadwaita/GTK4 no mesmo arquivo (window/view/accent/headerbar/card).

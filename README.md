@@ -159,9 +159,13 @@ Wallpaper ainda manda no light/dark: quando a `variant` do esquema não bate
 com o modo, o L de cada papel espelha (`L' = 100 − L`, S intacto).
 `schemelib.sh` deriva as envelopes (ou lê `sway/schemes/overrides/<nome>.env`,
 incluindo `<nome>.light.env`); `theme-mode.sh` e `render.sh` clampam a paleta
-nelas. Esquema desconhecido/ausente ⇒ fallback completo nas constantes
-atuais; `apprentice.env` mantém "Apprentice" byte-idêntico no dark. Detalhes
-em `sway/schemes/README.md`.
+nelas. Com esquema ativo os 16 ANSI do foot vêm do `color_01..16` do próprio
+JSON (o wallpaper pastel sem croma gerava 16 cinzas), e ACC/MUT passam por um
+re-clamp final — as misturas de contraste derrubavam S/L fora da envelope.
+Esquema
+desconhecido/ausente ⇒ fallback completo nas constantes atuais;
+`apprentice.env` mantém "Apprentice" byte-idêntico no dark. Detalhes em
+`sway/schemes/README.md`.
 
 ## OpenCode
 

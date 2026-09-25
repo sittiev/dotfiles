@@ -121,6 +121,35 @@ set +u
 # shellcheck disable=SC1091
 . "$HOME/.cache/wal/colors.sh" 2>/dev/null || true
 set -u
+
+# Esquema ativo: os 16 ANSI do terminal vêm do próprio esquema (Gogh
+# color_01..16). O wallpaper pastel sem croma gerava 16 cinzas e "Esquemas
+# de cores" não mudava nada no terminal. Sem esquema o bloco é pulado e o
+# caminho continua byte-idêntico ao antigo.
+if [ -n "${SCHEME_NAME:-}" ]; then
+    _sj="${SCHEME_JSON:-$HOME/.config/sway/schemes/gogh-themes-min.json}"
+    if command -v jq >/dev/null 2>&1 && [ -f "$_sj" ]; then
+        _ansi=$(jq -r --arg n "$SCHEME_NAME" '
+            ([.[] | select(.name == $n)] | last) as $e
+            | if $e == null then empty else
+                [range(1; 17) | . as $i
+                  | ($e["color_" + (if $i < 10 then "0" + ($i | tostring)
+                                    else ($i | tostring) end)] // empty)
+                  | ascii_downcase | ltrimstr("#")
+                  | "color" + (($i - 1) | tostring) + "=" + .] | .[]
+              end' "$_sj" 2>/dev/null) || _ansi=''
+        while IFS='=' read -r _k _v; do
+            case "$_k" in color[0-9] | color[0-9][0-9]) ;; *) continue ;; esac
+            case "$_v" in ??????) ;; *) continue ;; esac
+            case "$_v" in *[!0-9a-f]*) continue ;; esac
+            eval "$_k=\$_v"
+        done <<EOF
+$_ansi
+EOF
+        unset _ansi _k _v
+    fi
+    unset _sj
+fi
 FBG="$BG"
 FFG=$(ensure_contrast "$FG" "$FBG" 4.5)
 # Replace the temporary header values with contrast-safe values.

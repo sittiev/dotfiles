@@ -18,7 +18,15 @@ command -v jq >/dev/null 2>&1 || {
 }
 
 # Lista "Nome (variant)" — a variante desambigua light/dark na mesma lista.
-names=$(jq -r '.[] | "\(.name) (\(.variant))"' "$json" | sort)
+# Apprentice (dark) lidera a lista (entrada inicial do menu).
+_sorted=$(jq -r '.[] | "\(.name) (\(.variant))"' "$json" | sort)
+if printf '%s\n' "$_sorted" | grep -q '^Apprentice (dark)$'; then
+    names=$(printf 'Apprentice (dark)\n%s\n' \
+        "$(printf '%s\n' "$_sorted" | grep -v '^Apprentice (dark)$')")
+else
+    names=$_sorted
+fi
+unset _sorted
 [ -n "$names" ] || {
     notify-send "Esquemas" "Nenhum esquema disponível." 2>/dev/null || true
     exit 1

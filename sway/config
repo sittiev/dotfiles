@@ -181,12 +181,12 @@ default_border pixel 1
 default_floating_border pixel 1
 hide_edge_borders --i3 smart
 
-client.focused   #F5F7F5 #ECF0ED #353635 #F5F7F5 #ECF0ED
-client.unfocused #ACB1AE #e0e6e2 #656765 #e0e6e2 #ACB1AE
-client.focused_inactive #ACB1AE #e0e6e2 #656765 #e0e6e2 #ACB1AE
-client.placeholder      #ACB1AE #e0e6e2 #656765 #e0e6e2 #ACB1AE
+client.focused   #F1F7F3 #EAF0EC #353635 #F1F7F3 #EAF0EC
+client.unfocused #ACB1AE #e0e6e2 #6F716F #e0e6e2 #ACB1AE
+client.focused_inactive #ACB1AE #e0e6e2 #6F716F #e0e6e2 #ACB1AE
+client.placeholder      #ACB1AE #e0e6e2 #6F716F #e0e6e2 #ACB1AE
 client.background       #e0e6e2
-client.urgent           #F5F7F5 #CBCFCD #353635 #F5F7F5 #CBCFCD
+client.urgent           #F1F7F3 #B4D9C6 #353635 #F1F7F3 #B4D9C6
 
 for_window [window_type="dialog"] floating enable, move position center
 for_window [window_type="utility"] floating enable, move position center
