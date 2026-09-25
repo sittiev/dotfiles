@@ -8,6 +8,7 @@ Arquivos
 Navegador
 Tema do Tofi
 Tema claro/escuro
+Esquemas de cores
 Clipboard
 Emoji
 Luz noturna
@@ -27,6 +28,7 @@ case "$choice" in
     Navegador) exec librewolf ;;
     'Tema do Tofi') exec "$script_dir/tofi-themes.sh" ;;
     'Tema claro/escuro') exec "$script_dir/theme-toggle.sh" toggle ;;
+    'Esquemas de cores') exec "$script_dir/scheme-menu.sh" ;;
     Clipboard) exec "$script_dir/clipboard.sh" ;;
     Emoji) exec "$script_dir/emoji.sh" ;;
     'Luz noturna') exec "$script_dir/nightlight.sh" ;;
