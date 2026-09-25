@@ -4,7 +4,7 @@ bar:
   location: top
   right-margin: 8
   background: 00000000
-  foreground: E6E6E6ff
+  foreground: 999580ff
   font: "monospace:size=10"
   font-shaping: none
   spacing: 4
@@ -15,4 +15,4 @@ bar:
           string:
             text: "{time}"
             font: "monospace:size=10"
-            deco: {background: {color: 15274Cff}}
+            deco: {background: {color: 20201Dff}}

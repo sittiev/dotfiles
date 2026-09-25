@@ -4,11 +4,14 @@
 #   scheme_init <dark|light>
 #
 # Contrato: exporta ENV_<PAPEL>_{S,L}_{MIN,MAX} (0 ≤ min ≤ max ≤ 100) para os
-# papéis BG FG ACC MUT BRI. Scheme cromático (bg com S≥6) também exporta
-# ENV_BG_H/ENV_FG_H/ENV_ACC_H (hue em graus) — o clamp de papel preserva o hue
-# do wallpaper, e sem isso um envelope saturado pintava o verde do wallpaper
-# num scheme azul. Scheme quase acromático não exporta _H: o humor do
-# wallpaper segue como antes. SCHEME_NAME/SCHEME_VARIANT/SCHEME_MATCH são
+# papéis BG FG ACC MUT BRI, mais SCHEME_BG_HEX/SCHEME_FG_HEX (fundo e texto do
+# próprio scheme, L já espelhado quando variante ≠ modo — é o que faz o fundo,
+# inclusive o chip do yambar, mudar ao trocar de scheme). Scheme cromático
+# (bg com S≥6) também exporta ENV_BG_H/ENV_FG_H/ENV_ACC_H (hue em graus) — o
+# clamp de papel preserva o hue do wallpaper, e sem isso um envelope saturado
+# pintava o verde do wallpaper num scheme azul. Scheme quase acromático não
+# exporta _H: o humor do wallpaper segue como antes.
+# SCHEME_NAME/SCHEME_VARIANT/SCHEME_MATCH são
 # exportados SÓ quando as ENV_* estão completas — presença de SCHEME_NAME é
 # marcador confiável de sucesso. Sem estado / jq ausente / JSON ausente /
 # esquema desconhecido ⇒ exporta NADA: o colorlib cai nas constantes
@@ -31,7 +34,7 @@ _scheme_unset() {
     for _r in BG FG ACC MUT BRI; do
         unset "ENV_${_r}_S_MIN" "ENV_${_r}_S_MAX" "ENV_${_r}_L_MIN" "ENV_${_r}_L_MAX" "ENV_${_r}_H"
     done
-    unset SCHEME_NAME SCHEME_VARIANT SCHEME_MATCH
+    unset SCHEME_NAME SCHEME_VARIANT SCHEME_MATCH SCHEME_BG_HEX SCHEME_FG_HEX
 }
 
 _scheme_slug() { # "1984 Light" → "1984-light"
@@ -112,6 +115,15 @@ _acc_pick() { # "hex,hex,..." <hue-bg> → hex do accent de menor distância cir
     done | sort -n | head -1 | cut -f2
 }
 
+_mirror_hex() { # "rrggbb" → mesma cor com L espelhado (100−L), p.ex. variante ≠ modo
+    _mh=${1#\#}
+    [ -n "$_mh" ] || return 0
+    _mhl=$(rgb2hsl_hex "$_mh")
+    _mhr=${_mhl#* }; _mhs=${_mhr%% *}; _mhlv=${_mhr#* }
+    hsl2rgb_hex "${_mhl%% *}" "$_mhs" \
+        "$(LC_ALL=C awk -v l="$_mhlv" 'BEGIN { printf "%.2f", 100 - l }')"
+}
+
 scheme_init() {
     _mode=${1:-dark}
     case "$_mode" in dark|light) ;; *) _mode=dark ;; esac
@@ -154,6 +166,18 @@ EOF
     [ -n "$_bg$_fg$_acc$_mut$_bri" ] || return 0
 
     if [ "$_v" = "$_mode" ]; then _match=1; else _match=0; fi
+
+    # Fundos do próprio scheme, já no modo ativo (L espelhado em variante ≠
+    # modo). É isto que faz o fundo — inclusive o chip do yambar — mudar ao
+    # trocar de scheme: o envelope + hue do wallpaper convergia todos os
+    # schemes escuros quase-acromáticos no mesmo carvão.
+    _bgx=$_bg; _fgx=$_fg
+    if [ "$_match" -eq 0 ]; then
+        _bgx=$(_mirror_hex "$_bg") || return 0
+        _fgx=$(_mirror_hex "$_fg") || return 0
+    fi
+    SCHEME_BG_HEX=${_bgx#\#} SCHEME_FG_HEX=${_fgx#\#}
+    export SCHEME_BG_HEX SCHEME_FG_HEX
 
     # ---- override por modo (precedência sobre derivação) ----
     _slug=$(_scheme_slug "$_name")

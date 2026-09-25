@@ -316,15 +316,15 @@ if "ENV_ACC_S_MIN" in os.environ:
         _p["muted"] = _env_role(_p["muted"], "MUT")
     accent, muted = P["accent"], P["muted"]
 
-if "ENV_BG_S_MIN" in os.environ:
-    # BG/FG do modo ativo no envelope do esquema (colorlib: BG/FG S0-8
-    # "quase acromático, como #262626/#BCBCBC"). Sem isto o fundo ficava no
-    # humor cru do wallpaper (ex.: 648170 L=45 no modo preto) e o chip do
-    # yambar (quadradinho = BG) virava "cor nada a ver". P é alias do dict
-    # ativo; o dict inativo é rederivado no apply do próprio modo, então só
-    # o ativo é clampado. Sem ENV_* (sem esquema) o bloco não roda.
-    P["bg"] = _env_role(P["bg"], "BG")
-    P["fg"] = _env_role(P["fg"], "FG")
+if "SCHEME_BG_HEX" in os.environ:
+    # Com scheme ativo o fundo é o do próprio scheme (já espelhado quando a
+    # variante ≠ modo, via SCHEME_BG_HEX). Antes: envelope + hue do wallpaper
+    # — todos os schemes escuros quase-acromáticos (Apprentice, Dracula,
+    # Atelier Dune, Nord...) convergivam no mesmo carvão e o chip do yambar
+    # (quadradinho = BG) não mudava ao trocar de scheme. border/base derivam
+    # do fundo final; sem scheme, wallpaper como sempre.
+    P["bg"] = os.environ["SCHEME_BG_HEX"]
+    P["fg"] = os.environ["SCHEME_FG_HEX"]
     bg, fg = P["bg"], P["fg"]
     P["border"] = mix(bg, fg, 0.25)
     border = P["border"]

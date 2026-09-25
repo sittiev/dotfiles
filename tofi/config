@@ -14,19 +14,19 @@ padding-right = 0
 # fonte por nome Pango (nao caminho direto): fontconfig resolve JetBrainsMono
 # e faz fallback p/ Noto Color Emoji nos glifos coloridos
 font = /usr/share/fonts/noto/NotoSansMono-Regular.ttf
-text-color = #e6e6e6
-background-color = #15274c
-selection-color = #fafafa
-selection-background = #1a77db
+text-color = #999580
+background-color = #20201D
+selection-color = #20201D
+selection-background = #5fc489
 selection-match-color = #000000
-placeholder-color = #e6e6e6A8
+placeholder-color = #999580A8
 prompt-background = #00000000
 input-background = #00000000
-input-color = #e6e6e6
+input-color = #999580
 alternate-result-background = #00000000
 default-result-background = #00000000
-prompt-color = #e6e6e6
-border-color = #1a77db
+prompt-color = #999580
+border-color = #5fc489
 outline-width = 0
 corner-radius = 0
 border-width = 0
