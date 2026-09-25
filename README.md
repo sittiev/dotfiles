@@ -9,6 +9,7 @@ Canonical dotfiles for this CachyOS/Sway desktop.
 - Tofi launcher
 - Yambar bar
 - Pywal/WAL theme pipeline
+- Gogh color-scheme library (1247 vendored schemes) selected from Tofi
 - Swaybg + Waypaper wallpaper selection and dynamic palette refresh
 - Mako notifications
 - GTK 3/4 settings
@@ -20,6 +21,7 @@ The original files in `~/.config` were not deleted.
 
 ```text
 sway/       Sway config and scripts
+sway/schemes/  Vendored Gogh scheme library (see sway/schemes/README.md)
 foot/       Foot configuration
 yambar/     Yambar configuration
 tofi/       Tofi config and themes
@@ -37,11 +39,17 @@ scripts/    Validation helpers
 Edit the source files, not generated output:
 
 - `sway/scripts/colorlib.sh`
+- `sway/scripts/schemelib.sh`
 - `sway/scripts/theme-mode.sh`
 - `sway/scripts/render.sh`
 - `sway/scripts/theme.sh`
 - `sway/scripts/wallpaper.sh`
+- `sway/scripts/scheme-menu.sh`
 - `tofi/themes/*/config`
+
+`sway/schemes/gogh-themes-min.json` is vendored data: refresh it with
+`scripts/update-schemes.sh`, never by hand. The `overrides/*.env` files are
+curated by hand.
 
 The following are generated snapshots and are marked in their headers:
 
@@ -67,7 +75,9 @@ checkbashisms sway/scripts/*.sh
 ```
 
 The scripts target `dash` (`extra/dash`); `validate.sh` enforces `dash -n` and
-`checkbashisms` on every script under `sway/scripts/` and `scripts/`.
+`checkbashisms` on every script under `sway/scripts/` and `scripts/`, runs
+`scripts/test-schemelib.sh` (fallback, override, ranges, mirror, unknown) and
+checks the `sway/schemes` data file.
 
 ## Wallpaper
 
@@ -123,6 +133,27 @@ e `kdeglobals`. Custo por troca de wallpaper: ~0,7 s.
 `entry`, `.view`, `button`, menu and selection rules that re-tint the
 theme with the palette. GTK reads CSS only at startup: restart an open
 GTK application to see a new wallpaper's colors.
+
+## Esquemas de cores
+
+**Mod+Shift+x → "Esquemas de cores"** lista os 1247 esquemas Gogh no Tofi.
+A escolha grava o nome em `~/.cache/theme-scheme` e roda `theme.sh`; apagar
+o arquivo volta ao caminho sem esquema (constantes Apprentice atuais,
+byte-idêntico ao comportamento original). O picker valida o nome contra o
+JSON antes de gravar (escrita atômica) e `TOFI_SCHEME=<nome>` aplica sem
+abrir o menu.
+
+- **Wallpaper manda, esquema adapta**: o modo light/dark continua sendo
+  decidido pela luminância do wallpaper; quando a `variant` do esquema não
+  bate com o modo, o L de cada papel espelha (`L' = 100 − L`, S intacto).
+- Os papéis vêm do JSON (`schemelib.sh`) e entram em dois pontos:
+  `theme-mode.sh` clampa a paleta do wallpaper nos envelopes do esquema
+  antes do python; `render.sh` aplica as mesmas envelopes em foot e sway.
+- Esquema desconhecido/ausente ⇒ fallback completo nas constantes atuais.
+- Envelopes manuais: `sway/schemes/overrides/<nome>.env` (e
+  `<nome>.light.env`); `apprentice.env` reproduz as constantes históricas.
+- Consumidores fora do repositório (qt6ct/qt5ct/waylock/ly) têm writers
+  guardados — ver `docs/PENDING.md`.
 
 ## Activation
 

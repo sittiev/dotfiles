@@ -11,7 +11,11 @@
 ## Source of truth
 
 - Edit Sway config and scripts, not generated theme output.
-- `colorlib.sh`, `theme-mode.sh`, `render.sh`, and `theme.sh` are the theme source.
+- `colorlib.sh`, `schemelib.sh`, `theme-mode.sh`, `render.sh`, and `theme.sh`
+  are the theme source.
+- `sway/schemes/gogh-themes-min.json` is vendored data: refresh it only with
+  `scripts/update-schemes.sh`. `sway/schemes/overrides/*.env` are curated by
+  hand.
 - Tofi layouts live under `tofi/themes/`; `tofi/config` is generated.
 - `foot/foot.ini`, `yambar/config.yml`, `mako/config`, and `sway/scripts/swaynag-exit.sh` contain generated snapshots.
 - Never edit files under `sway/backups/` as if they were active configuration.
