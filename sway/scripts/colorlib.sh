@@ -73,17 +73,20 @@ apprentice_clamp() {
     hsl2rgb_hex "$_ac_h" "$_ac_s" "$_ac_l"
 }
 
-# Envelopes Apprentice por role (dark). Light espelha L em torno de 50%.
+# Envelopes por role (dark). Light espelha L em torno de 50%.
+# Os números são os defaults: sem esquema selecionado o output é idêntico ao
+# histórico. scheme_init (schemelib.sh) exporta ENV_* que sobrescrevem cada
+# faixa conforme o esquema ativo e o modo atual.
 #   BG/FG:     S 0-8   (quase acromático, como #262626 / #BCBCBC)
 #   ACCENT:    S 20-35 L 45-55 (como color1-6)
 #   MUTED:     S 0-12  L 26-40 (como color8)
 #   BRIGHT:    S 20-40 L 55-70 (como color10/12/13/14)
 #   Light: BG L88-94 FG L22-30 ACCENT S15-28 L45-55 MUTED L60-74 S0-12
-apprentice_bg() { apprentice_clamp "$1" 0 8 12 18; }
-apprentice_fg() { apprentice_clamp "$1" 0 8 68 76; }
-apprentice_accent() { apprentice_clamp "$1" 20 35 45 55; }
-apprentice_muted() { apprentice_clamp "$1" 0 12 26 40; }
-apprentice_bright() { apprentice_clamp "$1" 20 40 55 70; }
+apprentice_bg() { apprentice_clamp "$1" "${ENV_BG_S_MIN:-0}" "${ENV_BG_S_MAX:-8}" "${ENV_BG_L_MIN:-12}" "${ENV_BG_L_MAX:-18}"; }
+apprentice_fg() { apprentice_clamp "$1" "${ENV_FG_S_MIN:-0}" "${ENV_FG_S_MAX:-8}" "${ENV_FG_L_MIN:-68}" "${ENV_FG_L_MAX:-76}"; }
+apprentice_accent() { apprentice_clamp "$1" "${ENV_ACC_S_MIN:-20}" "${ENV_ACC_S_MAX:-35}" "${ENV_ACC_L_MIN:-45}" "${ENV_ACC_L_MAX:-55}"; }
+apprentice_muted() { apprentice_clamp "$1" "${ENV_MUT_S_MIN:-0}" "${ENV_MUT_S_MAX:-12}" "${ENV_MUT_L_MIN:-26}" "${ENV_MUT_L_MAX:-40}"; }
+apprentice_bright() { apprentice_clamp "$1" "${ENV_BRI_S_MIN:-20}" "${ENV_BRI_S_MAX:-40}" "${ENV_BRI_L_MIN:-55}" "${ENV_BRI_L_MAX:-70}"; }
 apprentice_bg_light() { apprentice_clamp "$1" 0 8 88 94; }
 apprentice_fg_light() { apprentice_clamp "$1" 0 8 22 30; }
 apprentice_accent_light() { apprentice_clamp "$1" 15 28 45 55; }
