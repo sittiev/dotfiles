@@ -212,6 +212,77 @@ exec swaynag -t warning -m 'Sair do Sway?' \
 EOF
 chmod 0755 "$HOME/.config/sway/scripts/swaynag-exit.sh"
 
+# ---- Qt (qt6ct/qt5ct): color scheme + ativação (guarded: só com config) ----
+# [ColorScheme] = 21 slots #AARRGGBB na ordem QPalette::ColorRole(0..20) —
+# Qt5 e Qt6 idênticos até PlaceholderText; no Qt>=6.6 o qt6ct completa
+# Accent=Highlight sozinho (count==Accent ⇒ append).
+_qt_slots() { # <cor-de-texto> → stdout com os 21 papéis
+    _t=$1
+    printf 'ff%s,ff%s,ff%s,ff%s,ff%s,ff%s,ff%s,ff%s,ff%s,ff%s,ff%s,ff%s,ff%s,ff%s,ff%s,ff%s,ff%s,ff%s,ff%s,ff%s,ff%s' \
+        "$_t" \
+        "$BG" \
+        "$(mix_hex "$BG" ffffff 0.14)" \
+        "$(mix_hex "$BG" ffffff 0.07)" \
+        "$(mix_hex "$BG" 000000 0.11)" \
+        "$(mix_hex "$BG" 000000 0.07)" \
+        "$_t" \
+        "$_t" \
+        "$_t" \
+        "$BASE" \
+        "$BG" \
+        "$(mix_hex "$BG" 000000 0.18)" \
+        "$ACCENT" \
+        "$(ensure_contrast "$_t" "$ACCENT" 4.5)" \
+        "$ACCENT" \
+        "$MUTED" \
+        "$BG" \
+        "$BG" \
+        "$BG" \
+        "$_t" \
+        "$MUTED"
+}
+_qt_write() { # <app> — escreve colors/dotfiles.conf e aponta o <app>.conf
+    _qd="${XDG_CONFIG_HOME:-$HOME/.config}/$1"
+    _qc="$_qd/$1.conf"
+    [ -f "$_qc" ] || return 0
+    mkdir -p "$_qd/colors"
+    _qt_tmp=$(mktemp)
+    printf '[ColorScheme]\nactive_colors=%s\ninactive_colors=%s\ndisabled_colors=%s\n' \
+        "$(_qt_slots "$FG")" "$(_qt_slots "$MUTED")" "$(_qt_slots "$MUTED")" > "$_qt_tmp"
+    cat "$_qt_tmp" > "$_qd/colors/dotfiles.conf"
+    rm -f "$_qt_tmp"
+    # Ativa (QSettings INI). As chaves só existem no [Appearance] (fonte
+    # qt5ct/qt6ct) ⇒ replace linha-âncora; sem a seção, anexa uma nova.
+    _qt_tmp=$(mktemp)
+    sed \
+        -e "s|^color_scheme_path[[:space:]]*=.*|color_scheme_path=$_qd/colors/dotfiles.conf|" \
+        -e "s|^custom_palette[[:space:]]*=.*|custom_palette=true|" \
+        "$_qc" > "$_qt_tmp"
+    if ! grep -q '^color_scheme_path=' "$_qt_tmp" && ! grep -q '^\[Appearance\]' "$_qc"; then
+        printf '\n[Appearance]\ncustom_palette=true\ncolor_scheme_path=%s\n' \
+            "$_qd/colors/dotfiles.conf" >> "$_qt_tmp"
+    fi
+    cat "$_qt_tmp" > "$_qc"
+    rm -f "$_qt_tmp"
+}
+_qt_write qt6ct
+_qt_write qt5ct
+
+# ---- ly (greeter): cores do tema em /etc/ly/config.ini (root-only ⇒ guarded)
+# Formato 0xSSRRGGBB (SS = styling; 0x01 = TB_BOLD). LY_CONF só p/ teste.
+_ly=${LY_CONF:-/etc/ly/config.ini}
+if [ -w "$_ly" ]; then
+    _ly_tmp=$(mktemp)
+    awk -v bg="0x00$BG" -v fg="0x00$FG" -v bd="0x00$ACCENT" -v er="0x01$FAIL" '
+        /^bg[ \t]*=/ { print "bg = " bg; next }
+        /^fg[ \t]*=/ { print "fg = " fg; next }
+        /^border_fg[ \t]*=/ { print "border_fg = " bd; next }
+        /^error_fg[ \t]*=/ { print "error_fg = " er; next }
+        { print }' "$_ly" > "$_ly_tmp"
+    cat "$_ly_tmp" > "$_ly"
+    rm -f "$_ly_tmp"
+fi
+
 # One reload per consumer.
 if pgrep -x mako >/dev/null 2>&1; then makoctl reload >/dev/null 2>&1 || true; else mako >/dev/null 2>&1 & fi
 pkill -USR1 kitty 2>/dev/null || true
