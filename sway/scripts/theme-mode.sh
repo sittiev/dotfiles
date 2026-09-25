@@ -304,6 +304,19 @@ if "ENV_ACC_S_MIN" in os.environ:
         _p["muted"] = _env_role(_p["muted"], "MUT")
     accent, muted = P["accent"], P["muted"]
 
+if "ENV_BG_S_MIN" in os.environ:
+    # BG/FG do modo ativo no envelope do esquema (colorlib: BG/FG S0-8
+    # "quase acromático, como #262626/#BCBCBC"). Sem isto o fundo ficava no
+    # humor cru do wallpaper (ex.: 648170 L=45 no modo preto) e o chip do
+    # yambar (quadradinho = BG) virava "cor nada a ver". P é alias do dict
+    # ativo; o dict inativo é rederivado no apply do próprio modo, então só
+    # o ativo é clampado. Sem ENV_* (sem esquema) o bloco não roda.
+    P["bg"] = _env_role(P["bg"], "BG")
+    P["fg"] = _env_role(P["fg"], "FG")
+    bg, fg = P["bg"], P["fg"]
+    P["border"] = mix(bg, fg, 0.25)
+    border = P["border"]
+
 # ---- GTK colors.css (paleta; backup da versao anterior) ----
 # theme_base_color = base (campo) — corrige contraste light (base mais clara que window).
 # Inclui tokens libadwaita/GTK4 no mesmo arquivo (window/view/accent/headerbar/card).
