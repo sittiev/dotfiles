@@ -502,13 +502,19 @@ button:active {
    transparentes, arredondados. Botar `background-color` no check marca o
    quadrado inteiro com a cor e o canto arredondado some — o radio marcado
    virava um retangulo escuro. `check:checked` (0,1,1) empatava com o do
-   tema e, carregando depois, o nosso vencia. A cor do indicador é do tema. */
+   tema e, carregando depois, o nosso vencia. A cor do indicador é do tema.
+
+   `switch:checked` saiu pelo mesmo motivo e com um sintoma pior: o switch
+   desenha o trilho com `background-size: 50px 20px` centralizado dentro de
+   um no mais LARGE, e botar `background-color` nele pintava o no inteiro —
+   sobrava um retangulo de cor vazando dos dois lados da pílula. `progressbar
+   progress`, `levelbar block` e `scale highlight` continuam: esses o tema
+   pinta com cor plana, entao nao ha imagem para cobrir. */
 button:not(.check):not(.radio):checked,
 button.selected,
 progressbar progress,
 levelbar block,
-scale highlight,
-switch:checked {
+scale highlight {
   background-color: %(accent)s;
   color: %(accent_fg)s;
 }
