@@ -202,4 +202,11 @@ exec_always dash -c 'pgrep -x mako >/dev/null 2>&1 || mako >/dev/null 2>&1'
 exec_always ~/.config/sway/scripts/cliphist-watch.sh
 exec /usr/bin/lxqt-policykit-agent
 
+# Alterna splith/splitv conforme a proporcao da janela em foco (autotiling-rs).
+# pkill antes de iniciar: o README upstream manda usar exec_always e acumularia um
+# processo a cada `swaymsg reload` (nwg-piotr/autotiling issue #69). Assim
+# recarrega o binario sem duplicar. Saida descartada porque o programa escreve
+# em stderr toda vez que nao ha janela focada, o que poluiria o log do sway.
+exec_always dash -c 'pkill -x autotiling-rs >/dev/null 2>&1; sleep 0.2; autotiling-rs >/dev/null 2>&1'
+
 # Cursor theme and size are intentionally not configured here.
