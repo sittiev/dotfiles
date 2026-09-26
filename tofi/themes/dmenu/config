@@ -1,14 +1,19 @@
 anchor = top
 width = 100%
-height = 18
+# 24px, e nao 18: o Pango usa a MAIOR caixa deMetrics da linha. O fallback
+# (Liberation Sans, a menor das 281 fontes com cobertura portuguesa) tem
+# 1.117em, que a 20px da 22.3px — mais que os 18px da barra, e cortava a
+# metade de baixo das letras. Nenhuma fonte instalada tem caixa menor.
+# NAO voltar a 18 sem antes trocar a fonte: sem fallback o texto acentuado
+# some inteiro, que e pior que cortar.
+height = 24
 horizontal = true
-# 16px, e nao 20: com height=18 a moldura de 2px deixa 14px de conteudo, e a
-# 20px o FindersKeepers ocupa 15.8px e o texto era cortado. 16px ocupa 12.7px.
-# NAO subir: 17px ja passa de 14px e volta a cortar.
-font-size = 16
+font-size = 20
 prompt-text = ""
+# border/outline 0: os dois consomem area de conteudo (outline 4 tira 8px de
+# cada lado). Com 24px sobra 1.7px, so caberia moldura de 0.
 outline-width = 0
-border-width = 2
+border-width = 0
 background-color = #000000
 min-input-width = 120
 result-spacing = 15
