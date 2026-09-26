@@ -1,12 +1,6 @@
 anchor = top
 width = 100%
-# 24px, e nao 18: o Pango usa a MAIOR caixa deMetrics da linha. O fallback
-# (Liberation Sans, a menor das 281 fontes com cobertura portuguesa) tem
-# 1.117em, que a 20px da 22.3px — mais que os 18px da barra, e cortava a
-# metade de baixo das letras. Nenhuma fonte instalada tem caixa menor.
-# NAO voltar a 18 sem antes trocar a fonte: sem fallback o texto acentuado
-# some inteiro, que e pior que cortar.
-height = 24
+height = 18
 horizontal = true
 font-size = 20
 prompt-text = ""

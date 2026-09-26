@@ -29,16 +29,7 @@ hide-input = false
 # tofi-colors-begin (gerado por tofi-apply.sh — nao editar este bloco)
 # FONT por NOME de familia, nunca por caminho: com caminho absoluto o Pango nao
 # monta a cadeia de fallback do fontconfig e todo emoji vira caixa vazia.
-#
-# A fallback e OBRIGATORIA: FindersKeepers tem so 130 codepoints (nenhum
-# acentuado) e sem a lista o tofi DESAPARECE a linha inteira em vez de cair no
-# fallback. Separador eh ESPACO: "A, B" e "A,B" nao funcionam no tofi.
-#
-# Liberation Sans = 1.117em, a menor caixa win entre as 281 fontes do sistema
-# com cobertura completa. Isso importa: o Pango usa a MAIOR caixa da linha, e
-# 1.117em a 20px = 22.3px, maior que a barra de 18px — por isso o texto
-# acentuado corta em 20px e so fecha em 16px. Nenhuma fonte instalada resolve.
-font = FindersKeepers Liberation Sans
+font = FindersKeepers
 text-color = #373839
 background-color = #e3e5e8
 selection-color = #f9f9fa
