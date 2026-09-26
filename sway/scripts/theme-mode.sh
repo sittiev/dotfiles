@@ -432,15 +432,30 @@ notebook > header {
 }
 
 /* menus, popovers e tooltips */
+/* Os `> contents` e `> arrow` não são redundância: em GTK4 a superfície
+   visível do popover é `popover.background > contents`, e o `.background`
+   é transparente. Qogir pinta esse `> contents` com #ffffff fixo, e
+   `popover.background > contents` (0,1,1) ganha de `popover.background`
+   (0,1,0) — o menu saía com o retângulo branco do tema por cima da nossa
+   cor. O mesmo vale para o `> arrow`, que é a pontinha do balão. */
 menu,
 .menu,
 .context-menu,
 popover.background,
+popover.background > contents,
+popover.background > arrow,
 popover.background.menu,
+popover.background.menu > contents,
+menubar > item popover.menu.background > contents,
 tooltip,
 tooltip.background {
   background-color: %(bg)s;
   color: %(fg)s;
+}
+
+/* borda da pontinha do popover, senão fica o cinza do tema */
+popover.background > arrow {
+  border-color: %(border)s;
 }
 
 /* campos de texto e views (base, igual ao headerbar) */
