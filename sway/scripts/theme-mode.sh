@@ -496,16 +496,52 @@ button:hover {
 button:active {
   background-color: %(btn_active)s;
 }
-button:checked,
+/* NAO mexer em `check:checked` / `radio:checked` aqui.
+   O tema desenha o indicador com uma IMAGEM
+   (`-gtk-icon-source: assets/checkbox-checked.png`) e o PNG tem os cantos
+   transparentes, arredondados. Botar `background-color` no check marca o
+   quadrado inteiro com a cor e o canto arredondado some — o radio marcado
+   virava um retangulo escuro. `check:checked` (0,1,1) empatava com o do
+   tema e, carregando depois, o nosso vencia. A cor do indicador é do tema. */
+button:not(.check):not(.radio):checked,
 button.selected,
-check:checked,
-radio:checked,
 progressbar progress,
 levelbar block,
 scale highlight,
 switch:checked {
   background-color: %(accent)s;
   color: %(accent_fg)s;
+}
+
+/* GtkRadioButton e GtkCheckButton SAO subclasses de GtkButton, entao o no CSS
+   delas tambem se chama "button" (com a classe .radio/.check). Os blocos
+   acima pintavam a caixa INTEIRA: o circulo do radio aparecia sobre um
+   retangulo slate, e o marcado ficava com um fundo escuro. O tema zera isso
+   com `radiobutton { background: none }`, mas a especificidade e a mesma
+   (0,0,1) e o user gtk.css carrega DEPOIS do tema — o nosso vencia.
+   Este reset vem depois dos blocos button, entao ganha o empate. */
+radiobutton,
+checkbutton {
+  background-color: transparent;
+  background-image: none;
+  border-color: transparent;
+  box-shadow: none;
+}
+radiobutton:hover,
+checkbutton:hover,
+radiobutton:active,
+checkbutton:active,
+radiobutton:checked,
+checkbutton:checked,
+button.radio:hover,
+button.check:hover,
+button.radio:active,
+button.check:active,
+button.radio:checked,
+button.check:checked {
+  background-color: transparent;
+  border-color: transparent;
+  box-shadow: none;
 }
 
 /* selecao */
