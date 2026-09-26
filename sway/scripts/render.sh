@@ -21,6 +21,9 @@ scheme_init "$MODE"
 : "${FAIL:=$ACCENT}"
 
 # Yambar: current top clock-only layout, palette injected only.
+# FindersKeepers sem USE_TYPO_METRICS: 20px rende 15.8px de caixa win, cabe nos 18px.
+# A fonte nao tem acentos, entao o fallback por glifo do pango desenha os
+# acentuados numa segunda fonte.
 YF=$(ensure_contrast "$FG" "$BG" 4.5 | tr 'a-f' 'A-F')
 YBG=$(printf '%s' "$BG" | tr 'a-f' 'A-F')
 cat > "$HOME/.config/yambar/config.yml" <<EOF
@@ -31,7 +34,7 @@ bar:
   right-margin: 8
   background: 00000000
   foreground: ${YF}ff
-  font: "monospace:size=10"
+  font: "FindersKeepers:size=20"
   font-shaping: none
   spacing: 4
   right:
@@ -40,7 +43,7 @@ bar:
         content:
           string:
             text: "{time}"
-            font: "monospace:size=10"
+            font: "FindersKeepers:size=20"
             deco: {background: {color: ${YBG}ff}}
 EOF
 

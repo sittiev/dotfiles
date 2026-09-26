@@ -4,8 +4,8 @@ bar:
   location: top
   right-margin: 8
   background: 00000000
-  foreground: 343637ff
-  font: "monospace:size=10"
+  foreground: 373839ff
+  font: "FindersKeepers:size=20"
   font-shaping: none
   spacing: 4
   right:
@@ -14,5 +14,5 @@ bar:
         content:
           string:
             text: "{time}"
-            font: "monospace:size=10"
-            deco: {background: {color: D0DEEBff}}
+            font: "FindersKeepers:size=20"
+            deco: {background: {color: E3E5E8ff}}

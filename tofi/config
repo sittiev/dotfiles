@@ -2,7 +2,7 @@ anchor = top
 width = 100%
 height = 18
 horizontal = true
-font-size = 10
+font-size = 20
 prompt-text = ""
 min-input-width = 120
 result-spacing = 15
@@ -11,22 +11,23 @@ padding-bottom = 0
 padding-left = 0
 padding-right = 0
 # tofi-colors-begin (gerado por tofi-apply.sh — nao editar este bloco)
-# fonte por nome Pango (nao caminho direto): fontconfig resolve JetBrainsMono
-# e faz fallback p/ Noto Color Emoji nos glifos coloridos
-font = /usr/share/fonts/noto/NotoSansMono-Regular.ttf
-text-color = #343637
-background-color = #d0deeb
-selection-color = #e4ecf3
-selection-background = #536d85
-selection-match-color = #ececec
-placeholder-color = #343637A8
+# FONT por NOME de familia, nunca por caminho: com caminho absoluto o Pango nao
+# monta a cadeia de fallback do fontconfig e todo emoji vira caixa vazia.
+# FindersKeepers nao tem acentos nem emoji, entao ambos caem no fallback.
+font = FindersKeepers
+text-color = #373839
+background-color = #e3e5e8
+selection-color = #f9f9fa
+selection-background = #657489
+selection-match-color = #f9f9f9
+placeholder-color = #373839A8
 prompt-background = #00000000
 input-background = #00000000
-input-color = #343637
+input-color = #373839
 alternate-result-background = #00000000
 default-result-background = #00000000
-prompt-color = #343637
-border-color = #536d85
+prompt-color = #373839
+border-color = #657489
 outline-width = 0
 corner-radius = 0
 border-width = 0

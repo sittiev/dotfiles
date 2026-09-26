@@ -61,30 +61,37 @@ fi
 
 mkdir -p "$(dirname "$DEST")"
 
-# 1) copia layout filtrando TODAS as cores + outline/corner (decisão: radius 0 global)
-#    Remove: *-color, *-background (cor), outline-*, corner-radius variants, border-width (re-injetado depois)
-#    Mantém: *-padding, fontes, geometria, comportamento
-awk '
-    /^[[:space:]]*border-width[[:space:]]*=/ { next }
-    /^[[:space:]]*outline-(width|color)[[:space:]]*=/ { next }
-    /^[[:space:]]*corner-radius[[:space:]]*=/ { next }
-    /corner-radius[[:space:]]*=/ { next }
-    # familia via Pango (fontconfig faz fallback p/ Noto Color Emoji); tamanho vem do layout
-    /^[[:space:]]*font[[:space:]]*=/ { next }
-    /^[[:space:]]*[a-zA-Z0-9_.-]*color[[:space:]]*=/ { next }
-    /^[[:space:]]*[a-zA-Z0-9_.-]*background[[:space:]]*=/ {
-        if ($0 ~ /padding/) { print; next }
-        next
-    }
-    { print }
-' "$SRC" > "$DEST.tmp"
+# render_layout <layout-src> <dest>
+#   1) copia o layout filtrando TODAS as cores + outline/corner (radius 0 global)
+#      Remove: *-color, *-background (cor), outline-*, corner-radius, border-width,
+#      font (re-injetado no bloco canonico). Mantém *-padding, geometria, comportamento.
+#   2) injeta o bloco de cor canonico
+#   3) preserva o border-width proprio do layout, se houver
+render_layout() {
+    _rl_src=$1
+    _rl_dest=$2
+    awk '
+        /^[[:space:]]*border-width[[:space:]]*=/ { next }
+        /^[[:space:]]*outline-(width|color)[[:space:]]*=/ { next }
+        /^[[:space:]]*corner-radius[[:space:]]*=/ { next }
+        /corner-radius[[:space:]]*=/ { next }
+        # familia via Pango: o nome vem do bloco canonico, nunca do layout
+        /^[[:space:]]*font[[:space:]]*=/ { next }
+        /^[[:space:]]*[a-zA-Z0-9_.-]*color[[:space:]]*=/ { next }
+        /^[[:space:]]*[a-zA-Z0-9_.-]*background[[:space:]]*=/ {
+            if ($0 ~ /padding/) { print; next }
+            next
+        }
+        { print }
+    ' "$_rl_src" > "$_rl_dest.tmp"
 
-# 2) injeta bloco de cor canônico (outline 0 = sem "borda preta" padrão 4px #080800)
-cat >> "$DEST.tmp" <<EOF
+    # outline 0 = sem "borda preta" padrão 4px #080800
+    cat >> "$_rl_dest.tmp" <<EOF
 # tofi-colors-begin (gerado por tofi-apply.sh — nao editar este bloco)
-# fonte por nome Pango (nao caminho direto): fontconfig resolve JetBrainsMono
-# e faz fallback p/ Noto Color Emoji nos glifos coloridos
-font = /usr/share/fonts/noto/NotoSansMono-Regular.ttf
+# FONT por NOME de familia, nunca por caminho: com caminho absoluto o Pango nao
+# monta a cadeia de fallback do fontconfig e todo emoji vira caixa vazia.
+# FindersKeepers nao tem acentos nem emoji, entao ambos caem no fallback.
+font = FindersKeepers
 text-color = #$FG
 background-color = #$BG
 selection-color = #$_TOFI_SEL
@@ -103,15 +110,24 @@ corner-radius = 0
 border-width = 2
 EOF
 
-# 3) se layout original tinha border-width próprio (dos=4, fullscreen=0), preserva
-#    extrai do SRC e sobrescreve o padrão 2 acima
-BW="$(sed -n 's/^[[:space:]]*border-width[[:space:]]*=[[:space:]]*//p' "$SRC" | head -1 | tr -d ' ')"
-if [ -n "$BW" ]; then
-    sed -i "s/^border-width = .*/border-width = $BW/" "$DEST.tmp"
+    _rl_bw="$(sed -n 's/^[[:space:]]*border-width[[:space:]]*=[[:space:]]*//p' "$_rl_src" | head -1 | tr -d ' ')"
+    if [ -n "$_rl_bw" ]; then
+        sed -i "s/^border-width = .*/border-width = $_rl_bw/" "$_rl_dest.tmp"
+    fi
+
+    # Write through the symlink; mv would replace it with a regular file.
+    cat "$_rl_dest.tmp" > "$_rl_dest"
+    rm -f "$_rl_dest.tmp"
+}
+
+render_layout "$SRC" "$DEST"
+
+# O clipboard usa layout proprio (vertical), mas a MESMA paleta: renderiza o
+# segundo config pela mesma funcao pra nunca divergir de cor do launcher.
+CLIP_SRC="$THEMES/clipboard/config"
+if [ -f "$CLIP_SRC" ]; then
+    render_layout "$CLIP_SRC" "$HOME/.config/tofi/config-clipboard"
 fi
 
-# Write through the symlink; mv would replace it with a regular file.
-cat "$DEST.tmp" > "$DEST"
-rm -f "$DEST.tmp"
 # cache do layout só após sucesso (falha não pode envenenar a próxima chamada)
 echo "$LAYOUT" > "$HOME/.cache/tofi-layout"
