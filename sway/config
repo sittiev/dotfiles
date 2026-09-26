@@ -172,8 +172,8 @@ focus_follows_mouse yes
 mouse_warping output
 seat * hide_cursor when-typing enable
 
-gaps inner 6
-gaps outer 0
+gaps inner 16
+gaps outer 24
 # Use 1px pixel borders instead of titlebars; --i3 hides single-child tab/stack bars.
 titlebar_border_thickness 0
 titlebar_padding 0
@@ -181,12 +181,12 @@ default_border pixel 1
 default_floating_border pixel 1
 hide_edge_borders --i3 smart
 
-client.focused   #6684E1 #4A5C92 #DFDDD6 #6684E1 #4A5C92
-client.unfocused #44433A #20201D #656D71 #20201D #44433A
-client.focused_inactive #44433A #20201D #656D71 #20201D #44433A
-client.placeholder      #44433A #20201D #656D71 #20201D #44433A
-client.background       #20201D
-client.urgent           #6684E1 #512826 #ABA896 #6684E1 #512826
+client.focused   #3C4F60 #7B8B99 #FAFAFA #3C4F60 #7B8B99
+client.unfocused #A5ADB5 #dbe6f0 #787D82 #dbe6f0 #A5ADB5
+client.focused_inactive #A5ADB5 #dbe6f0 #787D82 #dbe6f0 #A5ADB5
+client.placeholder      #A5ADB5 #dbe6f0 #787D82 #dbe6f0 #A5ADB5
+client.background       #dbe6f0
+client.urgent           #3C4F60 #91A1B0 #292B2C #3C4F60 #91A1B0
 
 for_window [window_type="dialog"] floating enable, move position center
 for_window [window_type="utility"] floating enable, move position center
