@@ -122,12 +122,16 @@ EOF
 
 render_layout "$SRC" "$DEST"
 
-# O clipboard usa layout proprio (vertical), mas a MESMA paleta: renderiza o
-# segundo config pela mesma funcao pra nunca divergir de cor do launcher.
-CLIP_SRC="$THEMES/clipboard/config"
-if [ -f "$CLIP_SRC" ]; then
-    render_layout "$CLIP_SRC" "$HOME/.config/tofi/config-clipboard"
-fi
+# Layouts com janela propria: cada um rende um config extra pela MESMA funcao,
+# entao a paleta nunca diverge do launcher.
+#   clipboard -> lista vertical (50 entradas do cliphist nao cabem numa barra)
+#   emoji     -> font-size menor; ver o aviso de metricas no layout
+for _rl_extra in clipboard emoji; do
+    _rl_xsrc="$THEMES/$_rl_extra/config"
+    if [ -f "$_rl_xsrc" ]; then
+        render_layout "$_rl_xsrc" "$HOME/.config/tofi/config-$_rl_extra"
+    fi
+done
 
 # cache do layout só após sucesso (falha não pode envenenar a próxima chamada)
 echo "$LAYOUT" > "$HOME/.cache/tofi-layout"

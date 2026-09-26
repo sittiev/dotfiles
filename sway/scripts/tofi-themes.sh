@@ -11,12 +11,12 @@ themes="$HOME/.config/tofi/themes"
 }
 
 names=$(find -L "$themes" -mindepth 2 -maxdepth 2 -type f -name config -exec dirname {} \; 2>/dev/null | xargs -r -n1 basename | sort)
-# "clipboard" e layout reservado do clipboard.sh (vertical, janela propria):
-# nao entra no seletor, senao viraria tambem o layout do launcher.
+# "clipboard" e "emoji" sao layouts reservados (janela propria, um so por
+# consumidor): nao entram no seletor, senao virariam o layout do launcher.
 kept=""
 for n in $names; do
     case "$n" in
-        clipboard) ;;
+        clipboard|emoji) ;;
         *) kept="$kept$n
 " ;;
     esac

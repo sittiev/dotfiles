@@ -1,0 +1,50 @@
+# emoji — layout-only (geometria/fontes/comportamento). Cores via tofi-apply.sh.
+# NAO mexer em font-size sem recalcular: o NotoColorEmoji tem caixa win de
+# 1.171875em, muito maior que a do FindersKeepers (0.79em). O Pango usa a maior
+# caixa da linha, entao num height=18 o limite e 18/1.171875 = 15.3px.
+# 16px estoura (18.8px) e corta a parte de baixo do emoji e do rotulo.
+font-size = 14
+hint-font = false
+horizontal = true
+anchor = top
+width = 100%
+height = 18
+# border/outline 0: ambos consomem area de conteudo (medido: outline 4 tira 8px
+# de cada lado). Com height=18 e font-size=14 sobram 1.6px, nao ha como bordar.
+padding-top = 0
+padding-bottom = 0
+padding-left = 0
+padding-right = 0
+min-input-width = 120
+result-spacing = 12
+prompt-text = ""
+scale = true
+exclusive-zone = -1
+hide-cursor = true
+text-cursor = true
+num-results = 0
+history = true
+fuzzy-match = false
+require-match = true
+auto-accept-single = false
+# tofi-colors-begin (gerado por tofi-apply.sh — nao editar este bloco)
+# FONT por NOME de familia, nunca por caminho: com caminho absoluto o Pango nao
+# monta a cadeia de fallback do fontconfig e todo emoji vira caixa vazia.
+# FindersKeepers nao tem acentos nem emoji, entao ambos caem no fallback.
+font = FindersKeepers
+text-color = #373839
+background-color = #e3e5e8
+selection-color = #f9f9fa
+selection-background = #657489
+selection-match-color = #f9f9f9
+placeholder-color = #373839A8
+prompt-background = #00000000
+input-background = #00000000
+input-color = #373839
+alternate-result-background = #00000000
+default-result-background = #00000000
+prompt-color = #373839
+border-color = #657489
+outline-width = 0
+corner-radius = 0
+border-width = 0

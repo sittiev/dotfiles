@@ -2,7 +2,10 @@ anchor = top
 width = 100%
 height = 18
 horizontal = true
-font-size = 20
+# 16px, e nao 20: com height=18 a moldura de 2px deixa 14px de conteudo, e a
+# 20px o FindersKeepers ocupa 15.8px e o texto era cortado. 16px ocupa 12.7px.
+# NAO subir: 17px ja passa de 14px e volta a cortar.
+font-size = 16
 prompt-text = ""
 min-input-width = 120
 result-spacing = 15
@@ -30,4 +33,4 @@ prompt-color = #373839
 border-color = #657489
 outline-width = 0
 corner-radius = 0
-border-width = 0
+border-width = 2

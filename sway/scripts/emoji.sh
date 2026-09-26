@@ -23,7 +23,7 @@ cat 🐱
 dog 🐶
 rocket_nation 🌍'
 
-entry=$(printf '%b\n' "$list" | "$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)/tofi-safe.sh" --config "$HOME/.config/tofi/config" --prompt-text "Emoji: " || true)
+entry=$(printf '%b\n' "$list" | "$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)/tofi-safe.sh" --config "$HOME/.config/tofi/config-emoji" --prompt-text "Emoji: " || true)
 [ -n "$entry" ] || exit 0
 emoji=${entry#* }
 printf '%s' "$emoji" | wl-copy
