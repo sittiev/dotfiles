@@ -172,7 +172,7 @@ focus_follows_mouse yes
 mouse_warping output
 seat * hide_cursor when-typing enable
 
-gaps inner 1
+gaps inner 16
 gaps outer 24
 # --i3 hides single-child tab/stack bars.
 titlebar_border_thickness 0
