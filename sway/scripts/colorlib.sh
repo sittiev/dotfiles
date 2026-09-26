@@ -61,23 +61,45 @@ hsl2rgb_hex() {
     }'
 }
 
-# apprentice_clamp <rrggbb> <s_min> <s_max> <l_min> <l_max> → rrggbb
-# Preserva hue do wallpaper, prende S/L no envelope Apprentice.
+# apprentice_clamp <rrggbb> <s_min> <s_max> <l_min> <l_max> [hue_override] → rrggbb
+# Prende S/L no envelope do scheme. hue_override, quando dado, é o hue a usar
+# no lugar do da entrada: é a assinatura da imagem (WALL_H) mandando na
+# família de cor, e o envelope do scheme no contraste/brilho.
+#
+# Caso especial — S sobe numa cor acromática: o hue de entrada não existe, e
+# o clamp usaria hue 0 (vermelho), pintando o "black" do terminal de marrom.
+# Nesse caso o cinza é repartido na família do scheme (SCHEME_ACC_CAND); sem
+# família, S volta a 0 e o slot fica acromático, que é melhor que errado.
 apprentice_clamp() {
     _ac_hex="$1"; _ac_smin="$2"; _ac_smax="$3"; _ac_lmin="$4"; _ac_lmax="$5"
+    # ${6:-} e não "$6": o chamador sem âncora passa 5 args, e set -u
+    # transformaria o $6 em "parameter not set" (derrubando o render).
+    _ac_hover="${6:-}"
     _ac_hsl="$(rgb2hsl_hex "$_ac_hex")"
     _ac_h="${_ac_hsl%% *}"; _ac_rest="${_ac_hsl#* }"
+    _ac_s0="${_ac_rest%% *}"
     _ac_s="${_ac_rest%% *}"; _ac_l="${_ac_rest#* }"
     _ac_s="$(LC_ALL=C awk -v s="$_ac_s" -v mn="$_ac_smin" -v mx="$_ac_smax" 'BEGIN{v=s+0; if(v<mn)v=mn; if(v>mx)v=mx; print v}')"
     _ac_l="$(LC_ALL=C awk -v l="$_ac_l" -v mn="$_ac_lmin" -v mx="$_ac_lmax" 'BEGIN{v=l+0; if(v<mn)v=mn; if(v>mx)v=mx; print v}')"
+    # exit-status, não stdout: `exit !(cond)` não imprime nada, então
+    # `[ -n "$(awk ...)" ]` é sempre falso e o ramo nunca roda.
+    if [ -n "$_ac_hover" ]; then
+        _ac_h=$_ac_hover
+    elif LC_ALL=C awk -v s0="$_ac_s0" 'BEGIN { exit !(s0 + 0 < 0.5) }' &&
+        LC_ALL=C awk -v s="$_ac_s" -v s0="$_ac_s0" \
+            'BEGIN { exit !(s + 0 > s0 + 0.5) }'; then
+        _ac_h=$(chroma_mean "${SCHEME_ACC_CAND:-}" 2>/dev/null) || _ac_h=''
+        _ac_h=${_ac_h%% *}
+        if [ -z "$_ac_h" ]; then
+            _ac_s=0
+            _ac_h=0
+        fi
+    fi
     hsl2rgb_hex "$_ac_h" "$_ac_s" "$_ac_l"
 }
 
 # hue_rotate <rrggbb> <graus> → rrggbb
-# Gira o hue preservando S/L. É o que amarra a paleta ANSI à família do
-# wallpaper: o layout semântico (qual slot é vermelho/verde/...) vem do
-# esquema, o clima de cor vem da imagem. Um esquema de hues 100% próprio
-# (laranja/rosa num wallpaper azul) pintava o terminal inteiro de laranja.
+# Gira o hue preservando S/L.
 hue_rotate() {
     _hr_hex=${1#\#}
     _hr_d=$(LC_ALL=C awk -v d="${2:-0}" 'BEGIN { d = d % 360; if (d < 0) d += 360; printf "%.2f", d }')
@@ -86,6 +108,113 @@ hue_rotate() {
     _hr_h=$(LC_ALL=C awk -v h="${_hr_hsl%% *}" -v d="$_hr_d" \
         'BEGIN { h += d; while (h >= 360) h -= 360; printf "%.2f", h }')
     hsl2rgb_hex "$_hr_h" "${_hr_tail%% *}" "${_hr_tail#* }"
+}
+
+# chroma_mean <"hex,hex,..."> → "H S SPREAD"
+# Assinatura de cor de um conjunto (o wallpaper ou um scheme):
+#   H       hue médio circular  — a família de cor
+#   S       croma médio         — o quanto aquela imagem é saturada
+#   SPREAD  maior distância circular entre dois hues — o quanto a imagem
+#           Variety de matiz
+# Só cores cromáticas (S>=6) votam: quase cinzas puxariam o centro para o
+# cinza e o hue viraria ruído.
+# SPREAD é o que faz a paleta do theme varyr junto com a variety da imagem:
+# wallpaper monocromático (spread ~5°) ⇒ janela de hue estreita; wallpaper
+# colorido (spread 120°) ⇒ janela larga. Com um span fixo, um wallpaper azul
+# de 5° recebia slots a 269° e o terminal saía roxo.
+# Sai 1 (stdout vazio) se nada é cromático: imagem P&B cai no caminho do
+# scheme, como antes.
+chroma_mean() {
+    printf '%s\n' "$1" | tr ',' '\n' | while IFS= read -r _cm_c; do
+        [ -n "$_cm_c" ] || continue
+        rgb2hsl_hex "${_cm_c#\#}"
+        printf '\n'
+    done | LC_ALL=C awk '
+    BEGIN { n = 0 }
+    {
+        s = $2 + 0
+        if (s < 6) next
+        hv[n] = $1
+        h = $1 * 3.14159265358979 / 180
+        x += cos(h) * s
+        y += sin(h) * s
+        ss += s
+        n++
+    }
+    END {
+        if (n == 0) exit 1
+        d = atan2(y, x) * 180 / 3.14159265358979
+        if (d < 0) d += 360
+        sp = 0
+        for (i = 0; i < n; i++) {
+            for (j = i + 1; j < n; j++) {
+                dd = hv[i] - hv[j]
+                if (dd < 0) dd = -dd
+                if (dd > 180) dd = 360 - dd
+                if (dd > sp) sp = dd
+            }
+        }
+        printf "%.2f %.2f %.2f", d, ss / n, sp
+    }'
+}
+
+# hue_pull <rrggbb> <anchor_h> <k> <src_center_h> → rrggbb
+# Puxa o hue de <rrggbb> para a vizinhança de <anchor_h>, comprimindo o
+# spread em torno de <src_center_h> por k. k=1 e anchor=src_center é
+# identidade; k=0 joga tudo no próprio anchor (paleta monocromática).
+# Usado nos 16 ANSI: o layout (qual slot é vermelho/verde/...) vem do scheme,
+# a família de cor vem do wallpaper. O 5º argumento (span, default 60) é a
+# janela de hue em torno da âncora: o resultado nunca sai dela, o que impede
+# que o spread de ~300° do scheme escape para rosa/verde que a imagem não tem.
+hue_pull() {
+    _hp_hex=${1#\#}
+    _hp_anchor=${2:-0}
+    _hp_k=${3:-0}
+    _hp_center=${4:-0}
+    _hp_span=${5:-60}
+    _hp_hsl=$(rgb2hsl_hex "$_hp_hex")
+    _hp_tail=${_hp_hsl#* }
+    _hp_s="${_hp_tail%% *}"
+    _hp_l="${_hp_tail#* }"
+    # Acromático: não há hue próprio para puxar. Devolve neutro (S=0) em vez de
+    # inventar um — o clamp de S depois disso escolheria hue 0 (vermelho) e
+    # pintava o "black" do terminal de marrom. exit-status, não stdout.
+    if LC_ALL=C awk -v s="$_hp_s" 'BEGIN { exit !(s + 0 < 0.5) }'; then
+        hsl2rgb_hex 0 0 "$_hp_l"
+        return 0
+    fi
+    # Diff circular com sinal: (h - c) normalizado para (-180, 180]. Usar
+    # 0..360 aqui tratava 322° como "+298°" e jogava o slot para 295° em vez
+    # de 190° — o diff tem de preservar o lado do círculo em que o matiz
+    # realmente está.
+    # Diff circular com sinal: (h - c) normalizado para (-180, 180]. Usar
+    # 0..360 aqui tratava 322° como "+298°" e jogava o slot para 295° em vez
+    # de 190° — o diff tem de preservar o lado do círculo em que o matiz
+    # realmente está.
+    #
+    # Janela, não compressão: o slot vai para anchor + diff × k e depois é
+    # PRESO a anchor ± span. Comprimir (k<1) encolhia o spread inteiro até
+    # os 8 slots virarem a mesma cor — uma parede de azul. Só rotacionar
+    # (k=1) deixava o spread de ~300° do scheme escapar e pintar de magenta
+    # num wallpaper azul. A janela usa toda a faixa liberada e não passa
+    # dela: com k=1 o spread preenche a janela toda, dentro da família.
+    _hp_h=$(LC_ALL=C awk -v h="${_hp_hsl%% *}" -v a="$_hp_anchor" \
+        -v c="$_hp_center" -v k="$_hp_k" -v sp="${_hp_span:-60}" '
+        BEGIN {
+            d = h - c
+            while (d > 180) d -= 360
+            while (d <= -180) d += 360
+            d = d * k
+            if (sp >= 0) {
+                if (d > sp) d = sp
+                if (d < -sp) d = -sp
+            }
+            h = a + d
+            while (h >= 360) h -= 360
+            while (h < 0) h += 360
+            printf "%.2f", h
+        }')
+    hsl2rgb_hex "$_hp_h" "$_hp_s" "$_hp_l"
 }
 
 # Envelopes por role (dark). Light espelha L em torno de 50%.
@@ -97,6 +226,21 @@ hue_rotate() {
 #   MUTED:     S 0-12  L 26-40 (como color8)
 #   BRIGHT:    S 20-40 L 55-70 (como color10/12/13/14)
 #   Light: BG L88-94 FG L22-30 ACCENT S15-28 L45-55 MUTED L60-74 S0-12
+# apprentice_clamp_neutral <rrggbb> <l_min> <l_max> → rrggbb
+# Clamp só de L, preservando S. Para os slots acromáticos do ANSI (0, 7 e os
+# "bright" correspondentes): o clamp de S os tingiria, e um "black" marrom ou
+# um "white" rosado é pior do que um cinza neutro. O envelope do scheme entra
+# só pelo L, que é onde está o contraste.
+apprentice_clamp_neutral() {
+    _acn_hex="$1"; _acn_lmin="$2"; _acn_lmax="$3"
+    _acn_hsl="$(rgb2hsl_hex "$_acn_hex")"
+    _acn_tail="${_acn_hsl#* }"
+    _acn_s="${_acn_tail%% *}"
+    _acn_l=$(LC_ALL=C awk -v l="${_acn_tail#* }" -v mn="$_acn_lmin" -v mx="$_acn_lmax" \
+        'BEGIN { v = l + 0; if (v < mn) v = mn; if (v > mx) v = mx; printf "%.2f", v }')
+    hsl2rgb_hex "${_acn_hsl%% *}" "$_acn_s" "$_acn_l"
+}
+
 apprentice_bg() { apprentice_clamp "$1" "${ENV_BG_S_MIN:-0}" "${ENV_BG_S_MAX:-8}" "${ENV_BG_L_MIN:-12}" "${ENV_BG_L_MAX:-18}"; }
 apprentice_fg() { apprentice_clamp "$1" "${ENV_FG_S_MIN:-0}" "${ENV_FG_S_MAX:-8}" "${ENV_FG_L_MIN:-68}" "${ENV_FG_L_MAX:-76}"; }
 apprentice_accent() { apprentice_clamp "$1" "${ENV_ACC_S_MIN:-20}" "${ENV_ACC_S_MAX:-35}" "${ENV_ACC_L_MIN:-45}" "${ENV_ACC_L_MAX:-55}"; }

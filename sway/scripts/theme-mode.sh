@@ -226,29 +226,6 @@ def _dark_pal():
             "accent": C5.lstrip("#").lower(), "muted": C8.lstrip("#").lower(),
             "border": mix(_bg, _fg, 0.25), "fail": C1.lstrip("#").lower()}
 
-def _light_pal():
-    _w = mix(BG.lstrip("#"), "ffffff", 0.80)
-    _f = mix(FG.lstrip("#"), "000000", 0.72)
-    # base (campo) MAIS CLARA que window — convenção light, corrige inversão
-    _b = mix(_w, "ffffff", 0.55)
-    _a = mix(C5.lstrip("#"), "000000", 0.15)
-    _m = mix(FG.lstrip("#"), "000000", 0.55)
-    _bo = mix(_w, "ffffff", 0.45)
-    return {"bg": _w, "fg": _f, "base": _b, "accent": _a, "muted": _m,
-            "border": _bo, "fail": C1.lstrip("#").lower()}
-
-_dark = _dark_pal()
-_light = _light_pal()
-for _p in (_dark, _light):
-    _p["fg"] = ensure(_p["fg"], _p["bg"], 4.5)
-    _p["muted"] = ensure(_p["muted"], _p["bg"], 3.0)
-    if _ratio(_p["fg"], _p["muted"]) < 1.8:
-        _p["muted"] = mix(_p["muted"], _p["bg"], 0.35)
-
-P = _dark if mode == "dark" else _light
-bg, fg, base, accent, muted, border = P["bg"], P["fg"], P["base"], P["accent"], P["muted"], P["border"]
-C1 = P["fail"]
-
 # Re-clamp de identidade: as misturas pós-apprentice (light: mix 15% p/ preto;
 # ensure de contraste do muted) derrubavam S/L para fora do envelope do esquema
 # (bug real: ACCENT S=30.6 com ENV_ACC_S>=41). Sem ENV_* exportada o bloco não
@@ -285,6 +262,34 @@ def _rgb_of(h, s, l):
     else: r1, g1, b1 = c, 0, x
     return "".join("%02x" % round((v + m) * 255) for v in (r1, g1, b1))
 
+def _light_pal():
+    # O fundo claro NÃO é mix(cor, branco, 0.80): isso dissolve o croma e
+    # dava cinza neutro num wallpaper azul — a janela ficava sem a cor da
+    # imagem. Sobe o L preservando H e S do pywal, que é a mesma ideia do
+    # _mirror do scheme, agora do lado da imagem.
+    _h, _s, _l = _hsl_of(BG)
+    _w = _rgb_of(_h, _s, 90.0)
+    _f = mix(FG.lstrip("#"), "000000", 0.72)
+    # base (campo) MAIS CLARA que window — convenção light, corrige inversão
+    _b = mix(_w, "ffffff", 0.55)
+    _a = mix(C5.lstrip("#"), "000000", 0.15)
+    _m = mix(FG.lstrip("#"), "000000", 0.55)
+    _bo = mix(_w, "ffffff", 0.45)
+    return {"bg": _w, "fg": _f, "base": _b, "accent": _a, "muted": _m,
+            "border": _bo, "fail": C1.lstrip("#").lower()}
+
+_dark = _dark_pal()
+_light = _light_pal()
+for _p in (_dark, _light):
+    _p["fg"] = ensure(_p["fg"], _p["bg"], 4.5)
+    _p["muted"] = ensure(_p["muted"], _p["bg"], 3.0)
+    if _ratio(_p["fg"], _p["muted"]) < 1.8:
+        _p["muted"] = mix(_p["muted"], _p["bg"], 0.35)
+
+P = _dark if mode == "dark" else _light
+bg, fg, base, accent, muted, border = P["bg"], P["fg"], P["base"], P["accent"], P["muted"], P["border"]
+C1 = P["fail"]
+
 def _env_role(hexs, role):
     try:
         smin = float(os.environ["ENV_%s_S_MIN" % role])
@@ -308,55 +313,34 @@ def _env_role(hexs, role):
             pass
     return _rgb_of(h, min(max(s, smin), smax), min(max(l, lmin), lmax))
 
-def _scheme_accent(hexs):
-    # Scheme cromático (ENV_ACC_H já escolhido no scheme_init pelo hue do bg,
-    # envelope estreito derivado dele): o caminho antigo. Scheme quase
-    # acromático não tem hue de bg — sem esta ramo o accent ficava no hue do
-    # wallpaper e TODOS os schemes escuros davam a mesma seleção (o wallpaper
-    # trocava de cor, o accent não): agora é o candidato do próprio scheme mais
-    # próximo do hue do accent do wallpaper — identidade do scheme, humor do
-    # wallpaper preservado.
-    if "ENV_ACC_H" in os.environ or not os.environ.get("SCHEME_ACC_CAND"):
-        return _env_role(hexs, "ACC")
-    _wh = _hsl_of(hexs)[0]
-    _best = None
-    for _c in os.environ["SCHEME_ACC_CAND"].split(","):
-        _c = _c.strip()
-        if len(_c) != 6:
-            continue
-        _d = abs(_hsl_of(_c)[0] - _wh)
-        if _d > 180:
-            _d = 360 - _d
-        if _best is None or _d < _best[0]:
-            _best = (_d, _c)
-    return _best[1] if _best else _env_role(hexs, "ACC")
-
 if "ENV_ACC_S_MIN" in os.environ:
     # Dicts primeiro: _write_pal persiste _dark/_light/P (não as locais);
     # depois refresh das locais pro CSS/GTK que vem em seguida.
+    # O accent segue o mesmo caminho dos demais papéis: _env_role prende S/L
+    # na envelope do scheme e preserva/reescreve o hue via ENV_ACC_H, que o
+    # scheme_init agora aponta para a assinatura do wallpaper (WALL_H).
     for _p in (_dark, _light):
-        _p["accent"] = _scheme_accent(_p["accent"])
+        _p["accent"] = _env_role(_p["accent"], "ACC")
         _p["muted"] = _env_role(_p["muted"], "MUT")
     accent, muted = P["accent"], P["muted"]
 
-if "SCHEME_BG_HEX" in os.environ:
-    # Com scheme ativo o fundo é o do próprio scheme (já espelhado quando a
-    # variante ≠ modo, via SCHEME_BG_HEX). Antes: envelope + hue do wallpaper
-    # — todos os schemes escuros quase-acromáticos (Apprentice, Dracula,
-    # Atelier Dune, Nord...) convergivam no mesmo carvão e o chip do yambar
-    # (quadradinho = BG) não mudava ao trocar de scheme. border/base derivam
-    # do fundo final; sem scheme, wallpaper como sempre.
-    P["bg"] = os.environ["SCHEME_BG_HEX"]
-    P["fg"] = os.environ["SCHEME_FG_HEX"]
-    bg, fg = P["bg"], P["fg"]
-    P["border"] = mix(bg, fg, 0.25)
-    border = P["border"]
-    if mode == "dark":
-        # Superfícies (campos, lista de arquivos) na família do scheme: vinham
-        # do C0 do wallpaper (cinza 6e7b73) e pintavam a lista do pcmanfm de
-        # cinza-sálvia num scheme azul. Dark: pouco mais clara que a janela.
-        P["base"] = mix(bg, fg, 0.10)
-        base = P["base"]
+if "ENV_BG_S_MIN" in os.environ:
+    # Fundo e texto também entram na blend: o scheme dá a envelope de L (e o
+    # espelhamento quando variante ≠ modo), a imagem dá o hue. Antes o fundo
+    # era a cor do próprio scheme (SCHEME_BG_HEX) e o chip do yambar
+    # denunciava a troca de esquema com um carvão que não era da imagem.
+    for _p in (_dark, _light):
+        _p["bg"] = _env_role(_p["bg"], "BG")
+        _p["fg"] = _env_role(_p["fg"], "FG")
+        _p["border"] = mix(_p["bg"], _p["fg"], 0.25)
+        # base (superfícies: campos, lista) na família da janela — antes
+        # vinha do C0 do wallpaper e pintava a lista do pcmanfm de
+        # cinza-sálvia num scheme azul.
+        _p["base"] = mix(_p["bg"], _p["fg"], 0.10)
+    bg, fg, base, border = P["bg"], P["fg"], P["base"], P["border"]
+    if _ratio(_p["fg"], _p["muted"]) < 1.8:
+        _p["muted"] = mix(_p["muted"], _p["bg"], 0.35)
+    muted = P["muted"]
 
 # ---- GTK colors.css (paleta; backup da versao anterior) ----
 # theme_base_color = base (campo) — corrige contraste light (base mais clara que window).

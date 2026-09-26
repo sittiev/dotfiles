@@ -157,20 +157,38 @@ abrir o menu.
 
 Wallpaper ainda manda no light/dark: quando a `variant` do esquema não bate
 com o modo, o L de cada papel espelha (`L' = 100 − L`, S intacto).
-`schemelib.sh` deriva as envelopes (ou lê `sway/schemes/overrides/<nome>.env`,
-incluindo `<nome>.light.env`); `theme-mode.sh` e `render.sh` clampam a paleta
-nelas. Com esquema ativo os 16 ANSI do foot vêm do `color_01..16` do próprio
-JSON — o wallpaper pastel sem croma gerava 16 cinzas — mas cada hue é **girado
-em Δ = hue(accent do wallpaper) − hue(accent do esquema)**: o esquema define
-o layout (qual slot é vermelho/verde/…) e as envelopes de contraste/S/L, a
-imagem define a família de cor. Sem essa rotação o terminal inteiro virava a
-cor do esquema enquanto fundo/texto/seleção seguiam o wallpaper. ACC/MUT
-passam por um re-clamp final — as misturas de contraste derrubavam S/L fora da
-envelope.
-Esquema
-desconhecido/ausente ⇒ fallback completo nas constantes atuais;
-`apprentice.env` mantém "Apprentice" byte-idêntico no dark. Detalhes em
-`sway/schemes/README.md`.
+
+**Divisão de trabalho: a imagem dá a cor, o esquema dá o contraste.**
+`schemelib.sh` lê a assinatura do wallpaper no pywal (`WALL_H` hue médio
+circular, `WALL_S` croma médio, `WALL_SPREAD` maior diferença circular entre
+matizes) e exporta as envelopes de L do esquema para `BG FG ACC MUT BRI`. Com
+âncora do wallpaper, as duas últimas peças entram em jogo:
+
+- **Hue** — `ENV_<papel>_H = WALL_H`: BG/FG/ACC/MUT saem na família da imagem.
+  O fundo claro também sobe o L preservando H e S do pywal, em vez de
+  `mix(cor, branco, 0.80)`, que dissolvia o croma e dava cinza neutro num
+  wallpaper azul.
+- **Croma** — as envelopes de S são descartadas (`_chroma_free`) e só sobra o
+  teto `WALL_S × 1.8` (`_chroma_cap`), para o esquema não importar mais cor
+  do que a imagem tem (um S=100 num wallpaper de S=23 punha um azul elétrico
+  de seleção). O accent ganha piso no próprio `WALL_S`, que é o único papel
+  que precisa gritar "isto está selecionado".
+- **Janela de matiz** — os 16 ANSI do foot saem do `color_01..16` do JSON (sem
+  eles um wallpaper pastel sem croma gerava 16 cinzas), mas cada hue é
+  **preso a `WALL_H ± spread×2+12`**, com `spread` da própria imagem: wallpaper
+  monocromático (spread 4°) recebe janela estreita, wallpaper colorido
+  (spread 150°) recebe janela larga. Nem comprimir o spread (colava os 8
+  slots na mesma cor) nem só rotacionar (deixava o spread de ~300° do
+  esquema pintar o terminal de magenta) resolvem os dois. O croma dos slots
+  é reescalado por `WALL_S / S_scheme`.
+- **Slots 0/7/8/15** (black/white e os "bright") saem com S=0: são acromáticos
+  por convenção do ANSI, e o clamp de S os tingiria — o "black" do terminal
+  saía marrom.
+
+Envelopes de override (`sway/schemes/overrides/<nome>.env`) ficam de fora
+desse ajuste: são curadas à mão, e `apprentice.env` precisa continuar
+byte-idêntico no dark. Esquema desconhecido/ausente ⇒ fallback completo nas
+constantes atuais. Detalhes em `sway/schemes/README.md`.
 
 ## OpenCode
 

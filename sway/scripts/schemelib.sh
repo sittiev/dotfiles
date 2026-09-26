@@ -4,13 +4,18 @@
 #   scheme_init <dark|light>
 #
 # Contrato: exporta ENV_<PAPEL>_{S,L}_{MIN,MAX} (0 ≤ min ≤ max ≤ 100) para os
-# papéis BG FG ACC MUT BRI, mais SCHEME_BG_HEX/SCHEME_FG_HEX (fundo e texto do
-# próprio scheme, L já espelhado quando variante ≠ modo — é o que faz o fundo,
-# inclusive o chip do yambar, mudar ao trocar de scheme). Scheme cromático
-# (bg com S≥6) também exporta ENV_BG_H/ENV_FG_H/ENV_ACC_H (hue em graus) — o
-# clamp de papel preserva o hue do wallpaper, e sem isso um envelope saturado
-# pintava o verde do wallpaper num scheme azul. Scheme quase acromático não
-# exporta _H: o humor do wallpaper segue como antes.
+# papéis BG FG ACC MUT BRI, e ENV_<PAPEL>_H (hue em graus) para BG/FG/ACC/MUT.
+#
+# Divisão de trabalho (wallpaper > paleta > scheme): a IMAGEM dá a cor
+# (hue + croma, via WALL_H/WALL_S lidos do pywal) e o SCHEME dá a
+# envelope — contraste, S/L por papel, espelhamento de L. Por isso o
+# clamp de papel (theme-mode.sh _env_role) preserva o hue do wallpaper
+# usando ENV_<PAPEL>_H: sem ele um envelope saturado pintava o verde do
+# wallpaper num scheme azul.
+#
+# Scheme quase acromático (bg com S<6) não exporta _H e o humor do
+# wallpaper segue como antes. Wallpaper acromático (preto e branco) não
+# exporta WALL_H e o hue do scheme volta a mandar.
 # SCHEME_NAME/SCHEME_VARIANT/SCHEME_MATCH são
 # exportados SÓ quando as ENV_* estão completas — presença de SCHEME_NAME é
 # marcador confiável de sucesso. Sem estado / jq ausente / JSON ausente /
@@ -35,6 +40,7 @@ _scheme_unset() {
         unset "ENV_${_r}_S_MIN" "ENV_${_r}_S_MAX" "ENV_${_r}_L_MIN" "ENV_${_r}_L_MAX" "ENV_${_r}_H"
     done
     unset SCHEME_NAME SCHEME_VARIANT SCHEME_MATCH SCHEME_BG_HEX SCHEME_FG_HEX SCHEME_ACC_CAND
+    unset WALL_H WALL_S WALL_SPREAD
 }
 
 _scheme_slug() { # "1984 Light" → "1984-light"
@@ -89,6 +95,98 @@ _set_env() { # <PAPEL> <smin smax lmin lmax>
     eval "export ENV_${_r}_S_MIN ENV_${_r}_S_MAX ENV_${_r}_L_MIN ENV_${_r}_L_MAX"
 }
 
+# Teto de croma da imagem: WALL_S × CHROMA_HEADROOM, aplicado às envelopes já
+# exportadas. A envelope do scheme dá o PISO de S (para o accent não sumir)
+# mas não pode impor mais cor do que a imagem tem — sem isto um scheme S=100
+# num wallpaper de S=23 punha um azul elétrico de seleção num desktop azul
+# pálido. Vale para os dois consumidores (este clamp e o python do
+# theme-mode) porque o teto é o mesmo.
+#
+# smin acompanha o teto quando o piso passaria de smax: o contrato da
+# envelope é min ≤ max, e um min=85 com max=41 é pior que um clamp inútil.
+# Largura mínima da envelope. Derivada de UMA cor, a envelope sai estreita
+# demais (L 39-45 no Ascendancy) e os 8 slots "regular" do terminal ficam com
+# o mesmo L e o mesmo S — uma parede de azul, impossível de ler. Abre a faixa
+# em torno do centro do scheme até a largura mínima, sem mover o centro: o
+# scheme continua decidindo ONDE a faixa fica, e o wallpaper continua
+# decidindo a família de cor.
+_env_widen() {
+    for _r in BG FG ACC MUT BRI; do
+        eval "_smin=\${ENV_${_r}_S_MIN:-}"; eval "_smax=\${ENV_${_r}_S_MAX:-}"
+        eval "_lmin=\${ENV_${_r}_L_MIN:-}"; eval "_lmax=\${ENV_${_r}_L_MAX:-}"
+        [ -n "$_smin" ] || continue
+        case $_r in
+            ACC) ws=14; wl=16 ;;
+            BRI) ws=14; wl=16 ;;
+            FG)  ws=8;  wl=12 ;;
+            *)   ws=0;  wl=0 ;;
+        esac
+        [ "$wl" -gt 0 ] || continue
+        _sw=$((_smax - _smin))
+        if [ "$_sw" -lt "$ws" ]; then
+            _pad=$(((ws - _sw) / 2))
+            _smin=$((_smin - _pad)); _smax=$((_smax + _pad))
+            [ "$_smin" -ge 0 ] || _smin=0
+            [ "$_smax" -le 100 ] || _smax=100
+            eval "ENV_${_r}_S_MIN=\$_smin ENV_${_r}_S_MAX=\$_smax"
+        fi
+        _lw=$((_lmax - _lmin))
+        if [ "$_lw" -lt "$wl" ]; then
+            _pad=$(((wl - _lw) / 2))
+            _lmin=$((_lmin - _pad)); _lmax=$((_lmax + _pad))
+            [ "$_lmin" -ge 0 ] || _lmin=0
+            [ "$_lmax" -le 100 ] || _lmax=100
+            eval "ENV_${_r}_L_MIN=\$_lmin ENV_${_r}_L_MAX=\$_lmax"
+        fi
+        eval "export ENV_${_r}_S_MIN ENV_${_r}_S_MAX ENV_${_r}_L_MIN ENV_${_r}_L_MAX"
+    done
+    unset _r _smin _smax _lmin _lmax _sw _lw _pad ws wl
+}
+
+_chroma_cap() {
+    [ -n "${WALL_S:-}" ] || return 0
+    _cc=$(LC_ALL=C awk -v s="$WALL_S" 'BEGIN { printf "%d", s * 1.8 }')
+    for _r in BG FG ACC MUT BRI; do
+        eval "_cur=\${ENV_${_r}_S_MAX:-}"
+        [ -n "$_cur" ] || continue
+        if [ "$_cur" -gt "$_cc" ]; then
+            eval "ENV_${_r}_S_MAX=\$_cc"
+            eval "_lo=\${ENV_${_r}_S_MIN:-0}"
+            [ "$_lo" -le "$_cc" ] || eval "ENV_${_r}_S_MIN=\$_cc"
+            eval "export ENV_${_r}_S_MAX ENV_${_r}_S_MIN"
+        fi
+    done
+    unset _cc _cur _lo _r
+}
+
+# Com âncora do wallpaper, a envelope de S é abandonada: quem manda no croma
+# é a imagem. A de L continua valendo — é onde o scheme expressa contraste e
+# brilho. O teto de _chroma_cap segura o outro extremo.
+#
+# Sem isto o PISO de S do scheme continua colorindo uma paleta que não tem
+# essa cor: o envelope BG do Ascendancy (S 0-4, tirado de um fundo quase
+# cinza) deixava o desktop cinza neutro mesmo com a imagem azul, e o FG
+# (S 34-42) punha no texto mais croma que o wallpaper inteiro tem.
+_chroma_free() {
+    for _r in BG FG ACC MUT BRI; do
+        eval "ENV_${_r}_S_MIN=0 ENV_${_r}_S_MAX=100"
+        eval "export ENV_${_r}_S_MIN ENV_${_r}_S_MAX"
+    done
+    # Piso do accent: a imagem pode ser tão dessaturada que a seleção vira
+    # cinza indistinguível do fundo (foi o que aconteceu com este wallpaper,
+    # S=23). O accent é o único papel que precisa GRITAR que algo está
+    # selecionado, então ganha um piso no próprio croma do wallpaper — não no
+    # do scheme, que é a cor que a gente está tentando não importar.
+    if [ -n "${WALL_S:-}" ]; then
+        _cf=$(LC_ALL=C awk -v s="$WALL_S" 'BEGIN { printf "%d", s }')
+        [ "$_cf" -gt "${ENV_ACC_S_MIN:-0}" ] && ENV_ACC_S_MIN=$_cf
+        [ "$_cf" -gt "${ENV_ACC_S_MAX:-0}" ] && ENV_ACC_S_MAX=$_cf
+        export ENV_ACC_S_MIN ENV_ACC_S_MAX
+        unset _cf
+    fi
+    unset _r
+}
+
 _hue_chroma() { # <hex> → "H" se S>=6 (scheme cromático), vazio se quase cinza
     # O clamp de papel preserva o hue do wallpaper; num envelope saturado
     # (ex.: Aardvark Blue, S56-64) isso pintava verde num scheme azul.
@@ -116,26 +214,36 @@ _acc_pick() { # "hex,hex,..." <hue-bg> → hex do accent de menor distância cir
 }
 
 _acc_center() { # "hex,hex,..." → hue médio circular (graus) da família accent
-    # Caracteriza o esquema; usado pelo render.sh para girar os 16 ANSI
-    # terminal na direção do accent do wallpaper. Ponderado por S: as cores
-    # vívidas definem a identidade, as quase cinzas não devem puxar o centro.
-    #_exit 1 (stdout vazio) ⇒ lista vazia/todo-cinza ⇒ sem rotação.
-    printf '%s\n' "$1" | tr ',' '\n' | while IFS= read -r _acn_c; do
-        [ -n "$_acn_c" ] || continue
-        printf '%s\n' "$(rgb2hsl_hex "${_acn_c#\#}")"
-    done | LC_ALL=C awk '
-    {
-        s = $2 + 0
-        if (s < 6) next          # quase acromático não vota no centro
-        h = $1 * 3.14159265358979 / 180
-        x += cos(h) * s; y += sin(h) * s; n++
-    }
-    END {
-        if (n == 0) exit 1
-        d = atan2(y, x) * 180 / 3.14159265358979
-        if (d < 0) d += 360
-        printf "%.2f", d
-    }'
+    # Caracteriza o esquema; usado pelo render.sh para puxar os 16 ANSI do
+    # terminal na direção da assinatura do wallpaper.
+    chroma_mean "$1" | cut -d' ' -f1
+}
+
+_acc_nearest_center() { # "hex,hex,..." → hex do accent mais próximo do centro
+    # Para derivar a envelope do papel ACC a partir de UMA cor (ver scheme_init).
+    _anc=$(_acc_center "$1") || return 0
+    [ -n "$_anc" ] || return 0
+    _acc_pick "$1" "$_anc"
+}
+
+# Assinatura do wallpaper: "H S" (hue + croma médio dos color1..6 do pywal).
+# Lê a paleta crua — a imagem, não o scheme. Importante: ACCENT não serve,
+# ele já é uma cor do scheme (_acc_pick sobre SCHEME_ACC_CAND), então ancorar
+# nele tornaria a rotação autorreferencial.
+_wall_anchor() {
+    [ -f "$HOME/.cache/wal/colors.sh" ] || return 0
+    set +u
+    # shellcheck disable=SC1091
+    . "$HOME/.cache/wal/colors.sh" 2>/dev/null
+    set -u
+    _wa=''
+    for _wai in 1 2 3 4 5 6; do
+        eval "_wac=\${color$_wai:-}"
+        [ -n "$_wac" ] || continue
+        _wa="$_wa${_wa:+,}${_wac#\#}"
+    done
+    [ -n "$_wa" ] || return 0
+    chroma_mean "$_wa" || return 0
 }
 
 _mirror_hex() { # "rrggbb" → mesma cor com L espelhado (100−L), p.ex. variante ≠ modo
@@ -207,6 +315,20 @@ EOF
     SCHEME_ACC_CAND=$(printf '%s' "$_acc" | tr 'A-F' 'a-f' | tr -d '#')
     export SCHEME_ACC_CAND
 
+    # Assinatura do wallpaper: "H S" dos color1..6 do pywal. Se a imagem é
+    # cromática, ELA define o hue de todos os papéis e o croma dos 16 ANSI
+    # (ver render.sh); o scheme fica só com a envelope. Se a imagem é P&B,
+    # WALL_H sai vazio e o hue do scheme volta a mandar.
+    _wa=$(_wall_anchor) || _wa=''
+    if [ -n "$_wa" ]; then
+        WALL_H=${_wa%% *}
+        _wa_rest=${_wa#* }
+        WALL_S=${_wa_rest%% *}
+        WALL_SPREAD=${_wa_rest#* }
+        export WALL_H WALL_S WALL_SPREAD
+    fi
+    unset _wa _wa_rest
+
     # ---- override por modo (precedência sobre derivação) ----
     _slug=$(_scheme_slug "$_name")
     if [ "$_mode" = light ]; then
@@ -222,6 +344,15 @@ EOF
         for _r in BG FG ACC MUT BRI; do
             eval "export ENV_${_r}_S_MIN ENV_${_r}_S_MAX ENV_${_r}_L_MIN ENV_${_r}_L_MAX" 2>/dev/null || true
         done
+        if [ -n "${WALL_H:-}" ]; then
+            for _r in BG FG ACC MUT; do
+                eval "ENV_${_r}_H=\$WALL_H; export ENV_${_r}_H"
+            done
+            # Só o hue da imagem. As envelopes de um override são curadas à
+            # mão — a largura e os pisos de S são escolha de quem escreveu o
+            # arquivo, e o contrato é que apprentice.env (+ .light) siga
+            # byte-idêntico. Free/cap/widen só valem no caminho derivado.
+        fi
         SCHEME_NAME=$_name SCHEME_VARIANT=$_v SCHEME_MATCH=$_match
         export SCHEME_NAME SCHEME_VARIANT SCHEME_MATCH
         return 0
@@ -235,16 +366,34 @@ EOF
     _e_acc=$(_env1 "$_acc") || return 0
     _e_mut=$(_env1 "$_mut") || return 0
     _e_bri=$(_env1 "$_bri") || return 0
-    # Scheme cromático: accent vem do próprio scheme (o candidato mais
-    # próximo do hue do bg) em vez do hue do wallpaper — seleção verde num
-    # scheme azul era a última cor fora da família. Scheme quase cinza
-    # (_hbg vazio, ex.: Apprentice/Ayu) mantém o humor do wallpaper.
-    _acc_sel=''
+    # O envelope do accent é derivado de UM accent representativo, não dos
+    # seis. Os seis de um scheme varam ~300° de hue e S de 20 a 100; a
+    # min/max da união abria S 29-100 e L 9-63, ou seja a envelope não
+    # apertava nada e o clamp final virava o único responsável pelo
+    # contraste. Escolhe o mais próximo do hue do bg (ou do centro, se o
+    # scheme é quase acromático) e deriva a envelope só dele.
     if [ -n "$_hbg" ]; then
         _acc_sel=$(_acc_pick "$_acc" "$_hbg") || return 0
-        if [ -n "$_acc_sel" ]; then
-            _e_acc=$(_env1 "$_acc_sel") || return 0
-        fi
+    else
+        _acc_sel=$(_acc_nearest_center "$_acc") || return 0
+    fi
+    if [ -n "$_acc_sel" ]; then
+        _e_acc=$(_env1 "$_acc_sel") || return 0
+    else
+        _e_acc=$(_env1 "$_acc") || return 0
+    fi
+    # Mesma lógica para BRI: os 7 "bright" de um scheme são often vezes
+    # repetição dos accents (Ascendancy repete color_02..07 em 10..15), e a
+    # min/max da união só produzia uma envelope que não apertava. Pega o
+    # representativo mais próximo do accent escolhido — o "bright" é, por
+    # definição, a versão mais clara do mesmo matiz.
+    _bri_sel=''
+    if [ -n "$_acc_sel" ]; then
+        _ac_h=$(rgb2hsl_hex "$_acc_sel")
+        _bri_sel=$(_acc_pick "$_bri" "${_ac_h%% *}") || _bri_sel=''
+    fi
+    if [ -n "$_bri_sel" ]; then
+        _e_bri=$(_env1 "$_bri_sel") || return 0
     fi
     if [ "$_match" -eq 0 ]; then
         _e_bg=$(_mirror "$_e_bg")
@@ -258,9 +407,21 @@ EOF
     _set_env ACC $_e_acc
     _set_env MUT $_e_mut
     _set_env BRI $_e_bri
-    if [ -n "$_hbg" ]; then ENV_BG_H=$_hbg; export ENV_BG_H; fi
-    if [ -n "$_hfg" ]; then ENV_FG_H=$_hfg; export ENV_FG_H; fi
-    if [ -n "$_acc_sel" ]; then
+    # Hue dos papéis = assinatura do wallpaper, não do scheme (SCHEME_MATCH
+    # já espelhou o L acima; o H é da imagem). Wallpaper P&B ⇒ sem _H, e o
+    # clamp preserva o hue de cada papel como sempre fez.
+    if [ -n "${WALL_H:-}" ]; then
+        for _r in BG FG ACC MUT; do
+            eval "ENV_${_r}_H=\$WALL_H; export ENV_${_r}_H"
+        done
+        _chroma_free
+        _chroma_cap
+        _env_widen
+    elif [ -n "$_hbg" ]; then
+        # Sem assinatura do wallpaper: scheme cromático manda no hue do bg.
+        ENV_BG_H=$_hbg; export ENV_BG_H
+    fi
+    if [ -n "$_acc_sel" ] && [ -z "${WALL_H:-}" ]; then
         _hac=$(_hue_chroma "$_acc_sel") || true
         if [ -n "$_hac" ]; then ENV_ACC_H=$_hac; export ENV_ACC_H; fi
     fi
