@@ -122,10 +122,16 @@ set +u
 . "$HOME/.cache/wal/colors.sh" 2>/dev/null || true
 set -u
 
-# Esquema ativo: os 16 ANSI do terminal vêm do próprio esquema (Gogh
-# color_01..16). O wallpaper pastel sem croma gerava 16 cinzas e "Esquemas
-# de cores" não mudava nada no terminal. Sem esquema o bloco é pulado e o
-# caminho continua byte-idêntico ao antigo.
+# Esquema ativo: os 16 ANSI do terminal entram no MESMO pipeline do resto da
+# paleta — croma do wallpaper, envelope (contraste/S/L) do esquema. Só o
+# layout semântico (qual slot é vermelho/verde/amarelo/...) vem do JSON Gogh
+# do esquema: sem ele o wallpaper pastel sem croma gerava 16 cinzas e
+# "Esquemas de cores" não mudava nada no terminal. E cada hue é girado em
+# Δ = hue(accent do wallpaper) − hue(accent do esquema), senão o terminal
+# inteiro virava a cor do esquema (Ascendancy laranja/rosa num wallpaper
+# azul) enquanto fundo/texto/seleção seguiam a imagem — as duas metades do
+# tema discordando. Sem esquema o bloco é pulado e o caminho continua
+# byte-idêntico ao antigo.
 if [ -n "${SCHEME_NAME:-}" ]; then
     _sj="${SCHEME_JSON:-$HOME/.config/sway/schemes/gogh-themes-min.json}"
     if command -v jq >/dev/null 2>&1 && [ -f "$_sj" ]; then
@@ -138,15 +144,24 @@ if [ -n "${SCHEME_NAME:-}" ]; then
                   | ascii_downcase | ltrimstr("#")
                   | "color" + (($i - 1) | tostring) + "=" + .] | .[]
               end' "$_sj" 2>/dev/null) || _ansi=''
+        # Âncora do wallpaper: o accent já é o papel que carrega a identidade
+        # cromática do resto do tema (mesma fonte do SCHEME_ACC_CAND).
+        _wh=$(rgb2hsl_hex "${ACCENT#\#}"); _wh=${_wh%% *}
+        # Esquema quase-acromático (acentos S<6) não tem centro: _acc_center
+        # falha, o delta cai para o hue do wallpaper e as cores quase cinzas do
+        # esquema só ganham um tint da imagem — o clamp de S/L tira o resto.
+        _sh=$(_acc_center "${SCHEME_ACC_CAND:-}" 2>/dev/null) || _sh=''
+        _delta=$(LC_ALL=C awk -v a="${_wh:-0}" -v b="${_sh:-0}" \
+            'BEGIN { d = a - b; d = d % 360; if (d < 0) d += 360; printf "%.2f", d }')
         while IFS='=' read -r _k _v; do
             case "$_k" in color[0-9] | color[0-9][0-9]) ;; *) continue ;; esac
             case "$_v" in ??????) ;; *) continue ;; esac
             case "$_v" in *[!0-9a-f]*) continue ;; esac
-            eval "$_k=\$_v"
+            eval "$_k=\$(hue_rotate \"\$_v\" \"\$_delta\")"
         done <<EOF
 $_ansi
 EOF
-        unset _ansi _k _v
+        unset _ansi _k _v _wh _sh _delta
     fi
     unset _sj
 fi

@@ -115,6 +115,29 @@ _acc_pick() { # "hex,hex,..." <hue-bg> → hex do accent de menor distância cir
     done | sort -n | head -1 | cut -f2
 }
 
+_acc_center() { # "hex,hex,..." → hue médio circular (graus) da família accent
+    # Caracteriza o esquema; usado pelo render.sh para girar os 16 ANSI
+    # terminal na direção do accent do wallpaper. Ponderado por S: as cores
+    # vívidas definem a identidade, as quase cinzas não devem puxar o centro.
+    #_exit 1 (stdout vazio) ⇒ lista vazia/todo-cinza ⇒ sem rotação.
+    printf '%s\n' "$1" | tr ',' '\n' | while IFS= read -r _acn_c; do
+        [ -n "$_acn_c" ] || continue
+        printf '%s\n' "$(rgb2hsl_hex "${_acn_c#\#}")"
+    done | LC_ALL=C awk '
+    {
+        s = $2 + 0
+        if (s < 6) next          # quase acromático não vota no centro
+        h = $1 * 3.14159265358979 / 180
+        x += cos(h) * s; y += sin(h) * s; n++
+    }
+    END {
+        if (n == 0) exit 1
+        d = atan2(y, x) * 180 / 3.14159265358979
+        if (d < 0) d += 360
+        printf "%.2f", d
+    }'
+}
+
 _mirror_hex() { # "rrggbb" → mesma cor com L espelhado (100−L), p.ex. variante ≠ modo
     _mh=${1#\#}
     [ -n "$_mh" ] || return 0

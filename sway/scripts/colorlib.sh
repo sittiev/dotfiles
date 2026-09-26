@@ -73,6 +73,21 @@ apprentice_clamp() {
     hsl2rgb_hex "$_ac_h" "$_ac_s" "$_ac_l"
 }
 
+# hue_rotate <rrggbb> <graus> → rrggbb
+# Gira o hue preservando S/L. É o que amarra a paleta ANSI à família do
+# wallpaper: o layout semântico (qual slot é vermelho/verde/...) vem do
+# esquema, o clima de cor vem da imagem. Um esquema de hues 100% próprio
+# (laranja/rosa num wallpaper azul) pintava o terminal inteiro de laranja.
+hue_rotate() {
+    _hr_hex=${1#\#}
+    _hr_d=$(LC_ALL=C awk -v d="${2:-0}" 'BEGIN { d = d % 360; if (d < 0) d += 360; printf "%.2f", d }')
+    _hr_hsl=$(rgb2hsl_hex "$_hr_hex")
+    _hr_tail=${_hr_hsl#* }
+    _hr_h=$(LC_ALL=C awk -v h="${_hr_hsl%% *}" -v d="$_hr_d" \
+        'BEGIN { h += d; while (h >= 360) h -= 360; printf "%.2f", h }')
+    hsl2rgb_hex "$_hr_h" "${_hr_tail%% *}" "${_hr_tail#* }"
+}
+
 # Envelopes por role (dark). Light espelha L em torno de 50%.
 # Os números são os defaults: sem esquema selecionado o output é idêntico ao
 # histórico. scheme_init (schemelib.sh) exporta ENV_* que sobrescrevem cada

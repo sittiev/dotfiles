@@ -160,8 +160,13 @@ com o modo, o L de cada papel espelha (`L' = 100 − L`, S intacto).
 `schemelib.sh` deriva as envelopes (ou lê `sway/schemes/overrides/<nome>.env`,
 incluindo `<nome>.light.env`); `theme-mode.sh` e `render.sh` clampam a paleta
 nelas. Com esquema ativo os 16 ANSI do foot vêm do `color_01..16` do próprio
-JSON (o wallpaper pastel sem croma gerava 16 cinzas), e ACC/MUT passam por um
-re-clamp final — as misturas de contraste derrubavam S/L fora da envelope.
+JSON — o wallpaper pastel sem croma gerava 16 cinzas — mas cada hue é **girado
+em Δ = hue(accent do wallpaper) − hue(accent do esquema)**: o esquema define
+o layout (qual slot é vermelho/verde/…) e as envelopes de contraste/S/L, a
+imagem define a família de cor. Sem essa rotação o terminal inteiro virava a
+cor do esquema enquanto fundo/texto/seleção seguiam o wallpaper. ACC/MUT
+passam por um re-clamp final — as misturas de contraste derrubavam S/L fora da
+envelope.
 Esquema
 desconhecido/ausente ⇒ fallback completo nas constantes atuais;
 `apprentice.env` mantém "Apprentice" byte-idêntico no dark. Detalhes em
