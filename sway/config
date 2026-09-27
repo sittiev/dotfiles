@@ -23,7 +23,11 @@ font pango:monospace 0.001
 
 ### Output configuration
 #
-# No resolution, scale, position, or monitor-assignment overrides.
+# HDMI-A-1 e o principal, a esquerda (pos 0 0). eDP-1 (notebook) estende a
+# direita quando ativo; com HDMI conectado o outputs.sh auto desliga o eDP.
+output HDMI-A-1 pos 0 0
+output eDP-1 pos 1920 0
+workspace 1 output HDMI-A-1 eDP-1
 output * bg #dbe2e8 solid_color
 # Waypaper is the only owner of swaybg; disable Sway's fallback helper.
 swaybg_command -
@@ -58,6 +62,7 @@ input type:pointer {
     bindsym $mod+period exec ~/.config/sway/scripts/emoji.sh
     bindsym $mod+Shift+v exec ~/.config/sway/scripts/clipboard.sh
     bindsym $mod+Shift+x exec ~/.config/sway/scripts/tofi-menu.sh
+    bindsym $mod+Shift+l exec ~/.config/sway/scripts/waylock.sh
     bindsym $mod+x exec ~/.config/sway/scripts/yambar-toggle.sh
     bindsym $mod+n exec ~/.config/sway/scripts/nightlight.sh
     bindsym $mod+Shift+n exec ~/.config/sway/scripts/nightmenu.sh
@@ -121,8 +126,8 @@ input type:pointer {
     bindsym $mod+e exec pcmanfm
     bindsym $mod+Shift+s layout toggle split
     bindsym $mod+f fullscreen
-    bindsym $mod+Shift+space floating toggle
-    bindsym $mod+space focus mode_toggle
+    bindsym $mod+space floating toggle
+    bindsym $mod+Shift+space focus mode_toggle
     bindsym $mod+a focus parent
 
 # Scratchpad:
@@ -188,17 +193,19 @@ for_window [all] border pixel 2
 hide_edge_borders --i3 none
 smart_borders off
 
-client.focused   #79929F #53646C #DEDFE0 #79929F #53646C
-client.unfocused #1c1f21 #1c1f21 #7A7F81 #1c1f21 #1c1f21
-client.focused_inactive #1c1f21 #1c1f21 #7A7F81 #1c1f21 #1c1f21
-client.placeholder      #1c1f21 #1c1f21 #7A7F81 #1c1f21 #1c1f21
-client.background       #1c1f21
-client.urgent           #79929F #3C4B55 #B9BDBF #79929F #3C4B55
+client.focused   #8E9192 #595C5D #ECEDEE #8E9192 #595C5D
+client.unfocused #0b0d0e #0b0d0e #5D6366 #0b0d0e #0b0d0e
+client.focused_inactive #0b0d0e #0b0d0e #5D6366 #0b0d0e #0b0d0e
+client.placeholder      #0b0d0e #0b0d0e #5D6366 #0b0d0e #0b0d0e
+client.background       #0b0d0e
+client.urgent           #8E9192 #313537 #ECEDEE #8E9192 #313537
 
 for_window [window_type="dialog"] floating enable, move position center
 for_window [window_type="utility"] floating enable, move position center
 for_window [app_id="pavucontrol"] floating enable, move position center
 for_window [app_id="blueman-manager"] floating enable, move position center
+for_window [app_id="overskride"] floating enable, move position center
+for_window [app_id="iwgtk"] floating enable, move position center
 
 # Native lightweight Wayland clients; wallpaper and theme are refreshed by Waypaper.
 exec ~/.config/sway/scripts/theme.sh
@@ -206,7 +213,12 @@ exec dash -c 'command -v waypaper >/dev/null 2>&1 && command -v swaybg >/dev/nul
 exec_always dash -c 'pgrep -x yambar >/dev/null 2>&1 || LC_TIME=C yambar >/dev/null 2>&1'
 exec_always dash -c 'pgrep -x mako >/dev/null 2>&1 || mako >/dev/null 2>&1'
 exec_always ~/.config/sway/scripts/cliphist-watch.sh
+exec_always ~/.config/sway/scripts/outputs.sh auto >/dev/null 2>&1
+bindswitch --reload --locked lid:on exec ~/.config/sway/scripts/outputs.sh lid on
+bindswitch --reload --locked lid:off exec ~/.config/sway/scripts/outputs.sh lid off
+exec_always ~/.config/sway/scripts/idle.sh
 exec /usr/bin/lxqt-policykit-agent
+exec swaymsg focus output HDMI-A-1 >/dev/null 2>&1
 
 # Alterna splith/splitv conforme a proporcao da janela em foco (autotiling-rs).
 # pkill antes de iniciar: o README upstream manda usar exec_always e acumularia um

@@ -13,6 +13,18 @@ if pgrep -x tofi >/dev/null 2>&1 || pgrep -x tofi-drun >/dev/null 2>&1; then
 fi
 
 rm -f "$lock"
+# Todo tofi/yambar vai pro monitor principal: injeta --output do
+# primary-output.sh (HDMI se conectado, senao eDP), salvo flag explicita.
+case " $* " in
+    *" --output"*|*" --output="*) ;;
+    *)
+        _primary=$("$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)/primary-output.sh" 2>/dev/null || printf '%s' '')
+        if [ -n "$_primary" ]; then
+            set -- --output="$_primary" "$@"
+        fi
+        unset _primary
+        ;;
+esac
 case "${1:-}" in
     --drun)
         shift

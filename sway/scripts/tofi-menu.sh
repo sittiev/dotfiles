@@ -17,7 +17,16 @@ Horário
 Data atual
 Bateria
 Yambar
-Papel de parede'
+Papel de parede
+Monitores: Auto (HDMI)
+Monitores: Só HDMI
+Monitores: Só notebook
+Monitores: Estender
+Monitores: Espelhar
+Bloquear tela
+Energia
+Bluetooth
+Rede (iwgtk)'
 
 choice=$(printf '%s\n' "$list" | "$script_dir/tofi-safe.sh" --config "$HOME/.config/tofi/config" --prompt-text "Sway: " || true)
 [ -n "$choice" ] || exit 0
@@ -40,4 +49,18 @@ case "$choice" in
         notify-send "Bateria" "$capacity%" ;;
     Yambar) exec "$script_dir/yambar-toggle.sh" ;;
     'Papel de parede') exec "$script_dir/wallpaper.sh" ;;
+    'Monitores: Auto (HDMI)') exec "$script_dir/outputs.sh" auto ;;
+    'Monitores: Só HDMI') exec "$script_dir/outputs.sh" hdmi ;;
+    'Monitores: Só notebook') exec "$script_dir/outputs.sh" laptop ;;
+    'Monitores: Estender') exec "$script_dir/outputs.sh" extend ;;
+    'Monitores: Espelhar') exec "$script_dir/outputs.sh" mirror ;;
+    'Bloquear tela') exec "$script_dir/waylock.sh" ;;
+    Energia) exec "$script_dir/powermenu.sh" ;;
+    Bluetooth)
+        if command -v overskride >/dev/null 2>&1; then exec overskride; fi
+        if command -v bluetoothctl >/dev/null 2>&1; then exec foot -e bluetoothctl; fi
+        notify-send "Bluetooth" "overskride não instalado (paru -S overskride)." 2>/dev/null || true ;;
+    'Rede (iwgtk)')
+        if command -v iwgtk >/dev/null 2>&1; then exec iwgtk; fi
+        notify-send "Rede" "iwgtk não instalado (paru -S iwgtk)." 2>/dev/null || true ;;
 esac

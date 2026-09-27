@@ -12,5 +12,8 @@ PS1='\w\$ '
 export PNPM_HOME="$HOME/.local/share/pnpm"
 export PATH="$PNPM_HOME/bin:$PATH"
 
+# ~/.local/bin (binarios locais de usuario: computer-use-linux, etc.)
+export PATH="$HOME/.local/bin:$PATH"
+
 # yabridge + Wine 11.18 (equalizacao de voz)
 [ -f "$HOME/.config/audio-eq/env.sh" ] && . "$HOME/.config/audio-eq/env.sh"

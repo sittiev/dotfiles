@@ -1,3 +1,3 @@
 #!/usr/bin/dash
 set -eu
-exec swaynag -t warning -m 'Sair do Sway?'   --background=d0deeb --border=536D85 --border-bottom=536D85   --text=343637 --button-background=536D85 --button-text=d0deeb   -B 'Sim, sair' 'swaymsg exit'
+exec swaynag -t warning -m 'Sair do Sway?'   --background=0b0d0e --border=8E9192 --border-bottom=8E9192   --text=ecedee --button-background=8E9192 --button-text=0b0d0e   -B 'Sim, sair' 'swaymsg exit'

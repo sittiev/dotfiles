@@ -47,6 +47,7 @@ link_path "$ROOT/gtk/3.0/settings.ini" "$HOME/.config/gtk-3.0/settings.ini"
 link_path "$ROOT/gtk/4.0/settings.ini" "$HOME/.config/gtk-4.0/settings.ini"
 link_path "$ROOT/shell/.bashrc" "$HOME/.bashrc"
 link_path "$ROOT/shell/.bash_profile" "$HOME/.bash_profile"
+link_path "$ROOT/shell/environment.d/10-qt-theme.conf" "$HOME/.config/environment.d/10-qt-theme.conf"
 
 if [ "$DRY_RUN" = 1 ]; then
     printf '%s\n' 'dry run complete; no files changed'

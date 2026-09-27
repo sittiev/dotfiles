@@ -20,7 +20,10 @@ scheme_init "$MODE"
 : "${BASE:=$BG}"
 : "${FAIL:=$ACCENT}"
 
-# Yambar: current top clock-only layout, palette injected only.
+# Yambar: current top clock-only layout, palette injected only. Sem margins:
+# o espacamento e so via gaps do sway (inner/outer). Sem monitor fixo: com
+# HDMI conectado o eDP fica desligado (outputs.sh auto), entao ha um unico
+# output ativo e a bar vai sempre pro principal.
 # FindersKeepers sem USE_TYPO_METRICS: 20px rende 15.8px de caixa win, cabe nos 18px.
 # A fonte nao tem acentos, entao o fallback por glifo do pango desenha os
 # acentuados numa segunda fonte.
@@ -31,7 +34,6 @@ cat > "$HOME/.config/yambar/config.yml" <<EOF
 bar:
   height: 18
   location: top
-  right-margin: 8
   background: 00000000
   foreground: ${YF}ff
   font: "FindersKeepers:size=20"
@@ -456,6 +458,12 @@ fi
 # One reload per consumer.
 if pgrep -x mako >/dev/null 2>&1; then makoctl reload >/dev/null 2>&1 || true; else mako >/dev/null 2>&1 & fi
 pkill -USR1 kitty 2>/dev/null || true
+# lxqt-policykit-agent (Qt6) so le a paleta no inicio: reinicia para seguir o tema.
+if command -v lxqt-policykit-agent >/dev/null 2>&1; then
+    pkill -x lxqt-policykit-agent >/dev/null 2>&1 || true
+    sleep 0.2
+    lxqt-policykit-agent >/dev/null 2>&1 &
+fi
 pkill -x yambar 2>/dev/null || true
 sleep 0.3
 LC_TIME=C yambar >/dev/null 2>&1 &
