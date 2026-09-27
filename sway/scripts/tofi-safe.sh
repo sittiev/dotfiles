@@ -13,6 +13,12 @@ if pgrep -x tofi >/dev/null 2>&1 || pgrep -x tofi-drun >/dev/null 2>&1; then
 fi
 
 rm -f "$lock"
+# Despacha o modo ANTES de injetar --output: o prepend muda $1 e o
+# --drun deixava de casar (virava tofi comum vazio em vez de tofi-drun).
+mode=run
+case "${1:-}" in
+    --drun) mode=drun; shift ;;
+esac
 # Todo tofi/yambar vai pro monitor principal: injeta --output do
 # primary-output.sh (HDMI se conectado, senao eDP), salvo flag explicita.
 case " $* " in
@@ -25,9 +31,8 @@ case " $* " in
         unset _primary
         ;;
 esac
-case "${1:-}" in
-    --drun)
-        shift
+case "$mode" in
+    drun)
         exec tofi-drun "$@"
         ;;
     *)
