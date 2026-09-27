@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Name=osu!lazer
+MimeType=application/x-osu-skin-archive;application/x-osu-replay;application/x-osu-beatmap-archive;
+Icon=osu-lazer
+Comment=Open source free-to-win rhythm game
+# SDL_VIDEODRIVER=wayland: o AppImage do osu! escolhe x11 por padrao
+# (log: "SDL3 Video driver: x11") e joga tudo via XWayland, o que traz
+# latencia de input e mouse-look ruim. O SDL3 dentro do AppImage tem o
+# driver wayland (dlopen de libwayland-client/libdecor, ambos no sistema).
+Exec=env SDL_VIDEODRIVER=wayland /usr/bin/osu-lazer
+Categories=Game;
