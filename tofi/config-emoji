@@ -5,10 +5,10 @@
 # 16px estoura (18.8px) e corta a parte de baixo do emoji e do rotulo.
 font-size = 14
 hint-font = false
-horizontal = true
+horizontal = false
 anchor = center
 width = 700
-height = 120
+height = 520
 # border/outline 0 herdado do bloco canonico (tofi-apply.sh); padding espelhado
 # do clipboard para a mesma caixa central.
 padding-top = 14
