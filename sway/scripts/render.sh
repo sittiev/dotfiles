@@ -59,7 +59,7 @@ border-color=#$ACCENT
 border-size=2
 border-radius=0
 margin=14
-font=FindersKeepers:size=12
+font=FindersKeepers 12
 markup=1
 anchor=bottom-right
 default-timeout=8000

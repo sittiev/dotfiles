@@ -19,41 +19,55 @@ connected() { # <output> → 0 se conectado (via swaymsg, fallback drm)
     [ "$(cat "/sys/class/drm/card1-$1/status" 2>/dev/null || printf 'unknown')" = connected ]
 }
 
+# out <name> <sub...> — enable e pos em chamadas separadas: num unico
+# `swaymsg output X enable, pos ..` o sway reaplica o pos do config file ao
+# re-habilitar um output desligado, engolindo o pos do mesmo comando.
+out() { # <nome> [enable|disable] [pos X Y]
+    _n=$1 _st=${2:-} _p1=${3:-} _p2=${4:-}
+    case "$_st" in
+        enable|disable) swaymsg output "$_n" "$_st" >/dev/null 2>&1 || true ;;
+    esac
+    if [ -n "$_p1" ]; then
+        swaymsg output "$_n" pos "$_p1" "$_p2" >/dev/null 2>&1 || true
+    fi
+    unset _n _st _p1 _p2
+}
+
 notify() { notify-send "Monitores" "$1" 2>/dev/null || true; }
 
 cmd=${1:-auto}
 case "$cmd" in
     auto)
         if connected "$HDMI"; then
-            swaymsg output "$HDMI" enable, pos 0 0 >/dev/null 2>&1 || true
-            swaymsg output "$LAPTOP" disable >/dev/null 2>&1 || true
+            out "$HDMI" enable 0 0
+            out "$LAPTOP" disable
             swaymsg focus output "$HDMI" >/dev/null 2>&1 || true
         else
-            swaymsg output "$LAPTOP" enable, pos 0 0 >/dev/null 2>&1 || true
+            out "$LAPTOP" enable 0 0
             swaymsg focus output "$LAPTOP" >/dev/null 2>&1 || true
         fi
         ;;
     hdmi)
-        swaymsg output "$HDMI" enable, pos 0 0 >/dev/null 2>&1 || true
-        swaymsg output "$LAPTOP" disable >/dev/null 2>&1 || true
+        out "$HDMI" enable 0 0
+        out "$LAPTOP" disable
         swaymsg focus output "$HDMI" >/dev/null 2>&1 || true
         notify "Só HDMI ($HDMI, esquerda)"
         ;;
     laptop)
-        swaymsg output "$LAPTOP" enable, pos 0 0 >/dev/null 2>&1 || true
-        swaymsg output "$HDMI" disable >/dev/null 2>&1 || true
+        out "$LAPTOP" enable 0 0
+        out "$HDMI" disable
         swaymsg focus output "$LAPTOP" >/dev/null 2>&1 || true
         notify "Só notebook ($LAPTOP)"
         ;;
     extend)
-        swaymsg output "$HDMI" enable, pos 0 0 >/dev/null 2>&1 || true
-        swaymsg output "$LAPTOP" enable, pos 1920 0 >/dev/null 2>&1 || true
+        out "$HDMI" enable 0 0
+        out "$LAPTOP" enable 1920 0
         swaymsg focus output "$HDMI" >/dev/null 2>&1 || true
         notify "Estendido: HDMI esquerda + notebook direita"
         ;;
     mirror)
-        swaymsg output "$HDMI" enable, pos 0 0 >/dev/null 2>&1 || true
-        swaymsg output "$LAPTOP" enable, pos 0 0 >/dev/null 2>&1 || true
+        out "$HDMI" enable 0 0
+        out "$LAPTOP" enable 0 0
         swaymsg focus output "$HDMI" >/dev/null 2>&1 || true
         notify "Espelhado"
         ;;
