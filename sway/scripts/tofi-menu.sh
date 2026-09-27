@@ -18,11 +18,7 @@ Data atual
 Bateria
 Yambar
 Papel de parede
-Monitores: Auto (HDMI)
-Monitores: Só HDMI
-Monitores: Só notebook
-Monitores: Estender
-Monitores: Espelhar
+Monitores
 Bloquear tela
 Energia
 Bluetooth
@@ -41,7 +37,14 @@ case "$choice" in
     Clipboard) exec "$script_dir/clipboard.sh" ;;
     Emoji) exec "$script_dir/emoji.sh" ;;
     'Luz noturna') exec "$script_dir/nightlight.sh" ;;
-    Notificações) exec makoctl mode -t do-not-disturb ;;
+    Notificações)
+        if makoctl mode 2>/dev/null | grep -q do-not-disturb; then
+            makoctl mode -r do-not-disturb 2>/dev/null || true
+            notify-send "Notificações" "Ativadas" 2>/dev/null || true
+        else
+            notify-send "Notificações" "Silenciadas" 2>/dev/null || true
+            makoctl mode -a do-not-disturb 2>/dev/null || true
+        fi ;;
     Horário) notify-send "Horário" "$(date '+%H:%M')" ;;
     'Data atual') notify-send "Data atual" "$(date '+%A, %d de %B de %Y')" ;;
     Bateria)
@@ -49,11 +52,7 @@ case "$choice" in
         notify-send "Bateria" "$capacity%" ;;
     Yambar) exec "$script_dir/yambar-toggle.sh" ;;
     'Papel de parede') exec "$script_dir/wallpaper.sh" ;;
-    'Monitores: Auto (HDMI)') exec "$script_dir/outputs.sh" auto ;;
-    'Monitores: Só HDMI') exec "$script_dir/outputs.sh" hdmi ;;
-    'Monitores: Só notebook') exec "$script_dir/outputs.sh" laptop ;;
-    'Monitores: Estender') exec "$script_dir/outputs.sh" extend ;;
-    'Monitores: Espelhar') exec "$script_dir/outputs.sh" mirror ;;
+    'Monitores') exec "$script_dir/monitormenu.sh" ;;
     'Bloquear tela') exec "$script_dir/waylock.sh" ;;
     Energia) exec "$script_dir/powermenu.sh" ;;
     Bluetooth)
