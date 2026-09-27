@@ -177,9 +177,9 @@ focus_follows_mouse yes
 mouse_warping output
 seat * hide_cursor when-typing enable
 
-# Gaps: 28 dentro, 0 fora. Nao ha margin-bottom no yambar (config.yml gerado
-# por render.sh usa so right-margin), entao o topo nao precisa de compensate.
-gaps inner 28
+# Gaps: 34 dentro, 0 fora. O yambar nao tem margins (render.sh nao emite
+# nenhuma), entao todo espacamento vem daqui.
+gaps inner 34
 gaps outer 0
 # --i3 hides single-child tab/stack bars.
 titlebar_border_thickness 0
