@@ -172,22 +172,28 @@ focus_follows_mouse yes
 mouse_warping output
 seat * hide_cursor when-typing enable
 
-gaps inner 16
-gaps outer 24
+# Gaps: 28 dentro, 0 fora. Nao ha margin-bottom no yambar (config.yml gerado
+# por render.sh usa so right-margin), entao o topo nao precisa de compensate.
+gaps inner 28
+gaps outer 0
 # --i3 hides single-child tab/stack bars.
 titlebar_border_thickness 0
 titlebar_padding 0
-default_border pixel 1
-default_floating_border pixel 1
+# default_border so vale para containers NOVOS: janela ja aberta guarda a
+# largura antiga (por isso o pcmanfm ficava com 1px). for_window [all] cobre
+# as que ja existem e as que vierem depois, entao as duas linhas sao necessarias.
+default_border pixel 2
+default_floating_border pixel 2
+for_window [all] border pixel 2
 hide_edge_borders --i3 none
 smart_borders off
 
-client.focused   #536D85 #859AAD #FAFAFA #536D85 #859AAD
-client.unfocused #d0deeb #d0deeb #787D82 #d0deeb #d0deeb
-client.focused_inactive #d0deeb #d0deeb #787D82 #d0deeb #d0deeb
-client.placeholder      #d0deeb #d0deeb #787D82 #d0deeb #d0deeb
-client.background       #d0deeb
-client.urgent           #536D85 #96ABC0 #343637 #536D85 #96ABC0
+client.focused   #79929F #53646C #DEDFE0 #79929F #53646C
+client.unfocused #1c1f21 #1c1f21 #7A7F81 #1c1f21 #1c1f21
+client.focused_inactive #1c1f21 #1c1f21 #7A7F81 #1c1f21 #1c1f21
+client.placeholder      #1c1f21 #1c1f21 #7A7F81 #1c1f21 #1c1f21
+client.background       #1c1f21
+client.urgent           #79929F #3C4B55 #B9BDBF #79929F #3C4B55
 
 for_window [window_type="dialog"] floating enable, move position center
 for_window [window_type="utility"] floating enable, move position center
