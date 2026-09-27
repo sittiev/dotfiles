@@ -460,9 +460,12 @@ fi
 if pgrep -x mako >/dev/null 2>&1; then makoctl reload >/dev/null 2>&1 || true; else mako >/dev/null 2>&1 & fi
 pkill -USR1 kitty 2>/dev/null || true
 # lxqt-policykit-agent (Qt6) so le a paleta no inicio: reinicia para seguir o tema.
+# pkill -x NAO serve aqui: o comm do kernel trunca em 15 chars
+# ("lxqt-policykit-") e o padrao nunca casa, entao cada apply deixava um
+# agente a mais rodando (6 no pico, medido). -f casa pela linha de comando.
 if command -v lxqt-policykit-agent >/dev/null 2>&1; then
-    pkill -x lxqt-policykit-agent >/dev/null 2>&1 || true
-    sleep 0.2
+    pkill -f '(^|/)lxqt-policykit-agent( |$)' >/dev/null 2>&1 || true
+    sleep 0.3
     lxqt-policykit-agent >/dev/null 2>&1 &
 fi
 pkill -x yambar 2>/dev/null || true
