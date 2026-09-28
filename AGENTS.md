@@ -25,6 +25,9 @@ articles and wikis. Re-check it every session; never rely on a cached copy.
   vault copy first, upstream second.
 - User profile (from vault): Rafael, full-stack, direct and technical, PT-BR
   for chat and English for code; prefer surgical patches over rewrites.
+- For significant code/arch changes, follow
+  `Vault/.agents/commands/consult-brain.md`: validate against `Stack.md`
+  anti-recommendations and stop on conflict.
 
 ## 3. Environment
 
@@ -72,6 +75,7 @@ utils before writing; touch only what the task requires; write the minimum
 code that solves it; match existing naming, formatting, error-handling, and
 test patterns (pick one when they conflict and flag it). State assumptions
 up front, ground numbers and causal claims, surface skipped work explicitly,
+define success criteria before coding and loop until verified,
 and checkpoint multi-step work (done, verified, left).
 
 Stop and flag: unclear state ownership, unknown blast radius, timing/race
