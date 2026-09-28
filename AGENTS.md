@@ -8,26 +8,30 @@ distraction-free, dopamine-free, low-contrast palette based on Apprentice
 (2–3 color palette). Optimize for latency, readability, and reproducibility —
 not for visual novelty.
 
-## 2. Vault-first (live source)
+## 2. Live source (Distros.md)
 
-The vault at `/home/rafael/Documentos/Vault` is constantly updated with new
-articles and wikis. Re-check it every session; never rely on a cached copy.
+The vault is a single live file: `/home/rafael/Documentos/Vault/Inbox/Distros.md`.
+It holds the distro shortlist, the objective (§1), and the wiki list below.
+Re-check it every session; when it gains wikis, propagate them into this
+section.
 
-- Load first: `Vault/AGENTS.md` (three zones), `Vault/CLAUDE.md` (init +
-  write-back), `Vault/Memória de Agentes/Memoria/{Perfil,Projetos,Decisões,Stack}.md`,
-  `Vault/Tópicos de Âncora/index.md`.
-- Zones: `Inbox/` + `Processamento/` are read-only; `Tópicos de Âncora/` is
-  AI-owned (full YAML frontmatter, `[[wikilinks]]`, min 1 link/note);
-  `Projetos/` + `Memória de Agentes/` are collaborative — never edit an
-  `accepted` ADR without confirmation.
-- Live wiki/reading list: `Vault/Inbox/Distros.md` (`# Wiki's, Artigos, Guias…`:
-  Sway wiki, i3 userguide, ly, dash/bash, Yambar, ricing, GTK/Qt). Consult the
-  vault copy first, upstream second.
-- User profile (from vault): Rafael, full-stack, direct and technical, PT-BR
-  for chat and English for code; prefer surgical patches over rewrites.
-- For significant code/arch changes, follow
-  `Vault/.agents/commands/consult-brain.md`: validate against `Stack.md`
-  anti-recommendations and stop on conflict.
+- User: Rafael, full-stack, direct and technical, PT-BR for chat and English
+  for code; prefer surgical patches over rewrites.
+- Sway/i3: https://github.com/swaywm/sway/wiki |
+  https://i3wm.org/docs/userguide.html
+- Login (ly): https://codeberg.org/fairyglade/ly |
+  https://wiki.archlinux.org/title/Ly
+- Shell (dash-first): https://man7.org/linux/man-pages/man1/dash.1.html |
+  https://wiki.archlinux.org/title/Dash |
+  https://github.com/rawiriblundell/wiki.bash-hackers.org/blob/main/scripting/tutoriallist.md |
+  https://dt.iki.fi/use-dash-bin-sh
+- Yambar: https://github.com/neonkore/yambar |
+  https://manpages.debian.org/testing/yambar/yambar.1.en.html |
+  https://manpages.opensuse.org/Leap-16.0/yambar/yambar-modules.5.en.html
+- Ricing: https://linuxbasecamp.com/learn/linux-desktop-ricing |
+  https://github.com/fosslife/awesome-ricing
+- GTK/Qt theming: https://github.com/nwg-piotr/nwg-look |
+  https://wiki.archlinux.org/title/Uniform_look_for_Qt_and_GTK_applications
 
 ## 3. Environment
 
@@ -99,8 +103,8 @@ Prefer native previews for theme work, then close what was opened:
 - `/home/rafael/Documentos/If you are a LLM open this/reinforcement learning.md`:
   load only for agent-memory design, skill-library/SkillBank work, or
   GRPO/RLHF/distillation tasks. Cite it; do not paste it here.
-- Reference vault and `docs/` paths by name and let the reader pull them in
-  lazily. Keep this file under 200 lines (sweet spot 60–120); each line must
+- Reference `docs/` paths by name and let the reader pull them in lazily.
+  When `Distros.md` gains wikis, copy them into §2. Keep this file under 200 lines (sweet spot 60–120); each line must
   earn its place — cut any rule whose removal would not cause a mistake
   within a week. Markdown is guidance; hard enforcement belongs in scripts.
 
