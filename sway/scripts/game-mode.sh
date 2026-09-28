@@ -14,7 +14,7 @@
 # Swap: o on tenta `swapoff -a` e, se falhar (ex. RAM cheia), cai para
 # `vm.swappiness=10`; o off desfaz. Ambos exigem root sem senha, liberado
 # UMA vez pelo usuário com:
-#   echo "$USER ALL=(ALL) NOPASSWD: /usr/sbin/swapoff -a, /usr/sbin/swapon -a, /usr/sbin/sysctl -w vm.swappiness=*" \
+#   echo "$USER ALL=(ALL) NOPASSWD: /usr/sbin/swapoff -a, /usr/sbin/swapon -a, /usr/sbin/sysctl -w vm.swappiness=*, /usr/sbin/cpupower frequency-set -g *" \
 #     | sudo tee /etc/sudoers.d/game-mode >/dev/null && sudo chmod 0440 /etc/sudoers.d/game-mode
 # Sem isso o script segue sem tocar no swap. Feche o browser ANTES do on:
 # com 3.5G swapados e 1G livre o swapoff falha por falta de RAM.
@@ -26,6 +26,7 @@ script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 cache_dir=${XDG_CACHE_HOME:-$HOME/.cache}/sway-game-mode
 active_file=$cache_dir/active
 ppd_file=$cache_dir/ppd-profile
+gov_file=$cache_dir/cpu-governor
 swap_state_file=$cache_dir/swap-state
 swap_sysctl_file=$cache_dir/swap-swappiness
 wlsunset_file=$cache_dir/wlsunset-was-on
@@ -45,6 +46,16 @@ mode_on() {
     if command -v powerprofilesctl >/dev/null 2>&1; then
         powerprofilesctl get > "$ppd_file" 2>/dev/null || true
         powerprofilesctl set performance >/dev/null 2>&1 || true
+    fi
+
+    # PPD sozinho não troca o governor aqui (acpi-cpufreq segue ondemand):
+    # força performance direto e salva para restaurar no off.
+    if [ -r /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor ] \
+        && command -v sudo >/dev/null 2>&1; then
+        cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor > "$gov_file" 2>/dev/null || true
+        if [ "$(cat "$gov_file" 2>/dev/null || printf '')" != performance ]; then
+            sudo -n cpupower frequency-set -g performance >/dev/null 2>&1 || true
+        fi
     fi
 
     # Swap: tenta desligar; sem RAM livre ou sem sudo cai para swappiness=10.
@@ -105,6 +116,10 @@ mode_off() {
         powerprofilesctl set "$(cat "$ppd_file")" >/dev/null 2>&1 || true
     fi
 
+    if [ -f "$gov_file" ] && command -v sudo >/dev/null 2>&1; then
+        sudo -n cpupower frequency-set -g "$(cat "$gov_file")" >/dev/null 2>&1 || true
+    fi
+
     # Desfaz o que o on fez no swap (mesmo estado salvo em swap-state).
     if command -v sudo >/dev/null 2>&1; then
         case "$(cat "$swap_state_file" 2>/dev/null || printf 'none')" in
@@ -145,12 +160,13 @@ mode_status() {
             "$(cat /proc/sys/vm/swappiness 2>/dev/null || printf '?')" \
             "$(($(wc -l < /proc/swaps 2>/dev/null || printf '1') - 1))"
     fi
-    printf 'swayidle=%s autotiling=%s cliphist=%s wlsunset=%s mako_mode=%s\n' \
+    printf 'swayidle=%s autotiling=%s cliphist=%s wlsunset=%s mako_mode=%s gov=%s\n' \
         "$(pgrep -x swayidle >/dev/null 2>&1 && printf on || printf off)" \
         "$(pgrep -x autotiling-rs >/dev/null 2>&1 && printf on || printf off)" \
         "$(pgrep -f '[w]l-paste.*cliphist store' >/dev/null 2>&1 && printf on || printf off)" \
         "$(pgrep -x wlsunset >/dev/null 2>&1 && printf on || printf off)" \
-        "$(makoctl mode 2>/dev/null | tr '\n' ',' || printf '?')"
+        "$(makoctl mode 2>/dev/null | tr '\n' ',' || printf '?')" \
+        "$(cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor 2>/dev/null || printf '?')"
 }
 
 cmd=${1:-status}
