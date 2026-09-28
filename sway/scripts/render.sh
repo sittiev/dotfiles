@@ -340,17 +340,18 @@ fi
 # Tofi keeps selected layout/geometry; only palette changes.
 "$HOME/.config/sway/scripts/tofi-apply.sh" "$(cat "$HOME/.cache/tofi-layout" 2>/dev/null || printf '%s' dmenu)" >/dev/null
 
-# Sway client colors only. Non-focused border and child_border use the
-# background color, so only the focused window shows an edge.
+# Sway client colors only. Non-focused border, indicator and child_border are
+# transparent, so only the focused window shows an edge. BG-colored borders
+# looked white on light wallpapers (BG=e3e6e8) — the opposite of dim-inactive.
 eval "$(sway_roles "$BG" "$FG" "$ACCENT" "$MUTED" "$FAIL")"
 SC="$HOME/.config/sway/config"
 if [ -f "$SC" ]; then
     SC_TMP=$SC.tmp.$$
     sed \
         -e "s|^client\.focused .*|client.focused   #$FOC #$FOCB #$FTXT #$FOC #$FOCB|" \
-        -e "s|^client\.unfocused .*|client.unfocused #$BG #$BG #$MUTC #$BG #$BG|" \
-        -e "s|^client\.focused_inactive .*|client.focused_inactive #$BG #$BG #$MUTC #$BG #$BG|" \
-        -e "s|^client\.placeholder .*|client.placeholder      #$BG #$BG #$MUTC #$BG #$BG|" \
+        -e "s|^client\.unfocused .*|client.unfocused #00000000 #$BG #$MUTC #00000000 #00000000|" \
+        -e "s|^client\.focused_inactive .*|client.focused_inactive #00000000 #$BG #$MUTC #00000000 #00000000|" \
+        -e "s|^client\.placeholder .*|client.placeholder      #00000000 #$BG #$MUTC #00000000 #00000000|" \
         -e "s|^client\.background .*|client.background       #$BG|" \
         -e "s|^client\.urgent .*|client.urgent           #$FOC #$URGB #$UTXT #$FOC #$URGB|" \
         "$SC" > "$SC_TMP"

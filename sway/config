@@ -196,12 +196,15 @@ for_window [all] border pixel 2
 hide_edge_borders --i3 none
 smart_borders off
 
-client.focused   #8E9192 #595C5D #ECEDEE #8E9192 #595C5D
-client.unfocused #0b0d0e #0b0d0e #5D6366 #0b0d0e #0b0d0e
-client.focused_inactive #0b0d0e #0b0d0e #5D6366 #0b0d0e #0b0d0e
-client.placeholder      #0b0d0e #0b0d0e #5D6366 #0b0d0e #0b0d0e
-client.background       #0b0d0e
-client.urgent           #8E9192 #313537 #ECEDEE #8E9192 #313537
+# Sem borda visivel em janela inativa: border/indicator/child_border das
+# classes nao-focadas sao transparentes (render.sh regenera estas linhas;
+# nao volte para a cor de fundo — em wallpaper claro ela vira borda branca).
+client.focused   #657789 #97A3AF #373839 #657789 #97A3AF
+client.unfocused #00000000 #e3e6e8 #7B7D7F #00000000 #00000000
+client.focused_inactive #00000000 #e3e6e8 #7B7D7F #00000000 #00000000
+client.placeholder      #00000000 #e3e6e8 #7B7D7F #00000000 #00000000
+client.background       #e3e6e8
+client.urgent           #657789 #A7B3BC #373839 #657789 #A7B3BC
 
 for_window [window_type="dialog"] floating enable, move position center
 for_window [window_type="utility"] floating enable, move position center
