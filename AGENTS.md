@@ -23,19 +23,27 @@ section.
   https://wiki.archlinux.org/title/Ly
 - Shell (dash-first): https://man7.org/linux/man-pages/man1/dash.1.html |
   https://wiki.archlinux.org/title/Dash |
+  https://en.wikipedia.org/wiki/Almquist_shell#dash |
+  https://linuxhandbook.com/dash-shell/ |
   https://github.com/rawiriblundell/wiki.bash-hackers.org/blob/main/scripting/tutoriallist.md |
   https://dt.iki.fi/use-dash-bin-sh
 - Yambar: https://github.com/neonkore/yambar |
+  https://aur.archlinux.org/packages/yambar |
   https://manpages.debian.org/testing/yambar/yambar.1.en.html |
   https://manpages.opensuse.org/Leap-16.0/yambar/yambar-modules.5.en.html
 - Ricing: https://linuxbasecamp.com/learn/linux-desktop-ricing |
   https://github.com/fosslife/awesome-ricing
 - GTK/Qt theming: https://github.com/nwg-piotr/nwg-look |
+  https://github.com/tsujan/Kvantum |
   https://wiki.archlinux.org/title/Uniform_look_for_Qt_and_GTK_applications
 - Locker (waylock): https://github.com/ifreund/waylock |
   https://man.archlinux.org/man/waylock.1.en
+- PCManFM actions: https://wiki.archlinux.org/title/PCManFM |
+  https://lxqt-project.org/wiki/custom_actions.html |
+  https://github.com/stefonarch/custom-actions
 - UX writing (Apple HIG): https://developer.apple.com/design/human-interface-guidelines/writing |
-  https://developer.apple.com/videos/play/wwdc2024/10140/
+  https://developer.apple.com/videos/play/wwdc2024/10140/ |
+  https://dev.to/arshtechpro/4-ios-ux-writing-secrets-that-will-transform-your-apps-user-experience-apple-insiders-reveal-all-3d0f
 
 ## 3. Environment
 
