@@ -24,6 +24,17 @@ scheme_data_ok() {
 check 'scheme data (gogh json)' scheme_data_ok
 check 'scheme tests' dash "$ROOT/scripts/test-schemelib.sh"
 
+action_ok() {
+    grep -q '^\[Desktop Entry\]$' "$1" &&
+        grep -q '^Type=Action$' "$1" &&
+        grep -q '^\[X-Action-Profile ' "$1" &&
+        grep -q '^MimeTypes=' "$1" &&
+        grep -q '^Exec=' "$1"
+}
+for f in "$ROOT"/pcmanfm/actions/*.desktop; do
+    check "action: ${f##*/}" action_ok "$f"
+done
+
 if command -v checkbashisms >/dev/null 2>&1; then
     HAVE_CB=1
 else

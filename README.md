@@ -58,6 +58,7 @@ foot/         Foot configuration
 yambar/       Yambar configuration
 tofi/         Tofi config and themes
 mako/         Mako configuration
+pcmanfm/      PCManFM clean config + context actions (gram/micro/foot)
 gtk/          GTK settings used by the theme pipeline
 shell/        Bash startup files
 systemd/      User-service files and notes

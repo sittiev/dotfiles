@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Action
+Name=Open in Micro
+Name[pt_BR]=Abrir no Micro
+Tooltip=Edit file in Micro (inside Foot)
+Icon=micro
+Profiles=files
+
+[X-Action-Profile files]
+MimeTypes=all/allfiles;
+Exec=foot micro %F

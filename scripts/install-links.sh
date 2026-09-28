@@ -49,6 +49,9 @@ link_path "$ROOT/shell/.bashrc" "$HOME/.bashrc"
 link_path "$ROOT/shell/.bash_profile" "$HOME/.bash_profile"
 link_path "$ROOT/shell/environment.d/10-qt-theme.conf" "$HOME/.config/environment.d/10-qt-theme.conf"
 link_path "$ROOT/apps/osu-lazer.desktop" "$HOME/.local/share/applications/osu-lazer.desktop"
+link_path "$ROOT/pcmanfm/pcmanfm.conf" "$HOME/.config/pcmanfm/default/pcmanfm.conf"
+link_path "$ROOT/pcmanfm/libfm.conf" "$HOME/.config/libfm/libfm.conf"
+link_path "$ROOT/pcmanfm/actions" "$HOME/.local/share/file-manager/actions"
 
 if [ "$DRY_RUN" = 1 ]; then
     printf '%s\n' 'dry run complete; no files changed'

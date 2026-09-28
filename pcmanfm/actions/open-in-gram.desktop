@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Action
+Name=Open in Gram
+Name[pt_BR]=Abrir no Gram
+Tooltip=Open file or folder in Gram
+Icon=gram
+Profiles=all
+
+[X-Action-Profile all]
+MimeTypes=all/all;
+Exec=gram %F
