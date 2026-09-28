@@ -34,6 +34,8 @@ section.
   https://wiki.archlinux.org/title/Uniform_look_for_Qt_and_GTK_applications
 - Locker (waylock): https://github.com/ifreund/waylock |
   https://man.archlinux.org/man/waylock.1.en
+- UX writing (Apple HIG): https://developer.apple.com/design/human-interface-guidelines/writing |
+  https://developer.apple.com/videos/play/wwdc2024/10140/
 
 ## 3. Environment
 
@@ -132,3 +134,17 @@ After a change, run:
 
 Show the diff before committing. Commit after validation without an extra
 confirmation; never push automatically.
+
+## 10. UX writing (user-visible strings)
+
+Applies to tofi menus, swaynag prompts, mako OSD, notifications — PT-BR.
+
+- Purge fillers: no adverbs/pleasantries ("rapidamente", "simplesmente",
+  "desculpe"); keep a modifier only if it differentiates the action.
+- Headline and body never repeat: headline carries the fact, body the next step.
+- Lead with why, then action: "Para X, faça Y".
+- Verbs on buttons ("Enviar", not "Vamos lá!"); same term for the same
+  action/state/error everywhere (mini word list, shared with HIG terms).
+- Errors: no blame, no "ops!"/"nós"; say what happened + how to fix it.
+- Tone follows context (celebrate wins, stay direct on errors); one
+  capitalization style per element type.
