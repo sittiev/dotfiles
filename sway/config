@@ -66,6 +66,7 @@ input type:pointer {
     bindsym $mod+x exec ~/.config/sway/scripts/yambar-toggle.sh
     bindsym $mod+n exec ~/.config/sway/scripts/nightlight.sh
     bindsym $mod+Shift+n exec ~/.config/sway/scripts/nightmenu.sh
+    bindsym $mod+g exec ~/.config/sway/scripts/game-mode.sh toggle
 
     # Drag floating windows by holding down $mod and left mouse button.
     floating_modifier $mod normal
