@@ -32,6 +32,8 @@ section.
   https://github.com/fosslife/awesome-ricing
 - GTK/Qt theming: https://github.com/nwg-piotr/nwg-look |
   https://wiki.archlinux.org/title/Uniform_look_for_Qt_and_GTK_applications
+- Locker (waylock): https://github.com/ifreund/waylock |
+  https://man.archlinux.org/man/waylock.1.en
 
 ## 3. Environment
 

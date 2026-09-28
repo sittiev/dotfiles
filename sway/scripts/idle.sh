@@ -16,11 +16,11 @@ if [ "$SUSPEND" -gt 0 ] 2>/dev/null; then
         timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
         timeout "$SUSPEND" 'systemctl suspend' \
         lock "$script_dir/waylock.sh" \
-        before-sleep "$script_dir/waylock.sh" >/dev/null 2>&1
+        before-sleep "$script_dir/waylock.sh --pre-sleep" >/dev/null 2>&1
 else
     exec swayidle -w \
         timeout 300 "$script_dir/waylock.sh" \
         timeout 600 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
         lock "$script_dir/waylock.sh" \
-        before-sleep "$script_dir/waylock.sh" >/dev/null 2>&1
+        before-sleep "$script_dir/waylock.sh --pre-sleep" >/dev/null 2>&1
 fi

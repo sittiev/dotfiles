@@ -9,7 +9,7 @@ falta — nada no pipeline quebra sem eles.
 |---|---|---|
 | `qt6ct` | UIs Qt6 | `pacman -S qt6ct`. Abra o app uma vez (gera `~/.config/qt6ct/qt6ct.conf`); a partir daí o render grava `colors/dotfiles.conf` e ativa sozinho (`color_scheme_path` + `custom_palette=true`). Apps Qt só leem o palette no início. |
 | `qt5ct` | UIs Qt5 | `pacman -S qt5ct`; mesmo comportamento do qt6ct. |
-| `waylock` | screenlocker | `sudo pacman -S waylock`. Binding `$mod+Shift+l` → `sway/scripts/waylock.sh` (`-init-color 0x$BG -input-color 0x$ACCENT -fail-color 0x$FAIL`). |
+| `waylock` | screenlocker | `sudo pacman -S waylock`. Binding `$mod+Shift+l` → `sway/scripts/waylock.sh` (`-init-color 0x$BG -input-color 0x$ACCENT -fail-color 0x$FAIL`). Singleton via `pgrep -x waylock` (sem empilhar = sem senha dupla); before-sleep usa `--pre-sleep` (`-fork-on-lock`, libera o delay lock do logind). |
 | `swayidle` | idle daemon | `sudo pacman -S swayidle`. `sway/scripts/idle.sh` (exec_always): trava 5min, apaga telas 10min, `lock` + `before-sleep`. |
 | `overskride` (AUR) | bluetooth GUI (bluez) | `paru -S overskride`; backend `bluez` + `bluez-utils` já instalados → `sudo systemctl enable --now bluetooth.service`. Menu Mod+Shift+x → Bluetooth. |
 | `iwgtk` (AUR) | wifi GUI (iwd puro) | `paru -S iwgtk`. NM e wpa_supplicant REMOVIDOS; rede = iwd + systemd-networkd (`/etc/systemd/network/25-wireless.network`, DHCP) + systemd-resolved. iwgtk fala com iwd via D-Bus. Menu Mod+Shift+x → Rede. |
