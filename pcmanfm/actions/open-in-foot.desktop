@@ -3,6 +3,7 @@ Type=Action
 Name=Open in Foot
 Name[pt_BR]=Abrir no Foot
 Tooltip=Open folder in Foot terminal
+Tooltip[pt_BR]=Abrir a pasta no terminal Foot
 Icon=foot
 Profiles=dir
 

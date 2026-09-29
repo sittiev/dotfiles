@@ -365,10 +365,10 @@ printf '%s' "$FOC" > "$HOME/.cache/slurp-color"
 cat > "$HOME/.config/sway/scripts/swaynag-exit.sh" <<EOF
 #!/usr/bin/dash
 set -eu
-exec swaynag -t warning -m 'Sair do Sway?' \
+exec swaynag -t warning -m 'Sair do Sway? A sessão será encerrada.' \
   --background=$BG --border=$FOC --border-bottom=$FOC \
   --text=$FG --button-background=$FOC --button-text=$BG \
-  -B 'Sim, sair' 'swaymsg exit'
+  -B 'Sair' 'swaymsg exit'
 EOF
 chmod 0755 "$HOME/.config/sway/scripts/swaynag-exit.sh"
 

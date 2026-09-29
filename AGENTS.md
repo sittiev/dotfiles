@@ -145,7 +145,9 @@ confirmation; never push automatically.
 
 ## 10. UX writing (user-visible strings)
 
-Applies to tofi menus, swaynag prompts, mako OSD, notifications — PT-BR.
+Applies to tofi menus, swaynag prompts, mako OSD, notifications.
+Todo texto visível ao usuário é em português do Brasil (pt-BR), sem
+exceção; inglês só em código, logs, comandos e nomes de pacote.
 
 - Purge fillers: no adverbs/pleasantries ("rapidamente", "simplesmente",
   "desculpe"); keep a modifier only if it differentiates the action.

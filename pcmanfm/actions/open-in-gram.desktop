@@ -3,6 +3,7 @@ Type=Action
 Name=Open in Gram
 Name[pt_BR]=Abrir no Gram
 Tooltip=Open file or folder in Gram
+Tooltip[pt_BR]=Abrir o arquivo ou a pasta no Gram
 Icon=gram
 Profiles=all
 

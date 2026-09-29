@@ -5,7 +5,7 @@
 set -eu
 
 command -v waylock >/dev/null 2>&1 || {
-    notify-send "Waylock" "waylock não instalado (docs/PENDING.md)." 2>/dev/null || true
+    notify-send "Bloqueio indisponível" "Para bloquear a tela, instale waylock: sudo pacman -S waylock." 2>/dev/null || true
     exit 1
 }
 
@@ -31,7 +31,7 @@ mode=$(cat "$c/theme-mode" 2>/dev/null || printf '%s' dark)
 pal="$c/theme-palette.$mode"
 [ -f "$pal" ] || pal="$c/theme-palette"
 [ -f "$pal" ] || {
-    notify-send "Waylock" "Paleta ausente; rode theme.sh." 2>/dev/null || true
+    notify-send "Tema indisponível" "Para bloquear com as cores do tema, rode theme.sh primeiro." 2>/dev/null || true
     exit 1
 }
 # shellcheck disable=SC1090

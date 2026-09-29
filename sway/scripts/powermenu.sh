@@ -8,21 +8,21 @@ script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 
 pick() {
     if [ -n "${TOFI_PICK:-}" ]; then printf '%s\n' "$TOFI_PICK"; return 0; fi
-    printf '%s\n' "Suspender em 5min" "Suspender em 10min" "Suspender em 15min" \
-        "Suspender em 30min" "Nunca suspender" "Tampa: suspender" "Tampa: nada" \
+    printf '%s\n' "Suspender em 5 min" "Suspender em 10 min" "Suspender em 15 min" \
+        "Suspender em 30 min" "Nunca suspender" "Tampa fechada: suspender" "Tampa fechada: só desligar a tela" \
         | "$script_dir/tofi-safe.sh" --prompt-text "Energia: " || true
 }
 
 choice=$(pick)
 [ -n "$choice" ] || exit 0
 case "$choice" in
-    "Suspender em 5min") printf '300' > "$HOME/.cache/suspend-timeout" ;;
-    "Suspender em 10min") printf '600' > "$HOME/.cache/suspend-timeout" ;;
-    "Suspender em 15min") printf '900' > "$HOME/.cache/suspend-timeout" ;;
-    "Suspender em 30min") printf '1800' > "$HOME/.cache/suspend-timeout" ;;
+    "Suspender em 5 min") printf '300' > "$HOME/.cache/suspend-timeout" ;;
+    "Suspender em 10 min") printf '600' > "$HOME/.cache/suspend-timeout" ;;
+    "Suspender em 15 min") printf '900' > "$HOME/.cache/suspend-timeout" ;;
+    "Suspender em 30 min") printf '1800' > "$HOME/.cache/suspend-timeout" ;;
     "Nunca suspender") printf '0' > "$HOME/.cache/suspend-timeout" ;;
-    "Tampa: suspender") printf 'suspend' > "$HOME/.cache/lid-action" ; exit 0 ;;
-    "Tampa: nada") printf 'nada' > "$HOME/.cache/lid-action"; exit 0 ;;
+    "Tampa fechada: suspender") printf 'suspend' > "$HOME/.cache/lid-action" ; exit 0 ;;
+    "Tampa fechada: só desligar a tela") printf 'nada' > "$HOME/.cache/lid-action"; exit 0 ;;
     *) exit 0 ;;
 esac
 exec "$script_dir/idle.sh"

@@ -3,6 +3,7 @@ Type=Action
 Name=Open in Micro
 Name[pt_BR]=Abrir no Micro
 Tooltip=Edit file in Micro (inside Foot)
+Tooltip[pt_BR]=Editar o arquivo no Micro (no Foot)
 Icon=micro
 Profiles=files
 

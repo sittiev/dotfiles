@@ -30,7 +30,7 @@ if [ -z "${SRC:-}" ] || [ ! -f "$SRC" ]; then
 fi
 
 if [ ! -f "$HOME/.cache/theme-palette" ]; then
-    notify-send "tofi" "Paleta não encontrada (~/.cache/theme-palette). Rode theme.sh primeiro." 2>/dev/null || true
+    notify-send "Tofi indisponível" "Para aplicar o layout, rode theme.sh primeiro." 2>/dev/null || true
     exit 1
 fi
 # shellcheck disable=SC1091

@@ -33,7 +33,7 @@ out() { # <nome> [enable|disable] [pos X Y]
     unset _n _st _p1 _p2
 }
 
-notify() { notify-send "Monitores" "$1" 2>/dev/null || true; }
+notify() { notify-send "$1" "$2" 2>/dev/null || true; }
 
 cmd=${1:-auto}
 case "$cmd" in
@@ -51,25 +51,25 @@ case "$cmd" in
         out "$HDMI" enable 0 0
         out "$LAPTOP" disable
         swaymsg focus output "$HDMI" >/dev/null 2>&1 || true
-        notify "Só HDMI ($HDMI, esquerda)"
+        notify "Só HDMI" "Notebook desligado."
         ;;
     laptop)
         out "$LAPTOP" enable 0 0
         out "$HDMI" disable
         swaymsg focus output "$LAPTOP" >/dev/null 2>&1 || true
-        notify "Só notebook ($LAPTOP)"
+        notify "Só notebook" "Monitor externo desligado."
         ;;
     extend)
         out "$HDMI" enable 0 0
         out "$LAPTOP" enable 1920 0
         swaymsg focus output "$HDMI" >/dev/null 2>&1 || true
-        notify "Estendido: HDMI esquerda + notebook direita"
+        notify "Monitores estendidos" "HDMI à esquerda, notebook à direita."
         ;;
     mirror)
         out "$HDMI" enable 0 0
         out "$LAPTOP" enable 0 0
         swaymsg focus output "$HDMI" >/dev/null 2>&1 || true
-        notify "Espelhado"
+        notify "Monitores espelhados" "A mesma imagem nos dois."
         ;;
     lid)
         case "${2:-}" in

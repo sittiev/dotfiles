@@ -38,7 +38,7 @@ is_on() { [ -f "$active_file" ]; }
 
 mode_on() {
     if is_on; then
-        notify "já ativo"
+        notify "Já ativo. Para jogar, use gamemoderun."
         return 0
     fi
     mkdir -p "$cache_dir"
@@ -98,17 +98,17 @@ mode_on() {
 
     printf 'on\n' > "$active_file"
     if [ "$swap_state" = off ]; then
-        notify "ON — performance, swap off, sem idle/suspend, DND. Lance com gamemoderun."
+        notify "Ativado: performance, sem suspensão e sem notificações. Para jogar, use gamemoderun."
     elif [ "$swap_state" = low ]; then
-        notify "ON — performance, swappiness 10 (swapoff falhou: feche o browser antes)."
+        notify "Ativado: performance, sem suspensão. Para desligar o swap, feche o navegador e ative de novo."
     else
-        notify "ON — performance, sem idle/suspend, DND. Swap intocado (sem sudo? veja o cabeçalho)."
+        notify "Ativado: performance, sem suspensão. Para desligar o swap, configure sudo sem senha para swapoff."
     fi
 }
 
 mode_off() {
     if ! is_on; then
-        notify "já desligado"
+        notify "Já desligado."
         return 0
     fi
 
@@ -144,9 +144,9 @@ mode_off() {
     autotiling-rs >/dev/null 2>&1 &
 
     if [ "$(cat "$wlsunset_file" 2>/dev/null || printf '0')" = 1 ]; then
-        notify "OFF — perfil restaurado. Night-light estava ON: reative com Super+n."
+        notify "Desativado: perfil restaurado. Para voltar a luz noturna, pressione Super+n."
     else
-        notify "OFF — perfil restaurado."
+        notify "Desativado: perfil restaurado."
     fi
     rm -f "$active_file"
 }

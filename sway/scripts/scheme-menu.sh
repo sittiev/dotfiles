@@ -9,11 +9,11 @@ json="$HOME/.config/sway/schemes/gogh-themes-min.json"
 state="${XDG_CACHE_HOME:-$HOME/.cache}/theme-scheme"
 
 [ -f "$json" ] || {
-    notify-send "Esquemas" "Biblioteca de esquemas não encontrada." 2>/dev/null || true
+    notify-send "Biblioteca de esquemas ausente" "Para listar esquemas, rode scripts/update-schemes.sh." 2>/dev/null || true
     exit 1
 }
 command -v jq >/dev/null 2>&1 || {
-    notify-send "Esquemas" "jq ausente; impossível listar esquemas." 2>/dev/null || true
+    notify-send "Lista de esquemas indisponível" "Para listar esquemas, instale jq: sudo pacman -S jq." 2>/dev/null || true
     exit 1
 }
 
@@ -28,7 +28,7 @@ else
 fi
 unset _sorted
 [ -n "$names" ] || {
-    notify-send "Esquemas" "Nenhum esquema disponível." 2>/dev/null || true
+    notify-send "Nenhum esquema encontrado" "Para listar esquemas, restaure a biblioteca com scripts/update-schemes.sh." 2>/dev/null || true
     exit 1
 }
 
@@ -43,7 +43,7 @@ fi
 name=$(printf '%s' "$choice" | sed -e 's/ (dark)$//' -e 's/ (light)$//')
 
 if ! jq -e --arg n "$name" 'any(.[]; .name == $n)' "$json" >/dev/null 2>&1; then
-    notify-send "Esquemas" "Esquema inválido: $choice" 2>/dev/null || true
+    notify-send "Esquema inválido" "Para aplicar, escolha um nome da lista. Recebido: $choice" 2>/dev/null || true
     exit 1
 fi
 

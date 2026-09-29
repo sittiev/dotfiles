@@ -10,7 +10,7 @@ set -eu
 # shellcheck disable=SC1091
 . "${0%/*}/nightlib.sh"
 
-readonly MENU_PROMPT="Noite: "
+readonly MENU_PROMPT="Luz noturna: "
 
 # is_temp VALUE: true iff VALUE is an integer in wlsunset range.
 is_temp() {
@@ -25,8 +25,8 @@ pick_choice() {
         printf '%s\n' "$TOFI_PICK"
         return 0
     fi
-    printf '%s\n' "1000K Noite" "2000K" "3000K" "4500K" \
-        "6500K Dia" "Gamma 0.8 (Escurecer)" "Gamma 1.0 (Normal)" "Desligar" \
+    printf '%s\n' "1000 K — noite" "2000 K" "3000 K" "4500 K" \
+        "6500 K — dia" "Escurecer (gamma 0.8)" "Normal (gamma 1.0)" "Desligar" \
         | "$(CDPATH= cd -- "${0%/*}" && pwd)/tofi-safe.sh" --prompt-text "$MENU_PROMPT" || true
 }
 
@@ -39,16 +39,16 @@ apply_choice() {
         *) current="" ;;
     esac
     case $choice in
-        "1000K Noite") night_apply 1000 ;;
-        "2000K") night_apply 2000 ;;
-        "3000K") night_apply 3000 ;;
-        "4500K") night_apply 4500 ;;
-        "6500K Dia" | "Desligar") night_off || true ;;
-        "Gamma 0.8"*)
+        "1000 K — noite") night_apply 1000 ;;
+        "2000 K") night_apply 2000 ;;
+        "3000 K") night_apply 3000 ;;
+        "4500 K") night_apply 4500 ;;
+        "6500 K — dia" | "Desligar") night_off || true ;;
+        "Escurecer"*)
             if ! is_temp "$current"; then current=1000; fi
             night_apply "$current" 0.8
             ;;
-        "Gamma 1.0"*)
+        "Normal"*)
             if ! is_temp "$current"; then current=1000; fi
             night_apply "$current" 1.0
             ;;

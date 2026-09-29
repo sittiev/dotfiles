@@ -75,7 +75,7 @@ input type:pointer {
     bindsym $mod+Shift+c reload
 
     # Exit sway
-    bindsym $mod+Shift+e exec swaynag -t warning -m 'You pressed the exit shortcut. Do you really want to exit sway? This will end your Wayland session.' -B 'Yes, exit sway' 'swaymsg exit'
+    bindsym $mod+Shift+e exec swaynag -t warning -m 'Sair do Sway? A sessão será encerrada.' -B 'Sair' 'swaymsg exit'
 
 # Moving around:
     bindsym $mod+$left focus left

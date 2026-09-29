@@ -7,11 +7,11 @@ config=$config_dir/config.ini
 theme=$HOME/.config/sway/scripts/theme.sh
 
 if ! command -v waypaper >/dev/null 2>&1; then
-    notify-send "Papel de parede" "Instale waypaper (yay -S waypaper)." 2>/dev/null || true
+    notify-send "Papel de parede indisponível" "Para trocar a imagem, instale waypaper: yay -S waypaper." 2>/dev/null || true
     exit 127
 fi
 if ! command -v swaybg >/dev/null 2>&1; then
-    notify-send "Papel de parede" "Instale swaybg (sudo pacman -S swaybg)." 2>/dev/null || true
+    notify-send "Papel de parede indisponível" "Para mostrar a imagem, instale swaybg: sudo pacman -S swaybg." 2>/dev/null || true
     exit 127
 fi
 

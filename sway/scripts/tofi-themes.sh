@@ -6,7 +6,7 @@ script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 themes="$HOME/.config/tofi/themes"
 
 [ -d "$themes" ] || {
-    notify-send "Tofi" "Pasta de temas não encontrada." 2>/dev/null || true
+    notify-send "Temas do Tofi indisponíveis" "Para escolher um layout, restaure ~/.config/tofi/themes." 2>/dev/null || true
     exit 1
 }
 
@@ -23,14 +23,14 @@ for n in $names; do
 done
 names=$kept
 [ -n "$names" ] || {
-    notify-send "Tofi" "Nenhum tema disponível." 2>/dev/null || true
+    notify-send "Nenhum tema do Tofi" "Para escolher um layout, adicione um config em ~/.config/tofi/themes." 2>/dev/null || true
     exit 1
 }
 
 if [ -n "${TOFI_PICK:-}" ]; then
     choice=$TOFI_PICK
 else
-    choice=$(printf '%s\n' "$names" | "$script_dir/tofi-safe.sh" --config "$HOME/.config/tofi/config" --prompt-text "Tema tofi: " || true)
+    choice=$(printf '%s\n' "$names" | "$script_dir/tofi-safe.sh" --config "$HOME/.config/tofi/config" --prompt-text "Tema: " || true)
 fi
 [ -n "$choice" ] || exit 0
 choice=$(basename -- "$choice")
