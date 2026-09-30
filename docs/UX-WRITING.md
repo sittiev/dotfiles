@@ -18,7 +18,7 @@ Fontes consultadas (§2 do `AGENTS.md`):
    `notify-send "Bluetooth indisponível" "Para configurar, instale overskride: …"`.
 2. **Sem enchimento.** Sem advérbio/amenidade ("rapidamente",
    "simplesmente", "desculpe", "Sim," em botão). Mantém modificador só se
-   diferencia a ação ("só desligar a tela" vs "suspender").
+   diferencia a ação ("apenas desligar a tela" vs "suspender").
 3. **Porquê antes da ação: "Para X, faça Y".**
    Erro sempre = o que aconteceu + como corrigir, sem culpa, sem "ops!"/"nós".
 4. **Verbos nos botões e itens de ação** ("Sair", "Suspender", "Desligar"),
@@ -35,22 +35,29 @@ Fontes consultadas (§2 do `AGENTS.md`):
    - Item de menu: infinitivo ou substantivo, primeira maiúscula
      ("Suspender em 5 min").
    - Botão swaynag: verbo ("Sair").
+8. **Item de lista filtrável é ASCII digitável.** O tofi filtra por
+   substring sem normalizar acento e com `require-match`, então um
+   rótulo com acento nunca casa com o que se digita ("horario" diferente
+   de "Horario" acentuado) e o Enter morre em silêncio. Filtro usa
+   sinônimo ASCII ("Hora", "Avisos", "Itens copiados", "Apenas HDMI");
+   acento vive só em título/corpo de notificação e prompt (exibição,
+   sem digitação).
 
 ## 2. Mini word list (mesmo termo em todo lugar)
 
 | Conceito | Usar | Não usar |
 |---|---|---|
 | Toggle geral | ativado / desativado | ON/OFF, ligado, habilitado |
-| Notificações (feminino plural) | ativadas / silenciadas | ON/OFF, habilitadas, mutadas |
+| Avisos (masculino plural) | ativados / silenciados | ON/OFF, habilitados, mutados |
 | Sair da sessão | Sair | Sim sair, Yes exit, encerrar (variação) |
 | Suspender | Suspender | Sleep, Dormir |
 | Tampa fechada | Tampa fechada: … | Tampa: …, Lid |
 | Luz noturna | Luz noturna (item), luz noturna (corpo) | Noite (sozinho), Night, wlsunset |
 | Esquemas | Esquema (prompt), esquemas (lista) | Themes, nomes com variant no título |
 | Layouts tofi | Tema (prompt), Temas do Tofi (erro) | tofi minúsculo, Tema tofi |
-| Clipboard | Área de transferência | Clipboard |
+| Clipboard | Itens copiados (item do hub), Área de transferência (prompt) | Clipboard |
 | Energia | Energia | Power, Powermenu |
-| Monitores | Monitores (menu/prompt), Só HDMI / Só notebook / estendidos / espelhados (estados) | Display, Screen, Monitor (singular no prompt) |
+| Monitores | Monitores (menu/prompt), Apenas HDMI / Apenas notebook (filtro), Só HDMI / Só notebook (títulos), estendidos / espelhados (estados) | Display, Screen, Monitor (singular no prompt) |
 | Bloqueio | Bloqueio indisponível / bloquear a tela | Waylock (no texto visível), lock |
 | Papel de parede | Papel de parede indisponível / trocar a imagem / mostrar a imagem | Wallpaper, waypaper/swaybg (no texto) |
 | Instalar dep. | Para configurar, instale X: <comando> | X não instalado (…), parêntese solto |
@@ -60,7 +67,7 @@ Fontes consultadas (§2 do `AGENTS.md`):
 
 **Notificação de confirmação** (toggle, monitor, OSD): título = fato.
 Corpo só se acrescenta estado útil; nunca repete o título.
-`Notificações ativadas` (sem corpo),
+`Avisos ativados` (sem corpo),
 `Só HDMI` + `Notebook desligado.`
 
 **Notificação de erro**: título = o que aconteceu; corpo = `Para X, <comando>`.
@@ -86,7 +93,8 @@ como fallback.
 |---|---|---|
 | `sway/scripts/tofi-menu.sh` (lista) | Tema claro/escuro; Clipboard; Data atual; Rede (iwgtk) | Claro ou escuro; Área de transferência; Data; Rede |
 | `tofi-menu.sh` (prompt) | `Sway: ` | `Ações: ` |
-| `tofi-menu.sh` (toggle) | `"Notificações" "Ativadas"` | `"Notificações ativadas"` (título-fato, sem corpo) |
+| `tofi-menu.sh` (toggle) | `"Notificações" "Ativadas"` | `"Avisos ativados"` (título-fato, sem corpo) |
+| `tofi-menu.sh` (filtro ASCII, princípio 8) | `Área de transferência`; `Notificações`; `Horário` | `Itens copiados`; `Avisos`; `Hora` (tofi não normaliza acento; com `require-match` o Enter morria em silêncio) |
 | `tofi-menu.sh` (erros) | `"Bluetooth" "overskride não instalado (…)"` | `"Bluetooth indisponível" "Para configurar, instale overskride: …"` ; idem Rede/iwgtk |
 | `tofi-menu.sh` (data) | `"Data atual"` | `"Data"` |
 | `sway/scripts/scheme-menu.sh` | `"Esquemas" "Biblioteca…não encontrada."` (repete) | `"Biblioteca de esquemas ausente" "Para listar esquemas, rode scripts/update-schemes.sh."`; idem jq/Nenhum/Inválido (com `Recebido: $choice`) |
@@ -96,9 +104,9 @@ como fallback.
 | `sway/scripts/wallpaper.sh` | `"Papel de parede" "Instale waypaper (…)"` | `"Papel de parede indisponível" "Para trocar a imagem, instale waypaper: …"`; idem swaybg/mostrar |
 | `sway/scripts/waylock.sh` | `"Waylock" "waylock não instalado (…)"` | `"Bloqueio indisponível" "Para bloquear a tela, instale waylock: …"`; `"Tema indisponível" "Para bloquear com as cores do tema, rode theme.sh primeiro."` |
 | `sway/scripts/tofi-apply.sh` | `"tofi" "Paleta não encontrada (…). Rode…"` | `"Tofi indisponível" "Para aplicar o layout, rode theme.sh primeiro."` (caminho fica só no stderr) |
-| `sway/scripts/powermenu.sh` | `5min`, `Tampa: suspender`, `Tampa: nada` | `5 min`, `Tampa fechada: suspender`, `Tampa fechada: só desligar a tela` |
+| `sway/scripts/powermenu.sh` | `5min`, `Tampa: suspender`, `Tampa: nada` | `5 min`, `Tampa fechada: suspender`, `Tampa fechada: apenas desligar a tela` (filtro ASCII, princípio 8) |
 | `sway/scripts/nightmenu.sh` | `1000K Noite`, `Gamma 0.8 (Escurecer)`, prompt `Noite: ` | `1000 K — noite`, `Escurecer (gamma 0.8)`, prompt `Luz noturna: ` |
-| `sway/scripts/monitormenu.sh` | prompt `Monitor: ` | prompt `Monitores: ` |
+| `sway/scripts/monitormenu.sh` | prompt `Monitor: ` | prompt `Monitores: `; filtro `Apenas HDMI` / `Apenas notebook` (títulos seguem `Só HDMI` / `Só notebook`, princípio 8) |
 | `sway/scripts/clipboard.sh` | prompt `Clipboard: ` | prompt `Área de transferência: ` |
 | `sway/config` + `render.sh` (swaynag) | EN `You pressed the exit shortcut…` / `Yes, exit sway`; `Sair do Sway?` / `Sim, sair` | `Sair do Sway? A sessão será encerrada.` / `Sair` nos dois |
 | `pcmanfm/actions/*.desktop` | só `Tooltip` em inglês | + `Tooltip[pt_BR]` com verbo |

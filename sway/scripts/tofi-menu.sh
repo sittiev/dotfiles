@@ -9,11 +9,11 @@ Navegador
 Tema do Tofi
 Claro ou escuro
 Esquemas de cores
-Área de transferência
+Itens copiados
 Emoji
 Luz noturna
-Notificações
-Horário
+Avisos
+Hora
 Data
 Bateria
 Yambar
@@ -34,18 +34,18 @@ case "$choice" in
     'Tema do Tofi') exec "$script_dir/tofi-themes.sh" ;;
     'Claro ou escuro') exec "$script_dir/theme-toggle.sh" toggle ;;
     'Esquemas de cores') exec "$script_dir/scheme-menu.sh" ;;
-    'Área de transferência') exec "$script_dir/clipboard.sh" ;;
+    'Itens copiados') exec "$script_dir/clipboard.sh" ;;
     Emoji) exec "$script_dir/emoji.sh" ;;
     'Luz noturna') exec "$script_dir/nightlight.sh" ;;
-    Notificações)
+    Avisos)
         if makoctl mode 2>/dev/null | grep -q do-not-disturb; then
             makoctl mode -r do-not-disturb 2>/dev/null || true
-            notify-send "Notificações ativadas" 2>/dev/null || true
+            notify-send "Avisos ativados" 2>/dev/null || true
         else
-            notify-send "Notificações silenciadas" 2>/dev/null || true
+            notify-send "Avisos silenciados" 2>/dev/null || true
             makoctl mode -a do-not-disturb 2>/dev/null || true
         fi ;;
-    Horário) notify-send "Horário" "$(date '+%H:%M')" ;;
+    Hora) notify-send "Hora" "$(date '+%H:%M')" ;;
     'Data') notify-send "Data" "$(date '+%A, %d de %B de %Y')" ;;
     Bateria)
         capacity=$(cat /sys/class/power_supply/BAT0/capacity 2>/dev/null || printf '?')
