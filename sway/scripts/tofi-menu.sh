@@ -9,7 +9,7 @@ Navegador
 Tema do Tofi
 Claro ou escuro
 Esquemas de cores
-Itens copiados
+Area de transferencia
 Emoji
 Luz noturna
 Avisos
@@ -34,7 +34,7 @@ case "$choice" in
     'Tema do Tofi') exec "$script_dir/tofi-themes.sh" ;;
     'Claro ou escuro') exec "$script_dir/theme-toggle.sh" toggle ;;
     'Esquemas de cores') exec "$script_dir/scheme-menu.sh" ;;
-    'Itens copiados') exec "$script_dir/clipboard.sh" ;;
+    'Area de transferencia') exec "$script_dir/clipboard.sh" ;;
     Emoji) exec "$script_dir/emoji.sh" ;;
     'Luz noturna') exec "$script_dir/nightlight.sh" ;;
     Avisos)
