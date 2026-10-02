@@ -897,16 +897,16 @@ PY
     fi
 
     # ---- GTK: preferência (gsettings + settings.ini + GTK2 + xsettingsd) ----
-    # PCManFM 1.4 usa GTK3; Ant/Ant-Nebula (EliverLara, ~/.themes) cobrem
-    # GTK2/3/4. Qogir segue como fallback caso o tema local suma.
+    # PCManFM 1.4 usa GTK3; Qogir fornece as variantes GTK3.
+    # Default é somente o fallback caso o tema local não esteja disponível.
     if [ "$mode" = dark ]; then
         gsettings set org.gnome.desktop.interface color-scheme prefer-dark 2>/dev/null || true
-        GTK_THEME="$(gtk_theme_pick Default Ant-Nebula Qogir-Dark)"
+        GTK_THEME="$(gtk_theme_pick Default Qogir-Dark)"
         ICON_THEME="$(icon_theme_pick Papirus-Dark yet-another-monochrome-icon-set)"
         GTK_PREFER="true"
     else
         gsettings set org.gnome.desktop.interface color-scheme prefer-light 2>/dev/null || true
-        GTK_THEME="$(gtk_theme_pick Default Ant Qogir-Light)"
+        GTK_THEME="$(gtk_theme_pick Default Qogir-Light)"
         ICON_THEME="$(icon_theme_pick Papirus-Light yet-another-monochrome-icon-set)"
         GTK_PREFER="false"
     fi
