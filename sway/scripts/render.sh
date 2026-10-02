@@ -20,10 +20,12 @@ scheme_init "$MODE"
 : "${BASE:=$BG}"
 : "${FAIL:=$ACCENT}"
 
-# Yambar: current top clock-only layout, palette injected only. Sem margins:
-# o espacamento e so via gaps do sway (inner/outer). Sem monitor fixo: com
-# HDMI conectado o eDP fica desligado (outputs.sh auto), entao ha um unico
-# output ativo e a bar vai sempre pro principal.
+# Yambar: default so horario; clique no horario alterna para data+horario
+# via on-click nativo da particula (yambar-particles(5)). Estado em
+# $XDG_RUNTIME_DIR/yambar-clock-full (some no logout => volta ao default).
+# Sem margins: o espacamento e so via gaps do sway (inner/outer). Sem monitor
+# fixo: com HDMI conectado o eDP fica desligado (outputs.sh auto), entao ha
+# um unico output ativo e a bar vai sempre pro principal.
 # FindersKeepers sem USE_TYPO_METRICS: 20px rende 15.8px de caixa win, cabe nos 18px.
 # A fonte nao tem acentos, entao o fallback por glifo do pango desenha os
 # acentuados numa segunda fonte.
@@ -40,12 +42,14 @@ bar:
   font-shaping: none
   spacing: 4
   right:
-    - clock:
-        time-format: "%a %d %b, %H:%M"
+    - script:
+        path: ~/.config/sway/scripts/yambar-clock.sh
+        poll-interval: 1000
         content:
           string:
-            text: "{time}"
+            text: "{display}"
             font: "FindersKeepers:size=20"
+            on-click: ~/.config/sway/scripts/yambar-clock-toggle.sh
             deco: {background: {color: ${YBG}ff}}
 EOF
 
