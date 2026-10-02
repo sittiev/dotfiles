@@ -223,6 +223,7 @@ exec_always ~/.config/sway/scripts/outputs.sh auto >/dev/null 2>&1
 bindswitch --reload --locked lid:on exec ~/.config/sway/scripts/outputs.sh lid on
 bindswitch --reload --locked lid:off exec ~/.config/sway/scripts/outputs.sh lid off
 exec_always ~/.config/sway/scripts/idle.sh
+exec_always ~/.config/sway/scripts/battery.sh
 exec /usr/bin/lxqt-policykit-agent
 exec swaymsg focus output HDMI-A-1 >/dev/null 2>&1
 
