@@ -180,9 +180,9 @@ mouse_warping output
 # "digita" (z/x no osu! contam) fazia o jogo re-confinar o ponteiro e o
 # cursor teleportava para o canto da tela. O jogo cuida do cursor dele.
 
-# Gaps: 40 dentro, 0 fora. O yambar nao tem margins (render.sh nao emite
+# Gaps: 50 dentro, 0 fora. O yambar nao tem margins (render.sh nao emite
 # nenhuma), entao todo espacamento vem daqui.
-gaps inner 40
+gaps inner 50
 gaps outer 0
 # --i3 hides single-child tab/stack bars.
 titlebar_border_thickness 0
