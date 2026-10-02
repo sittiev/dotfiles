@@ -28,6 +28,52 @@ case "$(cat "$HOME/.cache/ui-font" 2>/dev/null || printf 'noto')" in
     *) UI="Noto Sans" ;;
 esac
 MONO="Noto Sans Mono"
+# Tamanho da fonte nos apps (GTK/Qt): 11pt, padrao desktop.
+UISIZE=11
+
+# ---- Fonte nos apps GTK/Qt (ui-font.sh) ----
+# GTK3/4: gtk-font-name no settings.ini (replace-or-append, symlink-safe).
+for _gv in 3.0 4.0; do
+    _gi="$HOME/.config/gtk-${_gv}/settings.ini"
+    [ -f "$_gi" ] || continue
+    _gtmp=$_gi.tmp.$$
+    awk -v fnt="gtk-font-name=$UI $UISIZE" '
+        /^gtk-font-name=/ { if (!t++) print fnt; next }
+        { print }
+        END { if (!t) print fnt }
+    ' "$_gi" > "$_gtmp"
+    cat "$_gtmp" > "$_gi"
+    rm -f "$_gtmp"
+done
+# GTK2 (pcmanfm): gtk-font-name no gtkrc, fora do bloco wal do theme-mode.
+for _g2 in "$HOME/.gtkrc-2.0" "$HOME/.config/gtkrc-2.0"; do
+    [ -f "$_g2" ] || continue
+    _gtmp=$_g2.tmp.$$
+    awk -v fnt="gtk-font-name=\"$UI $UISIZE\"" '
+        /^gtk-font-name=/ { if (!t++) print fnt; next }
+        { print }
+        END { if (!t) print fnt }
+    ' "$_g2" > "$_gtmp"
+    cat "$_gtmp" > "$_g2"
+    rm -f "$_gtmp"
+done
+unset _gv _gi _g2 _gtmp
+# fontconfig: sans-serif generico resolve para a fonte da UI. E o mesmo que
+# o "Create fonts.conf" do qt5ct faz — cobre Qt (qt6ct nao guarda fonte no
+# .conf) e qualquer app que peca a familia generica. Pedidos explicitos
+# (mako/tofi/yambar/foot) nao sao afetados pelo alias.
+mkdir -p "$HOME/.config/fontconfig"
+cat > "$HOME/.config/fontconfig/fonts.conf" <<EOF
+<?xml version="1.0"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<!-- gerado por render.sh (ui-font.sh) — nao editar -->
+<fontconfig>
+  <alias>
+    <family>sans-serif</family>
+    <prefer><family>$UI</family></prefer>
+  </alias>
+</fontconfig>
+EOF
 
 # Yambar: default so horario; clique no horario alterna para data+horario
 # via on-click nativo da particula (yambar-particles(5)). Estado em

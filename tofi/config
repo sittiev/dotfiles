@@ -18,11 +18,11 @@ prompt-background-padding = 0
 placeholder-background-padding = 0
 
 # fundo transparente: padding só dá respiro (ordem: top,right,bottom,left)
-input-background-padding = 0,0,4,0
+input-background-padding = 0,0,0,0
 
 default-result-background-padding = 0
 
-selection-background-padding = 6,8
+selection-background-padding = 0
 
 
 ### Text cursor
