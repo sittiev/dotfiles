@@ -4,7 +4,7 @@ bar:
   location: bottom
   background: 00000000
   foreground: 3A3936ff
-  font: "Noto Sans Mono:size=12"
+  font: "Noto Sans:size=12"
   font-shaping: none
   spacing: 4
   right:

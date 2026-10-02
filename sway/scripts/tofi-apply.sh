@@ -86,12 +86,18 @@ render_layout() {
     ' "$_rl_src" > "$_rl_dest.tmp"
 
     # outline 0 = sem "borda preta" padrão 4px #080800
+    # Fonte da UI (ui-font.sh; mesma selecao do render.sh). Por NOME de
+    # familia, nunca por caminho: com caminho absoluto o Pango nao monta a
+    # cadeia de fallback do fontconfig e todo emoji vira caixa vazia.
+    # Fonte unica (rampa MS/Apple); tamanhos por layout (12/14/18/28).
+    case "$(cat "$HOME/.cache/ui-font" 2>/dev/null || printf 'noto')" in
+        sf) _rl_ui="SF Pro Display" ;;
+        segoe) _rl_ui="Segoe UI" ;;
+        *) _rl_ui="Noto Sans" ;;
+    esac
     cat >> "$_rl_dest.tmp" <<EOF
 # tofi-colors-begin (gerado por tofi-apply.sh — nao editar este bloco)
-# FONT por NOME de familia, nunca por caminho: com caminho absoluto o Pango nao
-# monta a cadeia de fallback do fontconfig e todo emoji vira caixa vazia.
-# Fonte unica Noto (rampa MS/Apple); tamanhos por layout (12/14/18/28).
-font = Noto Sans
+font = $_rl_ui
 text-color = #$FG
 background-color = #$BG
 selection-color = #$_TOFI_SEL

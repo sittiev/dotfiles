@@ -27,9 +27,6 @@ require-match = true
 auto-accept-single = false
 hide-input = false
 # tofi-colors-begin (gerado por tofi-apply.sh — nao editar este bloco)
-# FONT por NOME de familia, nunca por caminho: com caminho absoluto o Pango nao
-# monta a cadeia de fallback do fontconfig e todo emoji vira caixa vazia.
-# Fonte unica Noto (rampa MS/Apple); tamanhos por layout (12/14/18/28).
 font = Noto Sans
 text-color = #3a3936
 background-color = #e8e7e3

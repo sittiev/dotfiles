@@ -20,11 +20,20 @@ scheme_init "$MODE"
 : "${BASE:=$BG}"
 : "${FAIL:=$ACCENT}"
 
+# Fonte da UI (ui-font.sh): noto=padrao, sf, segoe. Mono tabular fixo em
+# Noto Sans Mono (SF/Segoe instaladas nao tem variante mono).
+case "$(cat "$HOME/.cache/ui-font" 2>/dev/null || printf 'noto')" in
+    sf) UI="SF Pro Display" ;;
+    segoe) UI="Segoe UI" ;;
+    *) UI="Noto Sans" ;;
+esac
+MONO="Noto Sans Mono"
+
 # Yambar: default so horario; clique no horario alterna para data+horario
 # via on-click nativo da particula (yambar-particles(5)). Estado em
 # $XDG_RUNTIME_DIR/yambar-clock-full (some no logout => volta ao default).
-# Tipografia (MS/Apple): fonte unica Noto, relogio em mono tabular para nao
-# pulsar a largura. Noto tem caixa win de 1.362em: size=12 rende 16.3px,
+# Tipografia (MS/Apple): fonte da UI via ui-font.sh (Noto/SF/Segoe), relogio
+# em mono tabular para nao pulsar a largura. Noto tem caixa win de 1.362em: size=12 rende 16.3px,
 # cabe nos 18px da barra (size=14 daria 19.1px e cortaria).
 # Sem margins: o espacamento e so via gaps do sway (inner/outer). Sem monitor
 # fixo: com HDMI conectado o eDP fica desligado (outputs.sh auto), entao ha
@@ -38,7 +47,7 @@ bar:
   location: bottom
   background: 00000000
   foreground: ${YF}ff
-  font: "Noto Sans Mono:size=12"
+  font: "${UI}:size=12"
   font-shaping: none
   spacing: 4
   right:
@@ -48,13 +57,13 @@ bar:
         content:
           string:
             text: "{display}"
-            font: "Noto Sans Mono:size=12"
+            font: "${MONO}:size=12"
             on-click: ~/.config/sway/scripts/yambar-clock-toggle.sh
             deco: {background: {color: ${YBG}ff}}
 EOF
 
-# Mako: fonte unica Noto (rampa MS: Body 14; OSDs Caption 12, o minimo).
-# Anchor bottom-right estilo Windows, mesmo com a bar embaixo
+# Mako: fonte da UI via ui-font.sh (rampa MS: Body 14; OSDs Caption 12,
+# o minimo). Anchor bottom-right estilo Windows, mesmo com a bar embaixo
 # (overlay passa por cima).
 # urgency=critical usa a borda FAIL para destacar (ex.: bateria muito fraca).
 cat > "$HOME/.config/mako/config" <<EOF
@@ -65,7 +74,7 @@ border-color=#$BG
 border-size=0
 border-radius=0
 margin=14
-font=Noto Sans 14
+font=$UI 14
 markup=1
 anchor=bottom-right
 default-timeout=8000
@@ -83,7 +92,7 @@ text-color=#$FG
 border-color=#$ACCENT
 border-size=1
 border-radius=0
-font=Noto Sans Mono 12
+font=$MONO 12
 anchor=center
 text-alignment=center
 width=152
@@ -95,7 +104,7 @@ text-color=#$FG
 border-color=#$ACCENT
 border-size=1
 border-radius=0
-font=Noto Sans Mono 12
+font=$MONO 12
 anchor=center
 text-alignment=center
 width=172
