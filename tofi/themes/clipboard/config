@@ -2,7 +2,7 @@
 # Diferenca do dmenu: resultados em coluna e janela centralizada, porque o
 # clipboard tem 50 entradas e nao cabe em uma barra de 28px.
 # Renderizado em ~/.config/tofi/config-clipboard (mesma paleta do launcher).
-font-size = 20
+font-size = 18
 hint-font = false
 horizontal = false
 anchor = center

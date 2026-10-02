@@ -2,7 +2,7 @@
 # outline-width/corner-radius sempre 0 (moldura preta sem alfa).
 # tofi soy-milk — barra horizontal clara (baseado em themes/soy-milk upstream)
 # Mostra o box model completo: prompt/input/alternate/selection com backgrounds arredondados.
-# Upstream usa font = Fredoka One; aqui JetBrainsMono (nome Pango p/ fallback emoji).
+# Upstream usa font = Fredoka One; aqui Noto Sans (fonte unica, rampa MS).
 font-size = 14
 hint-font = false
 horizontal = true

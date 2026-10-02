@@ -90,7 +90,8 @@ render_layout() {
 # tofi-colors-begin (gerado por tofi-apply.sh — nao editar este bloco)
 # FONT por NOME de familia, nunca por caminho: com caminho absoluto o Pango nao
 # monta a cadeia de fallback do fontconfig e todo emoji vira caixa vazia.
-font = FindersKeepers
+# Fonte unica Noto (rampa MS/Apple); tamanhos por layout (12/14/18/28).
+font = Noto Sans
 text-color = #$FG
 background-color = #$BG
 selection-color = #$_TOFI_SEL

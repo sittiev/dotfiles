@@ -4,7 +4,7 @@ bar:
   location: bottom
   background: 00000000
   foreground: 3A3936ff
-  font: "FindersKeepers:size=20"
+  font: "Noto Sans Mono:size=12"
   font-shaping: none
   spacing: 4
   right:
@@ -14,6 +14,6 @@ bar:
         content:
           string:
             text: "{display}"
-            font: "FindersKeepers:size=20"
+            font: "Noto Sans Mono:size=12"
             on-click: ~/.config/sway/scripts/yambar-clock-toggle.sh
             deco: {background: {color: E8E7E3ff}}

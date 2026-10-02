@@ -1,8 +1,7 @@
 # emoji — layout-only (geometria/fontes/comportamento). Cores via tofi-apply.sh.
-# NAO mexer em font-size sem recalcular: o NotoColorEmoji tem caixa win de
-# 1.171875em, muito maior que a do FindersKeepers (0.79em). O Pango usa a maior
-# caixa da linha, entao num height=18 o limite e 18/1.171875 = 15.3px.
-# 16px estoura (18.8px) e corta a parte de baixo do emoji e do rotulo.
+# Com a fonte unica Noto (caixa 1.362em) o texto domina a linha, nao o
+# NotoColorEmoji (1.171875em): Body 14 rende 19.1px/linha na janela de 520px,
+# sem corte. (O limite antigo de 15.3px era da caixa 0.79em do FindersKeepers.)
 font-size = 14
 hint-font = false
 horizontal = false

@@ -1,8 +1,9 @@
 # dark-paper — layout-only (geometria/fontes/comportamento). Cores via tofi-apply.sh (pywal low-contrast).
 # outline-width/corner-radius sempre 0 (moldura preta sem alfa).
 # tofi dark-paper — tela cheia tipográfica (baseado em themes/dark-paper upstream)
-# Upstream usa font = Fanwood Text; aqui JetBrainsMono (nome Pango p/ fallback emoji).
-font-size = 32
+# Upstream usa font = Fanwood Text; aqui Noto Sans (fonte unica, rampa MS).
+# Title 28 na rampa MS.
+font-size = 28
 hint-font = false
 border-width = 0
 padding-left = 4%
