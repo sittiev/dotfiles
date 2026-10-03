@@ -897,8 +897,12 @@ PY
     fi
 
     # ---- GTK: preferência (gsettings + settings.ini + GTK2 + xsettingsd) ----
-    # PCManFM 1.4 usa GTK3; Qogir fornece as variantes GTK3.
-    # Default é somente o fallback caso o tema local não esteja disponível.
+    # PCManFM 1.4 usa GTK3; Qogir fornece as variantes GTK3/GTK4.
+    # Qogir é o sucessor moderno na linhagem flat do X-Arc-Collection
+    # (gnome-look p/1167049, descontinuado em 2018, só até GTK 3.22 sem
+    # GTK4): mesma estética Arc, com suporte a GTK3.24/GTK4/libadwaita e
+    # ao gtk.css wal por cima. Default é somente o fallback caso o tema
+    # local não esteja disponível.
     if [ "$mode" = dark ]; then
         gsettings set org.gnome.desktop.interface color-scheme prefer-dark 2>/dev/null || true
         GTK_THEME="$(gtk_theme_pick Default Qogir-Dark)"
@@ -911,15 +915,20 @@ PY
         GTK_PREFER="false"
     fi
 
-    # YAMIS recolorido pela paleta (cópia gerada em ~/.local/share/icons/yamis-wal;
-    # o tema base fica intocado). Quando o recolorimento é possível, ele tem
-    # prioridade sobre o fallback Papirus.
-    ICON_WAL="$("$HOME/.config/sway/scripts/icon-recolor.sh" 2>/dev/null || true)"
+    # Papirus-wal recolorido pela paleta (cópia gerada em
+    # ~/.local/share/icons/papirus-wal; o tema base fica intocado) tem
+    # prioridade: cobre actions/symbolic em mono puxando FG/ACCENT/MUTED/FAIL.
+    # YAMIS-wal (icon-recolor.sh) é o fallback mono; Papirus-Dark/Light é o
+    # fallback colorido quando nenhum recolorimento é possível.
+    ICON_WAL="$("$HOME/.config/sway/scripts/papirus-recolor.sh" 2>/dev/null || true)"
+    if [ -z "$ICON_WAL" ]; then
+        ICON_WAL="$("$HOME/.config/sway/scripts/icon-recolor.sh" 2>/dev/null || true)"
+    fi
     if [ -n "$ICON_WAL" ]; then
         ICON_THEME="$ICON_WAL"
     fi
 
-    # YAMIS is a native monochrome icon theme; Papirus remains the fallback.
+    # papirus-wal/yamis-wal são monocromáticos nativos; Papirus é o fallback.
     gsettings set org.gnome.desktop.interface gtk-theme "$GTK_THEME" 2>/dev/null || true
     gsettings set org.gnome.desktop.interface icon-theme "$ICON_THEME" 2>/dev/null || true
     for v in 3.0 4.0; do
@@ -987,7 +996,9 @@ EOF
         pkill -HUP xsettingsd 2>/dev/null || true
     fi
 
-    # ---- Qt/KDE: colorscheme e YAMIS ativos (best effort) ----
+    # ---- Qt/KDE: colorscheme e ícones mono ativos (best effort) ----
+    # Qt mantém Kvantum PywalDark/Light + qt5ct/qt6ct com a paleta (a pedido);
+    # o X-Arc não traz tema Qt/Kvantum, então nada muda no Qt.
     local scheme_name="PywalDark"
     [ "$mode" = light ] && scheme_name="PywalLight"
     kwriteconfig6 --file kdeglobals --group General --key ColorScheme "$scheme_name" 2>/dev/null || true
