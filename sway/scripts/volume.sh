@@ -19,8 +19,8 @@ get_vol_info() {
 build_bar() {
     percent=$1
     bar=''
-    fill='⠿'
-    empty='⠀'
+    fill='█'
+    empty='░'
     i=1
     while [ "$i" -le 12 ]; do
         if [ "$((i * 100))" -le "$((percent * 12))" ]; then

@@ -10,23 +10,29 @@ STEP_INT="5%"
 STEP_EXT=5
 LOCK="/tmp/brightness-ddc.lock"
 
-icon='
-⠀⠀⠀⠀⠀⠀⠀⠀⢠⡄⠀⠀⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⠠⣄⠀⠀⠸⠇⠀⠀⣠⠄⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠈⢁⣤⠶⠶⣤⡈⠁⠀⠀⠀⠀⠀
-⠀⠀⠀⣤⣤⠀⣾⠁⠀⠀⠈⣷⠀⣤⣤⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠹⣦⣀⣀⣴⠏⠀⠀⠀⠀⠀⠀
-⠀⠀⠀⠀⢀⡴⠂⠀⢉⡉⠀⠐⢦⡀⠀⠀⠀⠀
-⠀⠀⠀⠀⠀⠀⠀⠀⢸⡇⠀⠀⠀⠀⠀⠀⠀⠀
-'
+# Arte em U+2580-259F (blocos), nao em Braille U+2800: o Noto Sans Mono do
+# OSD nao tem o bloco Braille (0/256), entao o fontconfig caia no DejaVu Sans
+# (proporcional) e a arte colapsava em pontos soltos. Blocos e box-drawing o
+# Noto Sans Mono cobre inteiro, entao a grade de 1 celula por caractere vale em
+# qualquer tamanho de fonte. O preenchimento e U+00A0 (espaco inseparavel), nao
+# U+0020: o pango quebra linha em espaco e descartava o desenho no meio.
+# 5 linhas x 17 colunas: o OSD tem height=168 e o
+# `font=... 12` do mako e em PONTOS (16px reais, ~23px de entrelinha), logo
+# so cabem 6 linhas, e a ultima e a barra. Nao aumentar a arte sem mexer no
+# height no render.sh.
+icon='    █   █   █    
+  █   █████   █  
+█    ███████    █
+  █   █████   █  
+    █   █   █    '
 
 # Build a 12-cell bar from an integer percent (0–100)
 build_bar() {
   local percent bar fill empty i
   percent="$1"
   bar=""
-  fill="⠿"
-  empty="⠀"
+  fill="█"
+  empty="░"
 
   i=1
   while [ "$i" -le 12 ]; do
@@ -83,4 +89,5 @@ notify-send \
   --print-id \
   -h boolean:transient:true \
   -h string:x-canonical-private-synchronous:osd \
-  "$icon$bar $bri_int%"
+  "$icon
+$bar $bri_int%"
