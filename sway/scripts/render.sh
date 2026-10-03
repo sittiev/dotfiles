@@ -30,6 +30,14 @@ esac
 MONO="Noto Sans Mono"
 # Tamanho da fonte nos apps (GTK/Qt): 11pt, padrao desktop.
 UISIZE=11
+# Tamanho da UI mako+tofi (ui-font-size.sh): rampa MS/Apple 12 Caption, 14
+# Body (padrao), 18 Destaque. Só mako principal + launcher tofi Body
+# compartilham; OSDs Caption 12 (mínimo), yambar 12 (18px da barra) e GTK 11
+# ficam fixos (ver tofi-apply.sh p/ dmenu/clipboard/dark-paper fixos).
+case "$(cat "$HOME/.cache/ui-font-size" 2>/dev/null || printf '14')" in
+    12|14|18) UISIZE_UI=$(cat "$HOME/.cache/ui-font-size" 2>/dev/null || printf '14') ;;
+    *) UISIZE_UI=14 ;;
+esac
 
 # ---- Fonte nos apps GTK/Qt (ui-font.sh) ----
 # GTK3/4: gtk-font-name no settings.ini (replace-or-append, symlink-safe).
@@ -108,8 +116,9 @@ bar:
             deco: {background: {color: ${YBG}ff}}
 EOF
 
-# Mako: fonte da UI via ui-font.sh (rampa MS: Body 14; OSDs Caption 12,
-# o minimo). Anchor bottom-right estilo Windows, mesmo com a bar embaixo
+# Mako: fonte da UI via ui-font.sh (família) + ui-font-size.sh (tamanho Body
+# compartilhado com o launcher tofi; OSDs Caption 12, o minimo). Anchor
+# bottom-right estilo Windows, mesmo com a bar embaixo
 # (overlay passa por cima).
 # urgency=critical usa a borda FAIL para destacar (ex.: bateria muito fraca).
 cat > "$HOME/.config/mako/config" <<EOF
@@ -120,7 +129,7 @@ border-color=#$BG
 border-size=0
 border-radius=0
 margin=14
-font=$UI 14
+font=$UI $UISIZE_UI
 markup=1
 anchor=bottom-right
 default-timeout=8000

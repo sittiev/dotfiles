@@ -10,6 +10,7 @@ Tema do Tofi
 Claro ou escuro
 Esquemas de cores
 Fonte
+Tamanho da fonte
 Area de transferencia
 Emoji
 Luz noturna
@@ -36,6 +37,7 @@ case "$choice" in
     'Claro ou escuro') exec "$script_dir/theme-toggle.sh" toggle ;;
     'Esquemas de cores') exec "$script_dir/scheme-menu.sh" ;;
     Fonte) exec "$script_dir/ui-font.sh" ;;
+    'Tamanho da fonte') exec "$script_dir/ui-font-size.sh" ;;
     'Area de transferencia') exec "$script_dir/clipboard.sh" ;;
     Emoji) exec "$script_dir/emoji.sh" ;;
     'Luz noturna') exec "$script_dir/nightlight.sh" ;;

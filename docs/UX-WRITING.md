@@ -62,6 +62,7 @@ Fontes consultadas (§2 do `AGENTS.md`):
 | Papel de parede | Papel de parede indisponível / trocar a imagem / mostrar a imagem | Wallpaper, waypaper/swaybg (no texto) |
 | Instalar dep. | Para configurar, instale X: <comando> | X não instalado (…), parêntese solto |
 | Mudo | Mudo | Mute, Mutado, Silenciado (só p/ notificações) |
+| Fonte da UI | Fonte (item), Tamanho da fonte (item), Tamanho: (prompt) | Font, Tamanho (sozinho) |
 
 ## 3. Padrões por elemento
 
@@ -76,7 +77,7 @@ Corpo só se acrescenta estado útil; nunca repete o título.
 **OSD (volume/brilho)**: exceção visual — sem prosa, só `Volume`/`Mudo`/barra.
 Não mexer no layout (tamanhos do mako são afinados); já conforme.
 
-**Prompt tofi**: `Ações: `, `Esquema: `, `Tema: `, `Área de transferência: `,
+**Prompt tofi**: `Ações: `, `Esquema: `, `Tema: `, `Fonte: `, `Tamanho: `, `Área de transferência: `,
 `Emoji: `, `Energia: `, `Luz noturna: `, `Monitores: `.
 
 **Swaynag**: `-m 'Sair do Sway? A sessão será encerrada.' -B 'Sair'`.

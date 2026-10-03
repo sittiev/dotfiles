@@ -1,6 +1,8 @@
 #!/usr/bin/dash
 # monitormenu.sh — submenu de monitores estilo nightmenu (Mod+Shift+x → Monitores).
-# HDMI-A-1 e o principal (esquerda); eDP-1 desliga com HDMI (outputs.sh auto).
+# HDMI-A-1 e o principal (esquerda); kanshi (perfil docked) desliga o eDP no
+# hotplug, fallback outputs.sh auto sem kanshi. Escolha manual persiste até o
+# próximo hotplug, quando o kanshi reaplica o perfil.
 # Non-interactive test hook: TOFI_PICK="<exact entry>" forces a choice.
 set -eu
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)

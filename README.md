@@ -10,7 +10,7 @@ live config on 2026-09-23; nothing under `~/.config` was deleted.
 Official repos:
 
 ```sh
-sudo pacman -S sway foot mako swaybg waypaper grim slurp wl-clipboard wtype \
+sudo pacman -S sway foot mako kanshi swaybg waypaper grim slurp wl-clipboard wtype \
     cliphist lxqt-policykit jq dash python glib2 \
     ttf-jetbrains-mono-nerd noto-fonts
 ```
@@ -58,6 +58,7 @@ foot/         Foot configuration
 yambar/       Yambar configuration
 tofi/         Tofi config and themes
 mako/         Mako configuration
+kanshi/       Kanshi hotplug profiles (auto; manual stays in sway/scripts/outputs.sh)
 pcmanfm/      PCManFM clean config + context actions (gram/micro/foot)
 gtk/          GTK settings used by the theme pipeline
 shell/        Bash startup files

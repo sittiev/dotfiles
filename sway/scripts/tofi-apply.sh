@@ -61,15 +61,17 @@ fi
 
 mkdir -p "$(dirname "$DEST")"
 
-# render_layout <layout-src> <dest>
+# render_layout <layout-src> <dest> [font-size]
 #   1) copia o layout filtrando TODAS as cores + outline/corner (radius 0 global)
 #      Remove: *-color, *-background (cor), outline-*, corner-radius, border-width,
 #      font (re-injetado no bloco canonico). Mantém *-padding, geometria, comportamento.
+#      font-size: mantido do layout, salvo override no $3 (ver abaixo).
 #   2) injeta o bloco de cor canonico
 #   3) preserva o border-width proprio do layout, se houver
 render_layout() {
     _rl_src=$1
     _rl_dest=$2
+    _rl_size=${3:-}
     awk '
         /^[[:space:]]*border-width[[:space:]]*=/ { next }
         /^[[:space:]]*outline-(width|color)[[:space:]]*=/ { next }
@@ -85,11 +87,26 @@ render_layout() {
         { print }
     ' "$_rl_src" > "$_rl_dest.tmp"
 
+    # Tamanho compartilhado com o mako (ui-font-size.sh; mesma selecao do
+    # render.sh): $3 substitui o font-size do layout. Vazio = mantém o layout
+    # (dmenu 12 na barra 18px, clipboard 18 na lista densa, dark-paper 28 Title).
+    if [ -n "$_rl_size" ]; then
+        _rl_ftmp="$_rl_dest.tmp2.$$"
+        awk -v sz="font-size = $_rl_size" '
+            /^[[:space:]]*font-size[[:space:]]*=/ { if (!t++) { print sz; next } next }
+            { print }
+            END { if (!t) print sz }
+        ' "$_rl_dest.tmp" > "$_rl_ftmp"
+        cat "$_rl_ftmp" > "$_rl_dest.tmp"
+        rm -f "$_rl_ftmp"
+    fi
+
     # outline 0 = sem "borda preta" padrão 4px #080800
     # Fonte da UI (ui-font.sh; mesma selecao do render.sh). Por NOME de
     # familia, nunca por caminho: com caminho absoluto o Pango nao monta a
     # cadeia de fallback do fontconfig e todo emoji vira caixa vazia.
-    # Fonte unica (rampa MS/Apple); tamanhos por layout (12/14/18/28).
+    # Familia unica (rampa MS/Apple); tamanho Body via ui-font-size.sh
+    # (só layouts Body seguem; fixos preservados pelo $3 vazio).
     case "$(cat "$HOME/.cache/ui-font" 2>/dev/null || printf 'noto')" in
         sf) _rl_ui="SF Pro Display" ;;
         segoe) _rl_ui="Segoe UI" ;;
@@ -124,18 +141,35 @@ EOF
     # Write through the symlink; mv would replace it with a regular file.
     cat "$_rl_dest.tmp" > "$_rl_dest"
     rm -f "$_rl_dest.tmp"
+    unset _rl_src _rl_dest _rl_size _rl_ftmp
 }
 
-render_layout "$SRC" "$DEST"
+# Tamanho Body compartilhado mako+tofi (ui-font-size.sh; mesmo default do
+# render.sh). Layouts Body seguem; dmenu (barra 18px), clipboard (lista
+# densa) e dark-paper (Title 28) mantêm o fixo.
+case "$(cat "$HOME/.cache/ui-font-size" 2>/dev/null || printf '14')" in
+    12|14|18) UISIZE_UI=$(cat "$HOME/.cache/ui-font-size" 2>/dev/null || printf '14') ;;
+    *) UISIZE_UI=14 ;;
+esac
+
+case "$LAYOUT" in
+    dmenu|dark-paper) _rl_main_size="" ;;
+    *) _rl_main_size="$UISIZE_UI" ;;
+esac
+render_layout "$SRC" "$DEST" "$_rl_main_size"
 
 # Layouts com janela propria: cada um rende um config extra pela MESMA funcao,
 # entao a paleta nunca diverge do launcher.
-#   clipboard -> lista vertical (50 entradas do cliphist nao cabem numa barra)
-#   emoji     -> font-size menor; ver o aviso de metricas no layout
+#   clipboard -> fixo 18: lista vertical (50 entradas do cliphist nao cabem
+#     numa barra); denso demais para acompanhar o Body.
+#   emoji -> Body como o launcher (mesmo aviso de metricas no layout).
 for _rl_extra in clipboard emoji; do
     _rl_xsrc="$THEMES/$_rl_extra/config"
     if [ -f "$_rl_xsrc" ]; then
-        render_layout "$_rl_xsrc" "$HOME/.config/tofi/config-$_rl_extra"
+        case "$_rl_extra" in
+            clipboard) render_layout "$_rl_xsrc" "$HOME/.config/tofi/config-$_rl_extra" "" ;;
+            *) render_layout "$_rl_xsrc" "$HOME/.config/tofi/config-$_rl_extra" "$UISIZE_UI" ;;
+        esac
     fi
 done
 
