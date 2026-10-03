@@ -9,8 +9,7 @@
 # no `laptop`. Extend/espelho não têm perfil auto (mesmo conjunto conectado
 # do docked) — ficam só no outputs.sh manual.
 # Posições espelham outputs.sh: HDMI à esquerda (0 0), eDP à direita (1920 0).
-# `exec` não reaplica output (o kanshi já aplicou): só foco + swayrst,
-# mesma dupla silenciosa do `outputs.sh auto` (sem notify no hotplug).
+# `exec` não reaplica output (o kanshi já aplicou): só foca a saída.
 
 profile docked {
 	output HDMI-A-1 enable position 0,0
