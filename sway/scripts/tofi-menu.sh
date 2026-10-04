@@ -183,7 +183,7 @@ sub_look() {
             "${PAD}Luz noturna · $(night_label)" \
             "${PAD}Temperatura da luz >" \
             "${PAD}Barra superior · $(yambar_label)" \
-            "${PAD}Relógio da barra · $(clock_label)" | ask "Aparência" 460)
+            "${PAD}Relógio da barra · $(clock_label)" | ask "Aparência" 520)
         [ -n "$c" ] || return 0
         case "$c" in
             *Voltar*|"$GAP") continue ;;
