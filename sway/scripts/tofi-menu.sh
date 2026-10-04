@@ -97,10 +97,15 @@ ask() {
         return 0
     fi
     if [ -n "$height" ]; then
-        TOFI_REOPEN=1 "$tofi" --config "$conf" --prompt-text "$prompt" --height="$height" || true
+        _ask_choice=$(TOFI_REOPEN=1 "$tofi" --config "$conf" --prompt-text "$prompt" --height="$height" || true)
     else
-        TOFI_REOPEN=1 "$tofi" --config "$conf" --prompt-text "$prompt" || true
+        _ask_choice=$(TOFI_REOPEN=1 "$tofi" --config "$conf" --prompt-text "$prompt" || true)
     fi
+    if [ "${TOFI_MENU_DEBUG:-0}" = 1 ]; then
+        printf '%s prompt=%s choice=%s\n' "$(date '+%H:%M:%S')" "$prompt" "$_ask_choice" >> /tmp/tofi-menu-debug.log
+    fi
+    printf '%s\n' "$_ask_choice"
+    unset _ask_choice
 }
 
 toggle_autotiling() {
