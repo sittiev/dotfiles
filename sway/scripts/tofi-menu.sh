@@ -79,6 +79,7 @@ ask() {
     # consumir TOFI_SEQ em memória nunca persistiria (loop infinito) — o
     # main despeja a fila num temporário e cada ask retira a 1ª linha.
     prompt=$1
+    height=${2:-}
     if [ -n "${TOFI_SEQ_FILE:-}" ]; then
         line=$(head -n 1 "$TOFI_SEQ_FILE" 2>/dev/null || true)
         tail -n +2 "$TOFI_SEQ_FILE" > "$TOFI_SEQ_FILE.next" 2>/dev/null || true
@@ -87,8 +88,13 @@ ask() {
         unset line
         return 0
     fi
-    "$tofi" --config "$conf" --prompt-text "$prompt" \
-        --hide-input=true --text-cursor=false || true
+    if [ -n "$height" ]; then
+        "$tofi" --config "$conf" --prompt-text "$prompt" --height="$height" \
+            --hide-input=true --text-cursor=false || true
+    else
+        "$tofi" --config "$conf" --prompt-text "$prompt" \
+            --hide-input=true --text-cursor=false || true
+    fi
 }
 
 toggle_autotiling() {
@@ -166,7 +172,7 @@ sub_look() {
             "${PAD}Papel de parede" \
             "${PAD}Luz noturna · $(night_label)" \
             "${PAD}Temperatura da luz >" \
-            "${PAD}Barra superior · $(yambar_label)" | ask "Aparência")
+            "${PAD}Barra superior · $(yambar_label)" | ask "Aparência" 460)
         [ -n "$c" ] || return 0
         case "$c" in
             *Voltar*|"$GAP") continue ;;
@@ -212,7 +218,7 @@ sub_sys() {
             "$GAP" \
             "${PAD}Hora · $(time_label)" \
             "${PAD}Data" \
-            "${PAD}Bloquear tela" | ask "Sistema")
+            "${PAD}Bloquear tela" | ask "Sistema" 420)
         [ -n "$c" ] || return 0
         case "$c" in
             *Voltar*|"$GAP") continue ;;
