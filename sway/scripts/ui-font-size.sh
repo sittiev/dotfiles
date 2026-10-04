@@ -17,11 +17,12 @@ if [ -z "$pick" ]; then
     if [ -n "${TOFI_UISIZE:-}" ]; then
         choice=$TOFI_UISIZE
     else
-        choice=$(printf '%s\n' '12' '14' '18' \
+        choice=$(printf '%s\n' '← Voltar' '12' '14' '18' \
             | "$script_dir/tofi-safe.sh" --config "$HOME/.config/tofi/config" --prompt-text "Tamanho: " || true)
     fi
     [ -n "${choice:-}" ] || exit 0
     case "$choice" in
+        *Voltar*) exit 0 ;;
         12|14|18) pick=$choice ;;
         *) notify-send "Tamanho inválido" "Para aplicar, escolha um nome da lista." 2>/dev/null || true; exit 1 ;;
     esac

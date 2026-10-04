@@ -9,13 +9,14 @@ script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 
 pick() {
     if [ -n "${TOFI_PICK:-}" ]; then printf '%s\n' "$TOFI_PICK"; return 0; fi
-    printf '%s\n' "Auto (HDMI)" "Apenas HDMI" "Apenas notebook" "Estender" "Espelhar" \
+    printf '%s\n' "← Voltar" "Auto (HDMI)" "Apenas HDMI" "Apenas notebook" "Estender" "Espelhar" \
         | "$script_dir/tofi-safe.sh" --prompt-text "Monitores: " || true
 }
 
 choice=$(pick)
 [ -n "$choice" ] || exit 0
 case "$choice" in
+    *Voltar*) exit 0 ;;
     "Auto (HDMI)") exec "$script_dir/outputs.sh" auto ;;
     "Apenas HDMI") exec "$script_dir/outputs.sh" hdmi ;;
     "Apenas notebook") exec "$script_dir/outputs.sh" laptop ;;

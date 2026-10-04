@@ -13,11 +13,12 @@ if [ -z "$pick" ]; then
     if [ -n "${TOFI_UIFONT:-}" ]; then
         choice=$TOFI_UIFONT
     else
-        choice=$(printf '%s\n' 'Noto Sans' 'SF Pro Display' 'Segoe UI' \
+        choice=$(printf '%s\n' '← Voltar' 'Noto Sans' 'SF Pro Display' 'Segoe UI' \
             | "$script_dir/tofi-safe.sh" --config "$HOME/.config/tofi/config" --prompt-text "Fonte: " || true)
     fi
     [ -n "${choice:-}" ] || exit 0
     case "$choice" in
+        *Voltar*) exit 0 ;;
         'Noto Sans') pick=noto ;;
         'SF Pro Display') pick=sf ;;
         'Segoe UI') pick=segoe ;;
