@@ -8,15 +8,16 @@
 # ela o Enter não casa nada). Grupos separados só por respiro (U+2800), sem
 # títulos decorativos.
 # Nível 2 (diálogos): um tofi por categoria. Alternadores ficam abertos e
-# atualizam o estado; sub-diálogos (Energia, Monitores, Temperatura,
+# atualizam o estado; sub-diálogos (Energia, Monitores, Luz noturna/Temperatura,
 # Esquemas, Fonte, Tofi, área de transferência, Emoji) rodam e VOLTAM ao
 # mesmo diálogo da categoria, já com o estado novo. Apps externos
 # (Terminal, Arquivos, Navegador, papel de parede, bloqueio, Rede,
 # Bluetooth) trocam de processo. Todo diálogo tem "< Voltar" como primeira
 # linha; Esc faz o mesmo.
 #
-# Separadores invisíveis: PAD=U+00A0 (margem esquerda; U+0020 quebrava o
-# Pango no meio da linha, ver brightness.sh) e GAP=U+2800 (linha em branco
+# Separadores invisíveis: PAD vazio (sem margem esquerda — itens colados
+# na borda; U+0020 quebrava o Pango no meio da linha, ver brightness.sh)
+# e GAP=U+2800 (linha em branco
 # entre grupos). U+0000 (nulo) é impossível aqui: string POSIX/argv é
 # terminada em NUL, então o menu nunca o receberia — U+2800 o substitui.
 # GAPs selecionados voltam ao mesmo diálogo (no-op).
@@ -35,9 +36,9 @@ script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 tofi="$script_dir/tofi-safe.sh"
 conf="$HOME/.config/tofi/config"
 
-# U+00A0 (margem) e U+2800 (respiro entre grupos) via escapes: o arquivo
-# segue legível e o grep continua achando os rótulos.
-PAD=$(printf '\302\240')
+# PAD vazio (itens colados na borda) e U+2800 (respiro entre grupos) via
+# escapes: o arquivo segue legível e o grep continua achando os rótulos.
+PAD=$(printf '')
 GAP=$(printf '\342\240\200')
 
 is_autotiling_on() { pgrep -x autotiling-rs >/dev/null 2>&1; }
@@ -97,9 +98,9 @@ ask() {
         return 0
     fi
     if [ -n "$height" ]; then
-        _ask_choice=$(TOFI_REOPEN=1 "$tofi" --config "$conf" --prompt-text "$prompt" --height="$height" || true)
+        _ask_choice=$(TOFI_REOPEN=1 "$tofi" --config "$conf" --prompt-text "$prompt" --height="$height" --padding-left=0 || true)
     else
-        _ask_choice=$(TOFI_REOPEN=1 "$tofi" --config "$conf" --prompt-text "$prompt" || true)
+        _ask_choice=$(TOFI_REOPEN=1 "$tofi" --config "$conf" --prompt-text "$prompt" --padding-left=0 || true)
     fi
     if [ "${TOFI_MENU_DEBUG:-0}" = 1 ]; then
         printf '%s prompt=%s choice=%s\n' "$(date '+%H:%M:%S')" "$prompt" "$_ask_choice" >> /tmp/tofi-menu-debug.log
@@ -177,13 +178,26 @@ sub_net() {
     done
 }
 
+sub_noite() {
+    while true; do
+        c=$(printf '%s\n' "${PAD}< Voltar" \
+            "${PAD}Luz noturna · $(night_label)" \
+            "${PAD}Temperatura da luz >" | ask "Luz noturna")
+        [ -n "$c" ] || return 0
+        case "$c" in
+            *Voltar*) return 0 ;;
+            *noturna*) "$script_dir/nightlight.sh" ;;
+            *Temperatura*) "$script_dir/nightmenu.sh" ;;
+        esac
+    done
+}
+
 sub_look() {
     while true; do
         if [ "$(theme_label)" = Claro ]; then mclaro=' · Ativo'; mescuro=''; else mclaro=''; mescuro=' · Ativo'; fi
         c=$(printf '%s\n' "${PAD}< Voltar" \
             "${PAD}Modo claro${mclaro}" \
             "${PAD}Modo escuro${mescuro}" \
-            "${PAD}Automático (pela luz)" \
             "$GAP" \
             "${PAD}Esquemas de cores · $(scheme_label)" \
             "${PAD}Tema do Tofi · $(tofi_label)" \
@@ -192,23 +206,20 @@ sub_look() {
             "${PAD}Tamanho da fonte · $(size_label)" \
             "$GAP" \
             "${PAD}Papel de parede" \
-            "${PAD}Luz noturna · $(night_label)" \
-            "${PAD}Temperatura da luz >" \
-            "${PAD}Barra superior · $(yambar_label)" \
+            "${PAD}Luz noturna · $(night_label) >" \
+            "${PAD}Barra inferior · $(yambar_label)" \
             "${PAD}Relógio da barra · $(clock_label)" | ask "Aparência" 520)
         [ -n "$c" ] || return 0
         case "$c" in
             *Voltar*|"$GAP") continue ;;
             *claro*) "$script_dir/theme-toggle.sh" light ;;
             *escuro*) "$script_dir/theme-toggle.sh" dark ;;
-            *Automático*) "$script_dir/theme-toggle.sh" auto ;;
             *Esquemas*) "$script_dir/scheme-menu.sh" ;;
             *Tamanho*) "$script_dir/ui-font-size.sh" ;;
             *Tema*) "$script_dir/tofi-themes.sh" ;;
             *Fonte*) "$script_dir/ui-font.sh" ;;
             *Papel*) exec "$script_dir/wallpaper.sh" ;;
-            *noturna*) "$script_dir/nightlight.sh" ;;
-            *Temperatura*) "$script_dir/nightmenu.sh" ;;
+            *noturna*) sub_noite ;;
             *Barra*) "$script_dir/yambar-toggle.sh" ;;
             *Relógio*) "$script_dir/yambar-clock-toggle.sh" ;;
         esac
