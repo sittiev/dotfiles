@@ -29,6 +29,14 @@ case "${1:-}" in
             "$THEME_MODE" apply light
         fi
         ;;
+    light)
+        printf '%s' "light" > "$MODE_LOCK"
+        "$THEME_MODE" apply light
+        ;;
+    dark)
+        printf '%s' "dark" > "$MODE_LOCK"
+        "$THEME_MODE" apply dark
+        ;;
     auto)
         rm -f "$MODE_LOCK"
         mode=$("$THEME_MODE" compute)

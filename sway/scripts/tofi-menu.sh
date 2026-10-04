@@ -60,6 +60,15 @@ font_label() {
     esac
 }
 size_label() { cat "${XDG_CACHE_HOME:-$HOME/.cache}/ui-font-size" 2>/dev/null || printf '14'; }
+scheme_label() { cat "${XDG_CACHE_HOME:-$HOME/.cache}/theme-scheme" 2>/dev/null || printf 'Apprentice'; }
+tofi_label() { cat "$HOME/.cache/tofi-layout" 2>/dev/null || printf 'padrao'; }
+clock_label() {
+    if [ -f "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/yambar-clock-full" ]; then
+        printf 'Data e hora'
+    else
+        printf 'Hora'
+    fi
+}
 div_label() { if is_autotiling_on; then printf 'Ativada'; else printf 'Desativada'; fi; }
 night_label() { if is_night_on; then printf 'Ligada'; else printf 'Desligada'; fi; }
 yambar_label() { if is_yambar_on; then printf 'Visível'; else printf 'Oculta'; fi; }
@@ -158,10 +167,14 @@ sub_net() {
 
 sub_look() {
     while true; do
+        if [ "$(theme_label)" = Claro ]; then mclaro=' · Ativo'; mescuro=''; else mclaro=''; mescuro=' · Ativo'; fi
         c=$(printf '%s\n' "${PAD}< Voltar" \
-            "${PAD}Claro ou escuro · $(theme_label)" \
-            "${PAD}Esquemas de cores" \
-            "${PAD}Tema do Tofi" \
+            "${PAD}Modo claro${mclaro}" \
+            "${PAD}Modo escuro${mescuro}" \
+            "${PAD}Automático (pela luz)" \
+            "$GAP" \
+            "${PAD}Esquemas de cores · $(scheme_label)" \
+            "${PAD}Tema do Tofi · $(tofi_label)" \
             "$GAP" \
             "${PAD}Fonte · $(font_label)" \
             "${PAD}Tamanho da fonte · $(size_label)" \
@@ -169,20 +182,25 @@ sub_look() {
             "${PAD}Papel de parede" \
             "${PAD}Luz noturna · $(night_label)" \
             "${PAD}Temperatura da luz >" \
-            "${PAD}Barra superior · $(yambar_label)" | ask "Aparência" 460)
+            "${PAD}Barra superior · $(yambar_label)" \
+            "${PAD}Relógio da barra · $(clock_label)" | ask "Aparência" 460)
         [ -n "$c" ] || return 0
         case "$c" in
             *Voltar*|"$GAP") continue ;;
-            *Claro*) "$script_dir/theme-toggle.sh" toggle ;;
+            *claro*) "$script_dir/theme-toggle.sh" light ;;
+            *escuro*) "$script_dir/theme-toggle.sh" dark ;;
+            *Automático*) "$script_dir/theme-toggle.sh" auto ;;
             *Esquemas*) "$script_dir/scheme-menu.sh" ;;
-            "*Tema do Tofi*") "$script_dir/tofi-themes.sh" ;;
-            "*Fonte ·*") "$script_dir/ui-font.sh" ;;
             *Tamanho*) "$script_dir/ui-font-size.sh" ;;
+            *Tema*) "$script_dir/tofi-themes.sh" ;;
+            *Fonte*) "$script_dir/ui-font.sh" ;;
             *Papel*) exec "$script_dir/wallpaper.sh" ;;
-            "*Luz noturna*") "$script_dir/nightlight.sh" ;;
+            *noturna*) "$script_dir/nightlight.sh" ;;
             *Temperatura*) "$script_dir/nightmenu.sh" ;;
             *Barra*) "$script_dir/yambar-toggle.sh" ;;
+            *Relógio*) "$script_dir/yambar-clock-toggle.sh" ;;
         esac
+        unset mclaro mescuro
     done
 }
 
@@ -198,7 +216,7 @@ sub_windows() {
             *Voltar*|"$GAP") continue ;;
             *Divisão*) toggle_autotiling ;;
             *Avisos*) toggle_dnd ;;
-            "*Modo jogo*") "$script_dir/game-mode.sh" toggle ;;
+            *jogo*) "$script_dir/game-mode.sh" toggle ;;
         esac
     done
 }
