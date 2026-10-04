@@ -97,9 +97,9 @@ ask() {
         return 0
     fi
     if [ -n "$height" ]; then
-        "$tofi" --config "$conf" --prompt-text "$prompt" --height="$height" || true
+        TOFI_REOPEN=1 "$tofi" --config "$conf" --prompt-text "$prompt" --height="$height" || true
     else
-        "$tofi" --config "$conf" --prompt-text "$prompt" || true
+        TOFI_REOPEN=1 "$tofi" --config "$conf" --prompt-text "$prompt" || true
     fi
 }
 
