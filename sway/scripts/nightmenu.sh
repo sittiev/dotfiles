@@ -27,7 +27,7 @@ pick_choice() {
     fi
     printf '%s\n' "< Voltar" "1000 K — noite" "2000 K" "3000 K" "4500 K" \
         "6500 K — dia" "Escurecer (gamma 0.8)" "Normal (gamma 1.0)" "Desligar" \
-        | "$(CDPATH= cd -- "${0%/*}" && pwd)/tofi-safe.sh" --prompt-text "$MENU_PROMPT" --hide-input=true --text-cursor=false || true
+        | "$(CDPATH= cd -- "${0%/*}" && pwd)/tofi-safe.sh" --prompt-text "$MENU_PROMPT" || true
 }
 
 apply_choice() {

@@ -10,7 +10,7 @@ pick() {
     if [ -n "${TOFI_PICK:-}" ]; then printf '%s\n' "$TOFI_PICK"; return 0; fi
     printf '%s\n' "< Voltar" "Suspender em 5 min" "Suspender em 10 min" "Suspender em 15 min" \
         "Suspender em 30 min" "Nunca suspender" "Tampa fechada: suspender" "Tampa fechada: apenas desligar a tela" \
-        | "$script_dir/tofi-safe.sh" --prompt-text "Energia" --hide-input=true --text-cursor=false || true
+        | "$script_dir/tofi-safe.sh" --prompt-text "Energia" || true
 }
 
 choice=$(pick)

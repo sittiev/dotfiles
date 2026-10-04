@@ -3,9 +3,9 @@
 #
 # Nível 1 (menu): Aplicativos, Conectividade, Aparência, Janelas, Sistema,
 # com o estado atual à direita (" · Ativada", " · 99%") e " >" onde há
-# subnível. Setas ASCII minimalistas (< voltar, > avançar); sem caixa de
-# entrada (hide-input, sem cursor — a linha do prompt vira título) e sem
-# dois-pontos nos rótulos. Grupos separados só por respiro (U+2800), sem
+# subnível. Setas ASCII minimalistas (< voltar, > avançar); o prompt vira
+# título sem dois-pontos (a digitação continua visível para filtrar — sem
+# ela o Enter não casa nada). Grupos separados só por respiro (U+2800), sem
 # títulos decorativos.
 # Nível 2 (diálogos): um tofi por categoria. Alternadores ficam abertos e
 # atualizam o estado; sub-diálogos (Energia, Monitores, Temperatura,
@@ -73,8 +73,7 @@ bat_label() {
 time_label() { date '+%H:%M'; }
 
 ask() {
-    # ask <prompt> — lê as entradas da stdin e devolve a escolha.
-    # Sem caixa de entrada: hide-input + sem cursor, o prompt vira título.
+    # ask <prompt> [altura] — lê as entradas da stdin e devolve a escolha.
     # Fila de teste em arquivo: ask roda dentro de $(...) (subshell), então
     # consumir TOFI_SEQ em memória nunca persistiria (loop infinito) — o
     # main despeja a fila num temporário e cada ask retira a 1ª linha.
@@ -89,11 +88,9 @@ ask() {
         return 0
     fi
     if [ -n "$height" ]; then
-        "$tofi" --config "$conf" --prompt-text "$prompt" --height="$height" \
-            --hide-input=true --text-cursor=false || true
+        "$tofi" --config "$conf" --prompt-text "$prompt" --height="$height" || true
     else
-        "$tofi" --config "$conf" --prompt-text "$prompt" \
-            --hide-input=true --text-cursor=false || true
+        "$tofi" --config "$conf" --prompt-text "$prompt" || true
     fi
 }
 
