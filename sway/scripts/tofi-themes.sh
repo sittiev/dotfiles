@@ -30,7 +30,7 @@ names=$kept
 if [ -n "${TOFI_PICK:-}" ]; then
     choice=$TOFI_PICK
 else
-    choice=$(printf '%s\n' "← Voltar" "$names" | "$script_dir/tofi-safe.sh" --config "$HOME/.config/tofi/config" --prompt-text "Tema: " || true)
+    choice=$(printf '%s\n' "< Voltar" "$names" | "$script_dir/tofi-safe.sh" --config "$HOME/.config/tofi/config" --prompt-text "Tema" --hide-input=true --text-cursor=false || true)
 fi
 [ -n "$choice" ] || exit 0
 case "$choice" in *Voltar*) exit 0 ;; esac

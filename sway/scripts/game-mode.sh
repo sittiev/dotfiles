@@ -136,12 +136,14 @@ mode_off() {
         makoctl mode -s default >/dev/null 2>&1 || true
     fi
 
-    # Mesmos comandos do exec_always do sway/config.
+    # Mesmos comandos do exec_always do sway/config (respeita o off do menu).
     "$script_dir/cliphist-watch.sh" >/dev/null 2>&1 || true
     "$script_dir/idle.sh" >/dev/null 2>&1 &
-    pkill -x autotiling-rs >/dev/null 2>&1 || true
-    sleep 0.2
-    autotiling-rs >/dev/null 2>&1 &
+    if [ ! -f "${XDG_CACHE_HOME:-$HOME/.cache}/autotiling-off" ]; then
+        pkill -x autotiling-rs >/dev/null 2>&1 || true
+        sleep 0.2
+        autotiling-rs >/dev/null 2>&1 &
+    fi
 
     if [ "$(cat "$wlsunset_file" 2>/dev/null || printf '0')" = 1 ]; then
         notify "Desativado: perfil restaurado. Para voltar a luz noturna, pressione Super+n."

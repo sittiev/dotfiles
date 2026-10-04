@@ -17,8 +17,8 @@ if [ -z "$pick" ]; then
     if [ -n "${TOFI_UISIZE:-}" ]; then
         choice=$TOFI_UISIZE
     else
-        choice=$(printf '%s\n' '← Voltar' '12' '14' '18' \
-            | "$script_dir/tofi-safe.sh" --config "$HOME/.config/tofi/config" --prompt-text "Tamanho: " || true)
+        choice=$(printf '%s\n' '< Voltar' '12' '14' '18' \
+            | "$script_dir/tofi-safe.sh" --config "$HOME/.config/tofi/config" --prompt-text "Tamanho" --hide-input=true --text-cursor=false || true)
     fi
     [ -n "${choice:-}" ] || exit 0
     case "$choice" in

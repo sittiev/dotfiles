@@ -2,28 +2,33 @@
 # tofi-menu.sh — hub estilo Ajustes Apple (categorias → diálogo → ação).
 #
 # Nível 1 (menu): Aplicativos, Conectividade, Aparência, Janelas, Sistema,
-# com o estado atual à direita (" · Ativada", " · 99%") e " →" onde há
-# subnível — o mesmo vocabulário visual do iOS (valor + seta).
-# Nível 2 (diálogos): um tofi por categoria, com subcategorias nomeadas em
-# "— CAPS —" e ações abaixo. Alternadores ficam abertos e atualizam o
-# estado; sub-diálogos (Energia, Monitores, Temperatura, Esquemas, Fonte,
-# Tofi, área de transferência, Emoji) rodam e VOLTAM ao mesmo diálogo da
-# categoria, já com o estado novo. Apps externos (Terminal, Arquivos,
-# Navegador, papel de parede, bloqueio, Rede, Bluetooth) trocam de processo.
-# Todo diálogo tem "← Voltar" como primeira linha; Esc faz o mesmo.
+# com o estado atual à direita (" · Ativada", " · 99%") e " >" onde há
+# subnível. Setas ASCII minimalistas (< voltar, > avançar); sem caixa de
+# entrada (hide-input, sem cursor — a linha do prompt vira título) e sem
+# dois-pontos nos rótulos. Grupos separados só por respiro (U+2800), sem
+# títulos decorativos.
+# Nível 2 (diálogos): um tofi por categoria. Alternadores ficam abertos e
+# atualizam o estado; sub-diálogos (Energia, Monitores, Temperatura,
+# Esquemas, Fonte, Tofi, área de transferência, Emoji) rodam e VOLTAM ao
+# mesmo diálogo da categoria, já com o estado novo. Apps externos
+# (Terminal, Arquivos, Navegador, papel de parede, bloqueio, Rede,
+# Bluetooth) trocam de processo. Todo diálogo tem "< Voltar" como primeira
+# linha; Esc faz o mesmo.
 #
 # Separadores invisíveis: PAD=U+00A0 (margem esquerda; U+0020 quebrava o
 # Pango no meio da linha, ver brightness.sh) e GAP=U+2800 (linha em branco
 # entre grupos). U+0000 (nulo) é impossível aqui: string POSIX/argv é
 # terminada em NUL, então o menu nunca o receberia — U+2800 o substitui.
-# Cabeçalhos ("—") e GAPs selecionados voltam ao mesmo diálogo (no-op).
-# Setas ← (U+2190) e → (U+2192): ver lista de setas Unicode.
+# GAPs selecionados voltam ao mesmo diálogo (no-op).
 #
 # Janelas: "Divisão automática" liga/desliga o autotiling-rs. Desligada, o
 # mod+w (abas) e o mod+s (pilha) viram monocle manual, um app por vez.
+# O desligado persiste em ~/.cache/autotiling-off: o exec_always do
+# sway/config e o game-mode.sh respeitam o arquivo, então um
+# `swaymsg reload` (render.sh) não ressuscita o processo.
 # Hook não-interativo de teste: TOFI_SEQ com uma escolha exata por linha é
 # consumida em ordem (menu, depois diálogo); esgotada, volta/sai. Ex.:
-# TOFI_SEQ="$(printf 'Janelas · Desativada →\n← Voltar')" ./tofi-menu.sh
+# TOFI_SEQ="$(printf 'Janelas · Desativada >\n< Voltar')" ./tofi-menu.sh
 set -eu
 
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
@@ -69,9 +74,10 @@ time_label() { date '+%H:%M'; }
 
 ask() {
     # ask <prompt> — lê as entradas da stdin e devolve a escolha.
+    # Sem caixa de entrada: hide-input + sem cursor, o prompt vira título.
     # Fila de teste em arquivo: ask roda dentro de $(...) (subshell), então
     # consumir TOFI_SEQ em memória nunca persistiria (loop infinito) — o
-    # main despeja a fila num temporário e cada askretira a 1ª linha.
+    # main despeja a fila num temporário e cada ask retira a 1ª linha.
     prompt=$1
     if [ -n "${TOFI_SEQ_FILE:-}" ]; then
         line=$(head -n 1 "$TOFI_SEQ_FILE" 2>/dev/null || true)
@@ -81,19 +87,24 @@ ask() {
         unset line
         return 0
     fi
-    "$tofi" --config "$conf" --prompt-text "$prompt" || true
+    "$tofi" --config "$conf" --prompt-text "$prompt" \
+        --hide-input=true --text-cursor=false || true
 }
 
 toggle_autotiling() {
+    flag=${XDG_CACHE_HOME:-$HOME/.cache}/autotiling-off
     if is_autotiling_on; then
         pkill -x autotiling-rs >/dev/null 2>&1 || true
+        printf '' > "$flag" 2>/dev/null || true
         notify-send "Divisão automática desligada" "Para monocle, use mod+w (abas) ou mod+s (pilha)." 2>/dev/null || true
     else
+        rm -f "$flag" 2>/dev/null || true
         pkill -x autotiling-rs >/dev/null 2>&1 || true
         sleep 0.2
         autotiling-rs >/dev/null 2>&1 &
         notify-send "Divisão automática ativada" "Novas janelas alternam direção sozinhas." 2>/dev/null || true
     fi
+    unset flag
 }
 
 toggle_dnd() {
@@ -119,7 +130,7 @@ open_rede() {
 
 sub_apps() {
     while true; do
-        c=$(printf '%s\n' "${PAD}← Voltar" "${PAD}Terminal" "${PAD}Arquivos" "${PAD}Navegador" | ask "Aplicativos: ")
+        c=$(printf '%s\n' "${PAD}< Voltar" "${PAD}Terminal" "${PAD}Arquivos" "${PAD}Navegador" | ask "Aplicativos")
         [ -n "$c" ] || return 0
         case "$c" in
             *Voltar*) return 0 ;;
@@ -132,7 +143,7 @@ sub_apps() {
 
 sub_net() {
     while true; do
-        c=$(printf '%s\n' "${PAD}← Voltar" "${PAD}Rede →" "${PAD}Bluetooth" | ask "Conectividade: ")
+        c=$(printf '%s\n' "${PAD}< Voltar" "${PAD}Rede >" "${PAD}Bluetooth" | ask "Conectividade")
         [ -n "$c" ] || return 0
         case "$c" in
             *Voltar*) return 0 ;;
@@ -144,24 +155,21 @@ sub_net() {
 
 sub_look() {
     while true; do
-        c=$(printf '%s\n' "${PAD}← Voltar" \
-            "${PAD}— TEMA —" \
+        c=$(printf '%s\n' "${PAD}< Voltar" \
             "${PAD}Claro ou escuro · $(theme_label)" \
             "${PAD}Esquemas de cores" \
             "${PAD}Tema do Tofi" \
             "$GAP" \
-            "${PAD}— TEXTO —" \
             "${PAD}Fonte · $(font_label)" \
             "${PAD}Tamanho da fonte · $(size_label)" \
             "$GAP" \
-            "${PAD}— FUNDO —" \
             "${PAD}Papel de parede" \
             "${PAD}Luz noturna · $(night_label)" \
-            "${PAD}Temperatura da luz →" \
-            "${PAD}Barra superior · $(yambar_label)" | ask "Aparência: ")
+            "${PAD}Temperatura da luz >" \
+            "${PAD}Barra superior · $(yambar_label)" | ask "Aparência")
         [ -n "$c" ] || return 0
         case "$c" in
-            *Voltar*|*—*|"$GAP") continue ;;
+            *Voltar*|"$GAP") continue ;;
             *Claro*) "$script_dir/theme-toggle.sh" toggle ;;
             *Esquemas*) "$script_dir/scheme-menu.sh" ;;
             "*Tema do Tofi*") "$script_dir/tofi-themes.sh" ;;
@@ -177,16 +185,14 @@ sub_look() {
 
 sub_windows() {
     while true; do
-        c=$(printf '%s\n' "${PAD}← Voltar" \
-            "${PAD}— DIVISÃO —" \
+        c=$(printf '%s\n' "${PAD}< Voltar" \
             "${PAD}Divisão automática · $(div_label)" \
             "$GAP" \
-            "${PAD}— FOCO —" \
             "${PAD}Avisos · $(dnd_label)" \
-            "${PAD}Modo jogo · $(game_label)" | ask "Janelas: ")
+            "${PAD}Modo jogo · $(game_label)" | ask "Janelas")
         [ -n "$c" ] || return 0
         case "$c" in
-            *Voltar*|*—*|"$GAP") continue ;;
+            *Voltar*|"$GAP") continue ;;
             *Divisão*) toggle_autotiling ;;
             *Avisos*) toggle_dnd ;;
             "*Modo jogo*") "$script_dir/game-mode.sh" toggle ;;
@@ -196,23 +202,20 @@ sub_windows() {
 
 sub_sys() {
     while true; do
-        c=$(printf '%s\n' "${PAD}← Voltar" \
-            "${PAD}— CONTEÚDO —" \
+        c=$(printf '%s\n' "${PAD}< Voltar" \
             "${PAD}Área de transferência" \
             "${PAD}Emoji" \
             "$GAP" \
-            "${PAD}— TELA E ENERGIA —" \
-            "${PAD}Monitores →" \
-            "${PAD}Energia →" \
+            "${PAD}Monitores >" \
+            "${PAD}Energia >" \
             "${PAD}Bateria · $(bat_label)" \
             "$GAP" \
-            "${PAD}— INFORMAÇÃO —" \
             "${PAD}Hora · $(time_label)" \
             "${PAD}Data" \
-            "${PAD}Bloquear tela" | ask "Sistema: ")
+            "${PAD}Bloquear tela" | ask "Sistema")
         [ -n "$c" ] || return 0
         case "$c" in
-            *Voltar*|*—*|"$GAP") continue ;;
+            *Voltar*|"$GAP") continue ;;
             *transferência*) "$script_dir/clipboard.sh" ;;
             *Emoji*) "$script_dir/emoji.sh" ;;
             *Monitores*) "$script_dir/monitormenu.sh" ;;
@@ -237,12 +240,12 @@ main() {
     fi
     while true; do
         choice=$(printf '%s\n' \
-            "${PAD}Aplicativos →" \
-            "${PAD}Conectividade →" \
-            "${PAD}Aparência · $(theme_label) →" \
-            "${PAD}Janelas · $(div_label) →" \
-            "${PAD}Sistema · $(bat_label) →" \
-            | ask "Ajustes: ")
+            "${PAD}Aplicativos >" \
+            "${PAD}Conectividade >" \
+            "${PAD}Aparência · $(theme_label) >" \
+            "${PAD}Janelas · $(div_label) >" \
+            "${PAD}Sistema · $(bat_label) >" \
+            | ask "Ajustes")
         [ -n "$choice" ] || exit 0
         case "$choice" in
             *Aplicativos*) sub_apps ;;

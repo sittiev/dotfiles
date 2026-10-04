@@ -26,7 +26,7 @@ rocket_nation 🌍'
 if [ -n "${TOFI_PICK:-}" ]; then
     entry=$TOFI_PICK
 else
-    entry=$(printf '%s\n' "← Voltar" "$list" | "$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)/tofi-safe.sh" --config "$HOME/.config/tofi/config-emoji" --prompt-text "Emoji: " || true)
+    entry=$(printf '%s\n' "< Voltar" "$list" | "$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)/tofi-safe.sh" --config "$HOME/.config/tofi/config-emoji" --prompt-text "Emoji" --hide-input=true --text-cursor=false || true)
 fi
 [ -n "$entry" ] || exit 0
 case "$entry" in *Voltar*) exit 0 ;; esac

@@ -10,7 +10,7 @@ set -eu
 # shellcheck disable=SC1091
 . "${0%/*}/nightlib.sh"
 
-readonly MENU_PROMPT="Luz noturna: "
+readonly MENU_PROMPT="Luz noturna"
 
 # is_temp VALUE: true iff VALUE is an integer in wlsunset range.
 is_temp() {
@@ -25,9 +25,9 @@ pick_choice() {
         printf '%s\n' "$TOFI_PICK"
         return 0
     fi
-    printf '%s\n' "← Voltar" "1000 K — noite" "2000 K" "3000 K" "4500 K" \
+    printf '%s\n' "< Voltar" "1000 K — noite" "2000 K" "3000 K" "4500 K" \
         "6500 K — dia" "Escurecer (gamma 0.8)" "Normal (gamma 1.0)" "Desligar" \
-        | "$(CDPATH= cd -- "${0%/*}" && pwd)/tofi-safe.sh" --prompt-text "$MENU_PROMPT" || true
+        | "$(CDPATH= cd -- "${0%/*}" && pwd)/tofi-safe.sh" --prompt-text "$MENU_PROMPT" --hide-input=true --text-cursor=false || true
 }
 
 apply_choice() {

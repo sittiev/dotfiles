@@ -35,7 +35,7 @@ unset _sorted
 if [ -n "${TOFI_SCHEME:-}" ]; then
     choice=$TOFI_SCHEME
 else
-    choice=$(printf '%s\n' "← Voltar" "$names" | "$script_dir/tofi-safe.sh" --config "$HOME/.config/tofi/config" --prompt-text "Esquema: " || true)
+    choice=$(printf '%s\n' "< Voltar" "$names" | "$script_dir/tofi-safe.sh" --config "$HOME/.config/tofi/config" --prompt-text "Esquema" --hide-input=true --text-cursor=false || true)
 fi
 [ -n "$choice" ] || exit 0
 case "$choice" in *Voltar*) exit 0 ;; esac

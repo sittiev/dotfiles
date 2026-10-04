@@ -24,7 +24,9 @@ font pango:monospace 0.001
 ### Output configuration
 #
 # HDMI-A-1 e o principal, a esquerda (pos 0 0). eDP-1 (notebook) estende a
-# direita quando ativo; com HDMI conectado o outputs.sh auto desliga o eDP.
+# direita quando ativo; com HDMI conectado o kanshi (perfil docked) desliga o
+# eDP — fallback outputs.sh auto quando sem kanshi. Posicoes aqui sao o
+# fallback estatico antes do daemon aplicar o perfil.
 output HDMI-A-1 pos 0 0
 output eDP-1 pos 1920 0
 workspace 1 output HDMI-A-1 eDP-1
@@ -199,12 +201,12 @@ smart_borders off
 # Sem borda visivel em janela inativa: border/indicator/child_border das
 # classes nao-focadas sao transparentes (render.sh regenera estas linhas;
 # nao volte para a cor de fundo — em wallpaper claro ela vira borda branca).
-client.focused   #657789 #97A3AF #373839 #657789 #97A3AF
-client.unfocused #00000000 #e3e6e8 #7B7D7F #00000000 #00000000
-client.focused_inactive #00000000 #e3e6e8 #7B7D7F #00000000 #00000000
-client.placeholder      #00000000 #e3e6e8 #7B7D7F #00000000 #00000000
-client.background       #e3e6e8
-client.urgent           #657789 #A7B3BC #373839 #657789 #A7B3BC
+client.focused   #79929F #53646C #DEDFE0 #79929F #53646C
+client.unfocused #00000000 #1c1f21 #7A7F81 #00000000 #00000000
+client.focused_inactive #00000000 #1c1f21 #7A7F81 #00000000 #00000000
+client.placeholder      #00000000 #1c1f21 #7A7F81 #00000000 #00000000
+client.background       #1c1f21
+client.urgent           #79929F #3C4B55 #B9BDBF #79929F #3C4B55
 
 for_window [window_type="dialog"] floating enable, move position center
 for_window [window_type="utility"] floating enable, move position center
@@ -219,7 +221,12 @@ exec dash -c 'command -v waypaper >/dev/null 2>&1 && command -v swaybg >/dev/nul
 exec_always dash -c 'pgrep -x yambar >/dev/null 2>&1 || LC_TIME=C yambar >/dev/null 2>&1'
 exec_always dash -c 'pgrep -x mako >/dev/null 2>&1 || mako >/dev/null 2>&1'
 exec_always ~/.config/sway/scripts/cliphist-watch.sh
-exec_always ~/.config/sway/scripts/outputs.sh auto >/dev/null 2>&1
+# Hotplug via kanshi (perfis em ~/.config/kanshi/config; exec chama
+# kanshi-hook.sh p/ focar a saida). Sem kanshi, fallback outputs.sh auto.
+# pkill antes: mesmo padrão do autotiling-rs abaixo — exec_always acumularia
+# um daemon a cada `swaymsg reload`. O manual (monitormenu.sh → outputs.sh)
+# persiste até o próximo hotplug, quando o kanshi reaplica o perfil.
+exec_always dash -c 'if command -v kanshi >/dev/null 2>&1 && [ -f "$HOME/.config/kanshi/config" ]; then pkill -x kanshi >/dev/null 2>&1 || true; sleep 0.2; kanshi >/dev/null 2>&1 & else ~/.config/sway/scripts/outputs.sh auto >/dev/null 2>&1; fi'
 bindswitch --reload --locked lid:on exec ~/.config/sway/scripts/outputs.sh lid on
 bindswitch --reload --locked lid:off exec ~/.config/sway/scripts/outputs.sh lid off
 exec_always ~/.config/sway/scripts/idle.sh
@@ -232,6 +239,8 @@ exec swaymsg focus output HDMI-A-1 >/dev/null 2>&1
 # processo a cada `swaymsg reload` (nwg-piotr/autotiling issue #69). Assim
 # recarrega o binario sem duplicar. Saida descartada porque o programa escreve
 # em stderr toda vez que nao ha janela focada, o que poluiria o log do sway.
-exec_always dash -c 'pkill -x autotiling-rs >/dev/null 2>&1; sleep 0.2; autotiling-rs >/dev/null 2>&1'
+# O menu Janelas desliga via ~/.cache/autotiling-off: com o arquivo presente
+# o reload nao ressuscita o processo (volta só pelo menu ou game-mode off).
+exec_always dash -c 'pkill -x autotiling-rs >/dev/null 2>&1; sleep 0.2; [ -f "${XDG_CACHE_HOME:-$HOME/.cache}/autotiling-off" ] || autotiling-rs >/dev/null 2>&1'
 
 # Cursor theme and size are intentionally not configured here.
