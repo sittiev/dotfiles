@@ -104,6 +104,13 @@ ask() {
     if [ "${TOFI_MENU_DEBUG:-0}" = 1 ]; then
         printf '%s prompt=%s choice=%s\n' "$(date '+%H:%M:%S')" "$prompt" "$_ask_choice" >> /tmp/tofi-menu-debug.log
     fi
+    # tofi devolve a escolha em NFD (e + combinante) e os literais do
+    # case sao NFC: sem normalizar, a comparacao byte a byte nunca casa
+    # e o dialogo volta ao menu (Aparencia, Divisao, transferencia...).
+    if command -v python3 >/dev/null 2>&1; then
+        _ask_nfc=$(printf '%s' "$_ask_choice" | python3 -c 'import sys,unicodedata; sys.stdout.write(unicodedata.normalize("NFC", sys.stdin.read()))' 2>/dev/null) && _ask_choice=$_ask_nfc
+        unset _ask_nfc
+    fi
     printf '%s\n' "$_ask_choice"
     unset _ask_choice
 }
