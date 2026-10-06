@@ -8,7 +8,7 @@
 set -eu
 
 command -v swaylock >/dev/null 2>&1 || {
-    notify-send "Bloqueio indisponível" "Para bloquear a tela, instale swaylock: sudo pacman -S swaylock." 2>/dev/null || true
+    notify-send "Bloqueio indisponível" "Para bloquear a tela, instale swaylock-effects: paru -S swaylock-effects-git." 2>/dev/null || true
     exit 1
 }
 

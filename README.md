@@ -18,14 +18,14 @@ sudo pacman -S sway foot mako kanshi swaybg waypaper grim slurp wl-clipboard wty
 AUR, via `paru`:
 
 ```sh
-paru -S tofi yambar python-pywal16 qogir-gtk-theme
+paru -S tofi yambar python-pywal16 qogir-gtk-theme swaylock-effects-git
 ```
 
 Validation tools and optional theme consumers (all official; the writers
 skip them when absent, see `docs/PENDING.md`):
 
 ```sh
-sudo pacman -S checkbashisms qt6ct qt5ct swaylock ly
+sudo pacman -S checkbashisms qt6ct qt5ct ly
 ```
 
 YAMIS, the icon set, is not packaged: put it at
