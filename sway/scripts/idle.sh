@@ -1,5 +1,5 @@
 #!/usr/bin/dash
-# idle.sh — swayidle: trava com waylock (tema), apaga telas e suspende.
+# idle.sh — swayidle: trava com swaylock (tema), apaga telas e suspende.
 # Na tomada: trava aos 5min, apaga telas aos 10min, suspende após $SUSPEND
 # (cache ~/.cache/suspend-timeout, 0=nunca, padrão 900).
 # Descarregando (bateria): trava aos 3min, apaga telas aos 5min, suspende em
@@ -33,15 +33,15 @@ sleep 0.2
 if [ "$SUSPEND" -gt 0 ] 2>/dev/null; then
     # shellcheck disable=SC2086
     exec swayidle -w \
-        timeout "$LOCK" "$script_dir/waylock.sh" \
+        timeout "$LOCK" "$script_dir/swaylock.sh" \
         timeout "$SCREEN" 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
         timeout "$SUSPEND" 'systemctl suspend' \
-        lock "$script_dir/waylock.sh" \
-        before-sleep "$script_dir/waylock.sh --pre-sleep" >/dev/null 2>&1
+        lock "$script_dir/swaylock.sh" \
+        before-sleep "$script_dir/swaylock.sh --pre-sleep" >/dev/null 2>&1
 else
     exec swayidle -w \
-        timeout "$LOCK" "$script_dir/waylock.sh" \
+        timeout "$LOCK" "$script_dir/swaylock.sh" \
         timeout "$SCREEN" 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' \
-        lock "$script_dir/waylock.sh" \
-        before-sleep "$script_dir/waylock.sh --pre-sleep" >/dev/null 2>&1
+        lock "$script_dir/swaylock.sh" \
+        before-sleep "$script_dir/swaylock.sh --pre-sleep" >/dev/null 2>&1
 fi

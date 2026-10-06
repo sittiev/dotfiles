@@ -36,8 +36,8 @@ section.
 - GTK/Qt theming: https://github.com/nwg-piotr/nwg-look |
   https://github.com/tsujan/Kvantum |
   https://wiki.archlinux.org/title/Uniform_look_for_Qt_and_GTK_applications
-- Locker (waylock): https://github.com/ifreund/waylock |
-  https://man.archlinux.org/man/waylock.1.en
+- Locker (swaylock): https://github.com/swaywm/swaylock |
+  https://man.archlinux.org/man/swaylock.1.en
 - PCManFM actions: https://wiki.archlinux.org/title/PCManFM |
   https://lxqt-project.org/wiki/custom_actions.html |
   https://github.com/stefonarch/custom-actions

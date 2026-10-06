@@ -25,7 +25,7 @@ Validation tools and optional theme consumers (all official; the writers
 skip them when absent, see `docs/PENDING.md`):
 
 ```sh
-sudo pacman -S checkbashisms qt6ct qt5ct waylock ly
+sudo pacman -S checkbashisms qt6ct qt5ct swaylock ly
 ```
 
 YAMIS, the icon set, is not packaged: put it at

@@ -64,7 +64,7 @@ input type:pointer {
     bindsym $mod+period exec ~/.config/sway/scripts/emoji.sh
     bindsym $mod+Shift+v exec ~/.config/sway/scripts/clipboard.sh
     bindsym $mod+Shift+x exec ~/.config/sway/scripts/tofi-menu.sh
-    bindsym $mod+Shift+Escape exec ~/.config/sway/scripts/waylock.sh
+    bindsym $mod+Shift+Escape exec ~/.config/sway/scripts/swaylock.sh
     bindsym $mod+x exec ~/.config/sway/scripts/yambar-toggle.sh
     bindsym $mod+n exec ~/.config/sway/scripts/nightlight.sh
     bindsym $mod+Shift+n exec ~/.config/sway/scripts/nightmenu.sh

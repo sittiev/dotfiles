@@ -58,7 +58,7 @@ Fontes consultadas (§2 do `AGENTS.md`):
 | Clipboard | Itens copiados (item do hub), Área de transferência (prompt) | Clipboard |
 | Energia | Energia | Power, Powermenu |
 | Monitores | Monitores (menu/prompt), Apenas HDMI / Apenas notebook (filtro), Só HDMI / Só notebook (títulos), estendidos / espelhados (estados) | Display, Screen, Monitor (singular no prompt) |
-| Bloqueio | Bloqueio indisponível / bloquear a tela | Waylock (no texto visível), lock |
+| Bloqueio | Bloqueio indisponível / bloquear a tela | Swaylock (no texto visível), lock |
 | Papel de parede | Papel de parede indisponível / trocar a imagem / mostrar a imagem | Wallpaper, waypaper/swaybg (no texto) |
 | Instalar dep. | Para configurar, instale X: <comando> | X não instalado (…), parêntese solto |
 | Mudo | Mudo | Mute, Mutado, Silenciado (só p/ notificações) |
@@ -103,7 +103,7 @@ como fallback.
 | `sway/scripts/game-mode.sh` | `ON — …`, `já ativo`, `OFF — …` | `Já ativo. Para jogar, use gamemoderun.`; `Ativado: performance, sem suspensão…`; `Desativado: perfil restaurado.` (+ `Para voltar a luz noturna, pressione Super+n.` quando aplicável) |
 | `sway/scripts/tofi-themes.sh` | `"Tofi" "Pasta…não encontrada."`, prompt `Tema tofi: ` | `"Temas do Tofi indisponíveis" "Para escolher um layout, restaure ~/.config/tofi/themes."`; prompt `Tema: ` |
 | `sway/scripts/wallpaper.sh` | `"Papel de parede" "Instale waypaper (…)"` | `"Papel de parede indisponível" "Para trocar a imagem, instale waypaper: …"`; idem swaybg/mostrar |
-| `sway/scripts/waylock.sh` | `"Waylock" "waylock não instalado (…)"` | `"Bloqueio indisponível" "Para bloquear a tela, instale waylock: …"`; `"Tema indisponível" "Para bloquear com as cores do tema, rode theme.sh primeiro."` |
+| `sway/scripts/swaylock.sh` | `"Waylock" "waylock não instalado (…)"` | `"Bloqueio indisponível" "Para bloquear a tela, instale swaylock: …"`; `"Tema indisponível" "Para bloquear com as cores do tema, rode theme.sh primeiro."` |
 | `sway/scripts/tofi-apply.sh` | `"tofi" "Paleta não encontrada (…). Rode…"` | `"Tofi indisponível" "Para aplicar o layout, rode theme.sh primeiro."` (caminho fica só no stderr) |
 | `sway/scripts/powermenu.sh` | `5min`, `Tampa: suspender`, `Tampa: nada` | `5 min`, `Tampa fechada: suspender`, `Tampa fechada: apenas desligar a tela` (filtro ASCII, princípio 8) |
 | `sway/scripts/nightmenu.sh` | `1000K Noite`, `Gamma 0.8 (Escurecer)`, prompt `Noite: ` | `1000 K — noite`, `Escurecer (gamma 0.8)`, prompt `Luz noturna: ` |

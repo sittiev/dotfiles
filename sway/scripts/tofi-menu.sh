@@ -270,7 +270,7 @@ sub_sys() {
                 unset cap ;;
             *Hora*) notify-send "Hora" "$(date '+%H:%M')" ;;
             *Data*) notify-send "Data" "$(date '+%A, %d de %B de %Y')" ;;
-            *Bloquear*) exec "$script_dir/waylock.sh" ;;
+            *Bloquear*) exec "$script_dir/swaylock.sh" ;;
         esac
     done
 }
