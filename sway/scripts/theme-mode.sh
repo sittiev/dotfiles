@@ -906,29 +906,24 @@ PY
     if [ "$mode" = dark ]; then
         gsettings set org.gnome.desktop.interface color-scheme prefer-dark 2>/dev/null || true
         GTK_THEME="$(gtk_theme_pick Default Qogir-Dark)"
-        ICON_THEME="$(icon_theme_pick Papirus-Dark yet-another-monochrome-icon-set)"
+        ICON_THEME="$(icon_theme_pick yet-another-monochrome-icon-set)"
         GTK_PREFER="true"
     else
         gsettings set org.gnome.desktop.interface color-scheme prefer-light 2>/dev/null || true
         GTK_THEME="$(gtk_theme_pick Default Qogir-Light)"
-        ICON_THEME="$(icon_theme_pick Papirus-Light yet-another-monochrome-icon-set)"
+        ICON_THEME="$(icon_theme_pick yet-another-monochrome-icon-set)"
         GTK_PREFER="false"
     fi
 
-    # Papirus-wal recolorido pela paleta (cópia gerada em
-    # ~/.local/share/icons/papirus-wal; o tema base fica intocado) tem
-    # prioridade: cobre actions/symbolic em mono puxando FG/ACCENT/MUTED/FAIL.
-    # YAMIS-wal (icon-recolor.sh) é o fallback mono; Papirus-Dark/Light é o
-    # fallback colorido quando nenhum recolorimento é possível.
-    ICON_WAL="$("$HOME/.config/sway/scripts/papirus-recolor.sh" 2>/dev/null || true)"
-    if [ -z "$ICON_WAL" ]; then
-        ICON_WAL="$("$HOME/.config/sway/scripts/icon-recolor.sh" 2>/dev/null || true)"
-    fi
+    # YAMIS-wal recolorido pela paleta (cópia gerada em
+    # ~/.local/share/icons/yamis-wal; o tema base fica intocado) é o padrão:
+    # cobre tudo em mono puxando FG/ACCENT/MUTED da paleta.
+    ICON_WAL="$("$HOME/.config/sway/scripts/icon-recolor.sh" 2>/dev/null || true)"
     if [ -n "$ICON_WAL" ]; then
         ICON_THEME="$ICON_WAL"
     fi
 
-    # papirus-wal/yamis-wal são monocromáticos nativos; Papirus é o fallback.
+    # yamis-wal é monocromático nativo (FollowsColorScheme recolorido).
     gsettings set org.gnome.desktop.interface gtk-theme "$GTK_THEME" 2>/dev/null || true
     gsettings set org.gnome.desktop.interface icon-theme "$ICON_THEME" 2>/dev/null || true
     for v in 3.0 4.0; do
