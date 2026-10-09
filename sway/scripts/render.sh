@@ -166,27 +166,39 @@ width=172
 height=168
 EOF
 
-# Foot: keep current font/geometry, replace only colors. Foot 1.28 uses
+# Fonte do terminal (term-font.sh): jetbrains=padrao, lexend, atkinson.
+# Lexend e Atkinson sao proporcionais: a Nerd entra como fallback de glifos
+# (icones), mas a grade do foot segue fixa — glifo proporcional pode
+# cortar/sobrepor. Tamanho 12pt igual ao padrao anterior.
+case "$(cat "$HOME/.cache/term-font" 2>/dev/null || printf 'jetbrains')" in
+    lexend) TERMFONT="Lexend:size=12,JetBrainsMono Nerd Font:size=12" ;;
+    atkinson) TERMFONT="Atkinson Hyperlegible:size=12,JetBrainsMono Nerd Font:size=12" ;;
+    *) TERMFONT="JetBrainsMono Nerd Font:size=12" ;;
+esac
+
+# Foot: fonte via term-font.sh, resto da geometria preservado; só as cores
+# sao trocadas. Foot 1.28 usa
 # [colors-light]/[colors-dark], not the backup's obsolete [colors] section.
 # initial-color-theme must match the section we emit, otherwise a new foot
 # looks for the absent one and falls back to its built-in defaults.
 FOOT="$HOME/.config/foot/foot.ini"
 FOOT_TMP="$FOOT.tmp.$$"
 if [ -f "$FOOT" ]; then
-    awk -v mode="$MODE" '
+    awk -v mode="$MODE" -v font="$TERMFONT" '
         /^\[colors(-light|-dark)?\]$/ { skip=1; next }
         /^\[/ { skip=0; inmain = ($0 == "[main]") }
         skip { next }
         inmain && /^initial-color-theme=/ { next }
+        inmain && /^font=/ { next }
         {
             print
-            if ($0 == "[main]" && !done) { print "initial-color-theme=" mode; done=1 }
+            if ($0 == "[main]" && !done) { print "initial-color-theme=" mode; print "font=" font; done=1 }
         }
-        END { if (!done) { print "[main]"; print "initial-color-theme=" mode } }
+        END { if (!done) { print "[main]"; print "initial-color-theme=" mode; print "font=" font } }
     ' "$FOOT" > "$FOOT_TMP"
 else
     printf '%s\n' '[main]' "initial-color-theme=$MODE" \
-        'font=JetBrainsMono Nerd Font:size=12' > "$FOOT_TMP"
+        "font=$TERMFONT" > "$FOOT_TMP"
 fi
 cat >> "$FOOT_TMP" <<EOF
 [colors-$MODE]
