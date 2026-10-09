@@ -27,7 +27,17 @@ case "$(cat "$HOME/.cache/ui-font" 2>/dev/null || printf 'noto')" in
     segoe) UI="Segoe UI" ;;
     *) UI="Noto Sans" ;;
 esac
-MONO="Noto Sans Mono"
+# Fonte mono (mono-font.sh): auto=padrao segue a UI no yambar/tofi, relogio
+# e OSDs em Noto Sans Mono. Escolha explícita vale para os quatro.
+case "$(cat "$HOME/.cache/mono-font" 2>/dev/null || printf 'auto')" in
+    noto) _MONOFAM="Noto Sans Mono" ;;
+    jetbrains) _MONOFAM="JetBrainsMono Nerd Font" ;;
+    atkinson) _MONOFAM="Atkinson Hyperlegible Mono" ;;
+    *) _MONOFAM="" ;;
+esac
+MONO_UI="${_MONOFAM:-$UI}"
+MONO="${_MONOFAM:-Noto Sans Mono}"
+unset _MONOFAM
 # Tamanho da fonte nos apps (GTK/Qt): 11pt, padrao desktop.
 UISIZE=11
 # Tamanho da UI mako+tofi (ui-font-size.sh): rampa MS/Apple 12 Caption, 14
@@ -86,8 +96,9 @@ EOF
 # Yambar: default so horario; clique no horario alterna para data+horario
 # via on-click nativo da particula (yambar-particles(5)). Estado em
 # $XDG_RUNTIME_DIR/yambar-clock-full (some no logout => volta ao default).
-# Tipografia (MS/Apple): fonte da UI via ui-font.sh (Noto/SF/Segoe), relogio
-# em mono tabular para nao pulsar a largura. Noto tem caixa win de 1.362em: size=12 rende 16.3px,
+# Tipografia (MS/Apple): barra e relogio via mono-font.sh (auto segue a
+# fonte da UI: Noto/SF/Segoe), relogio em mono tabular para nao pulsar a
+# largura. Noto tem caixa win de 1.362em: size=12 rende 16.3px,
 # cabe nos 18px da barra (size=14 daria 19.1px e cortaria).
 # Sem margins: o espacamento e so via gaps do sway (inner/outer). Sem monitor
 # fixo: com HDMI conectado o eDP fica desligado (outputs.sh auto), entao ha
@@ -101,7 +112,7 @@ bar:
   location: bottom
   background: 00000000
   foreground: ${YF}ff
-  font: "${UI}:size=12"
+  font: "${MONO_UI}:size=12"
   font-shaping: none
   spacing: 4
   right:

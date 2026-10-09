@@ -102,15 +102,20 @@ render_layout() {
     fi
 
     # outline 0 = sem "borda preta" padrão 4px #080800
-    # Fonte da UI (ui-font.sh; mesma selecao do render.sh). Por NOME de
+    # Fonte mono (mono-font.sh; mesma selecao do render.sh). Por NOME de
     # familia, nunca por caminho: com caminho absoluto o Pango nao monta a
     # cadeia de fallback do fontconfig e todo emoji vira caixa vazia.
-    # Familia unica (rampa MS/Apple); tamanho Body via ui-font-size.sh
-    # (só layouts Body seguem; fixos preservados pelo $3 vazio).
+    # Auto (padrao) segue a fonte da UI (rampa MS/Apple); tamanho Body via
+    # ui-font-size.sh (só layouts Body seguem; fixos preservados pelo $3 vazio).
     case "$(cat "$HOME/.cache/ui-font" 2>/dev/null || printf 'noto')" in
         sf) _rl_ui="SF Pro Display" ;;
         segoe) _rl_ui="Segoe UI" ;;
         *) _rl_ui="Noto Sans" ;;
+    esac
+    case "$(cat "$HOME/.cache/mono-font" 2>/dev/null || printf 'auto')" in
+        noto) _rl_ui="Noto Sans Mono" ;;
+        jetbrains) _rl_ui="JetBrainsMono Nerd Font" ;;
+        atkinson) _rl_ui="Atkinson Hyperlegible Mono" ;;
     esac
     cat >> "$_rl_dest.tmp" <<EOF
 # tofi-colors-begin (gerado por tofi-apply.sh — nao editar este bloco)

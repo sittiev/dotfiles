@@ -68,6 +68,14 @@ term_label() {
         *) printf 'JetBrains Mono' ;;
     esac
 }
+mono_label() {
+    case "$(cat "${XDG_CACHE_HOME:-$HOME/.cache}/mono-font" 2>/dev/null || printf 'auto')" in
+        noto) printf 'Noto Sans Mono' ;;
+        jetbrains) printf 'JetBrains Mono' ;;
+        atkinson) printf 'Atkinson Hyperlegible Mono' ;;
+        *) printf 'Automática' ;;
+    esac
+}
 scheme_label() { cat "${XDG_CACHE_HOME:-$HOME/.cache}/theme-scheme" 2>/dev/null || printf 'Apprentice'; }
 tofi_label() { cat "$HOME/.cache/tofi-layout" 2>/dev/null || printf 'padrao'; }
 clock_label() {
@@ -212,6 +220,7 @@ sub_look() {
             "${PAD}Fonte · $(font_label)" \
             "${PAD}Tamanho da fonte · $(size_label)" \
             "${PAD}Fonte do terminal · $(term_label)" \
+            "${PAD}Fonte mono · $(mono_label)" \
             "$GAP" \
             "${PAD}Papel de parede" \
             "${PAD}Luz noturna · $(night_label) >" \
@@ -226,6 +235,7 @@ sub_look() {
             *Tamanho*) "$script_dir/ui-font-size.sh" ;;
             *Tema*) "$script_dir/tofi-themes.sh" ;;
             *terminal*) "$script_dir/term-font.sh" ;;
+            *mono*) "$script_dir/mono-font.sh" ;;
             *Fonte*) "$script_dir/ui-font.sh" ;;
             *Papel*) exec "$script_dir/wallpaper.sh" ;;
             *noturna*) sub_noite ;;
