@@ -64,7 +64,7 @@ size_label() { cat "${XDG_CACHE_HOME:-$HOME/.cache}/ui-font-size" 2>/dev/null ||
 term_label() {
     case "$(cat "${XDG_CACHE_HOME:-$HOME/.cache}/term-font" 2>/dev/null || printf 'jetbrains')" in
         lexend) printf 'Lexend' ;;
-        atkinson) printf 'Atkinson Hyperlegible' ;;
+        atkinson) printf 'Atkinson Hyperlegible Mono' ;;
         *) printf 'JetBrains Mono' ;;
     esac
 }

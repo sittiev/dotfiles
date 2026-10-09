@@ -1,6 +1,6 @@
 #!/usr/bin/dash
 # Escolhe a fonte do terminal (foot) entre JetBrains Mono, Lexend e
-# Atkinson Hyperlegible.
+# Atkinson Hyperlegible Mono.
 # Sem arg: abre o seletor no tofi. Salva a chave em ~/.cache/term-font;
 # render.sh lê de lá (ausente = jetbrains).
 # Uso: term-font.sh [jetbrains|lexend|atkinson]   (TOFI_TERMFONT dribla o seletor, p/ teste)
@@ -14,7 +14,7 @@ if [ -z "$pick" ]; then
     if [ -n "${TOFI_TERMFONT:-}" ]; then
         choice=$TOFI_TERMFONT
     else
-        choice=$(printf '%s\n' '< Voltar' 'JetBrains Mono' 'Lexend' 'Atkinson Hyperlegible' \
+        choice=$(printf '%s\n' '< Voltar' 'JetBrains Mono' 'Lexend' 'Atkinson Hyperlegible Mono' \
             | "$script_dir/tofi-safe.sh" --config "$HOME/.config/tofi/config" --prompt-text "Fonte do terminal" || true)
     fi
     [ -n "${choice:-}" ] || exit 0
@@ -22,7 +22,7 @@ if [ -z "$pick" ]; then
         *Voltar*) exit 0 ;;
         'JetBrains Mono') pick=jetbrains ;;
         'Lexend') pick=lexend ;;
-        'Atkinson Hyperlegible') pick=atkinson ;;
+        'Atkinson Hyperlegible Mono') pick=atkinson ;;
         *) notify-send "Fonte inválida" "Para aplicar, escolha um nome da lista." 2>/dev/null || true; exit 1 ;;
     esac
 fi
@@ -43,5 +43,5 @@ mode=$(cat "$HOME/.cache/theme-mode" 2>/dev/null || printf 'dark')
 case "$mode" in light|dark) ;; *) mode=dark ;; esac
 "$script_dir/render.sh" "$mode" >/dev/null 2>&1
 
-name=$(case "$pick" in jetbrains) printf 'JetBrains Mono' ;; lexend) printf 'Lexend' ;; *) printf 'Atkinson Hyperlegible' ;; esac)
+name=$(case "$pick" in jetbrains) printf 'JetBrains Mono' ;; lexend) printf 'Lexend' ;; *) printf 'Atkinson Hyperlegible Mono' ;; esac)
 notify-send "Fonte do terminal" "$name aplicada. Novas janelas usam a fonte." 2>/dev/null || true

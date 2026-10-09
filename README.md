@@ -12,13 +12,13 @@ Official repos:
 ```sh
 sudo pacman -S sway foot mako kanshi swaybg waypaper grim slurp wl-clipboard wtype \
     cliphist lxqt-policykit jq dash python glib2 \
-    ttf-jetbrains-mono-nerd noto-fonts ttf-atkinson-hyperlegible
+    ttf-jetbrains-mono-nerd noto-fonts
 ```
 
 AUR, via `paru`:
 
 ```sh
-paru -S tofi yambar python-pywal16 qogir-gtk-theme swaylock-effects-git lexend-fonts-git
+paru -S tofi yambar python-pywal16 qogir-gtk-theme swaylock-effects-git lexend-fonts-git ttf-atkinson-hyperlegible-next-mono
 ```
 
 Validation tools and optional theme consumers (all official; the writers

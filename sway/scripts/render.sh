@@ -167,12 +167,12 @@ height=168
 EOF
 
 # Fonte do terminal (term-font.sh): jetbrains=padrao, lexend, atkinson.
-# Lexend e Atkinson sao proporcionais: a Nerd entra como fallback de glifos
-# (icones), mas a grade do foot segue fixa — glifo proporcional pode
-# cortar/sobrepor. Tamanho 12pt igual ao padrao anterior.
+# Atkinson Mono e JetBrains sao mono de verdade. Lexend e proporcional: a
+# Nerd entra como fallback de glifos (icones), mas a grade do foot segue
+# fixa — glifo proporcional pode cortar/sobrepor. Tamanho 12pt em todas.
 case "$(cat "$HOME/.cache/term-font" 2>/dev/null || printf 'jetbrains')" in
     lexend) TERMFONT="Lexend:size=12,JetBrainsMono Nerd Font:size=12" ;;
-    atkinson) TERMFONT="Atkinson Hyperlegible:size=12,JetBrainsMono Nerd Font:size=12" ;;
+    atkinson) TERMFONT="Atkinson Hyperlegible Mono:size=12,JetBrainsMono Nerd Font:size=12" ;;
     *) TERMFONT="JetBrainsMono Nerd Font:size=12" ;;
 esac
 
