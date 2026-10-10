@@ -192,6 +192,22 @@ desse ajuste: são curadas à mão, e `apprentice.env` precisa continuar
 byte-idêntico no dark. Esquema desconhecido/ausente ⇒ fallback completo nas
 constantes atuais. Detalhes em `sway/schemes/README.md`.
 
+## Bloqueio automático
+
+**Mod+Shift+x → Sistema → Bloqueio automático** define o tempo até o
+`swaylock` travar a tela sozinho: 1 min, 2 min, 5 min, 10 min, 15 min,
+30 min, 1 h ou nunca. A escolha grava `~/.cache/lock-timeout` em segundos e
+reinicia `sway/scripts/idle.sh`, dono do `swayidle`:
+
+- o valor vale na tomada e na bateria (`battery.sh` só escolhe quando apagar
+  as telas: 5 min na bateria, 10 min na tomada);
+- "Nunca bloquear" (0) remove o `timeout` do travamento, mas `lock` e
+  `before-sleep` continuam — o `Mod+Shift+Escape` e a suspensão travam igual;
+- apagar telas e suspender (`Mod+Shift+x → Energia`,
+  `~/.cache/suspend-timeout`) são independentes: escolher 1 h de bloqueio não
+  muda o suspend;
+- sem o arquivo, `idle.sh` usa 300 s.
+
 ## OpenCode
 
 The global OpenCode configuration restricts the filesystem MCP to this

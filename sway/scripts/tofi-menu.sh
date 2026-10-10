@@ -8,8 +8,9 @@
 # ela o Enter não casa nada). Grupos separados só por respiro (U+2800), sem
 # títulos decorativos.
 # Nível 2 (diálogos): um tofi por categoria. Alternadores ficam abertos e
-# atualizam o estado; sub-diálogos (Energia, Monitores, Luz noturna/Temperatura,
-# Esquemas, Fonte, Tofi, área de transferência, Emoji) rodam e VOLTAM ao
+# atualizam o estado; sub-diálogos (Energia, Bloqueio automático, Monitores,
+# Luz noturna/Temperatura, Esquemas, Fonte, Tofi, área de transferência,
+# Emoji) rodam e VOLTAM ao
 # mesmo diálogo da categoria, já com o estado novo. Apps externos
 # (Terminal, Arquivos, Navegador, papel de parede, bloqueio, Rede,
 # Bluetooth) trocam de processo. Todo diálogo tem "< Voltar" como primeira
@@ -78,6 +79,18 @@ mono_label() {
 }
 scheme_label() { cat "${XDG_CACHE_HOME:-$HOME/.cache}/theme-scheme" 2>/dev/null || printf 'Apprentice'; }
 tofi_label() { cat "$HOME/.cache/tofi-layout" 2>/dev/null || printf 'padrao'; }
+lock_label() { # segundos de ~/.cache/lock-timeout → "5 min" / "1 h" / "Nunca"
+    v=$(cat "${XDG_CACHE_HOME:-$HOME/.cache}/lock-timeout" 2>/dev/null || printf '300')
+    case "$v" in '' | *[!0-9]*) v=300 ;; esac
+    if [ "$v" -eq 0 ] 2>/dev/null; then
+        printf 'Nunca'
+    elif [ "$v" -ge 3600 ] 2>/dev/null; then
+        printf '%s h' "$((v / 3600))"
+    else
+        printf '%s min' "$((v / 60))"
+    fi
+    unset v
+}
 clock_label() {
     if [ -f "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/yambar-clock-full" ]; then
         printf 'Data e hora'
@@ -271,11 +284,12 @@ sub_sys() {
             "$GAP" \
             "${PAD}Monitores >" \
             "${PAD}Energia >" \
+            "${PAD}Bloqueio automático · $(lock_label) >" \
             "${PAD}Bateria · $(bat_label)" \
             "$GAP" \
             "${PAD}Hora · $(time_label)" \
             "${PAD}Data" \
-            "${PAD}Bloquear tela" | ask "Sistema" 420)
+            "${PAD}Bloquear tela" | ask "Sistema" 470)
         [ -n "$c" ] || return 0
         case "$c" in
             *Voltar*|"$GAP") continue ;;
@@ -283,6 +297,7 @@ sub_sys() {
             *Emoji*) "$script_dir/emoji.sh" ;;
             *Monitores*) "$script_dir/monitormenu.sh" ;;
             *Energia*) "$script_dir/powermenu.sh" ;;
+            *Bloqueio*) "$script_dir/lockmenu.sh" ;;
             *Bateria*)
                 cap=$(cat /sys/class/power_supply/BAT*/capacity 2>/dev/null | head -n 1 || printf '?')
                 notify-send "Bateria" "$cap%"
