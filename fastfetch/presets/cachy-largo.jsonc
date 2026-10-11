@@ -1,0 +1,348 @@
+// Cachy largo (themagicalmammal) — fonte: discussao fastfetch #971 (cachy-largo).
+// Cores do schema (paleta do terminal); nenhum hex/RGB fixo.
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "type": "auto",
+        "padding": {
+            "top": 2,
+            "left": 2,
+            "right": 2
+        }
+    },
+    "display": {
+        "separator": " \u001b[2C",
+        "constants": [
+            "\u001b[s",
+            "\u001b[u\u001b[14C",
+            "\u001b[32m",
+            "\u001b[33m",
+            "\u001b[34m",
+            "\u001b[35m",
+            "\u001b[36m",
+            "\u001b[31m",
+            "\u001b[32m",
+            "\u001b[33m",
+            "\u001b[34m",
+            "\u001b[35m",
+            "\u001b[36m",
+            "\u001b[31m"
+        ],
+        "brightColor": false
+    },
+    "modules": [
+        {
+            "type": "break"
+        },
+        {
+            "type": "version",
+            "key": " ",
+            "format": " {1} - {2} "
+        },
+        {
+            "type": "title",
+            "keyIcon": "",
+            "key": "{$4}├─   {$1}Login{$2}"
+        },
+        {
+            "type": "os",
+            "key": "{$4}├─ 󰣇  {$1}OS{$2}"
+        },
+        {
+            "type": "kernel",
+            "key": "{$4}├─   {$1}Kernel{$2}"
+        },
+        {
+            "type": "locale",
+            "key": "{$4}├─   {$1}Locale{$2}"
+        },
+        {
+            "type": "packages",
+            "key": "{$4}└─   {$1}Packages{$2}"
+        },
+        {
+            "type": "break"
+        },
+        {
+            "type": "custom",
+            "key": " ",
+            "format": " Hardware"
+        },
+        {
+            "type": "board",
+            "key": "{$6}├─   {$1}Board{$2}"
+        },
+        {
+            "type": "bios",
+            "key": "{$6}│  └─   {$1}BIOS{$2}",
+            "format": "{4} ({1})"
+        },
+        {
+            "type": "host",
+            "key": "{$6}├─   {$1}Chassis{$2}"
+        },
+        {
+            "type": "cpu",
+            "key": "{$6}├─   {$1}CPU{$2}",
+            "format": "{1} - ({3}C/{5}T) @ {7} - {8}",
+            "temp": true
+        },
+        {
+            "type": "command",
+            "key": "{$6}│  └─   {$1}CPU Usage{$2}",
+            "text": "read cpu a b c d e f g h i j < /proc/stat; total=$((a+b+c+d+e+f+g+h)); used=$((a+b+c)); u=$((used*100/total)); f=$((u/10)); e=$((10-f)); printf \"[\"; for i in $(seq 1 $f); do printf \"█\"; done; for i in $(seq 1 $e); do printf \"░\"; done; printf \"] %s%%\" \"$u\""
+        },
+        {
+            "type": "gpu",
+            "key": "{$6}├─   {$1}GPU{$2}",
+            "temp": true
+        },
+        {
+            "type": "opengl",
+            "key": "{$6}│  ├─   {$1}OpenGL{$2}",
+            "keyColor": "green"
+        },
+        {
+            "type": "vulkan",
+            "key": "{$6}│  ├─   {$1}Vulkan{$2}",
+            "keyColor": "green"
+        },
+        {
+            "type": "command",
+            "key": "{$6}│  ├─ 󱛟  {$1}Usage{$2}",
+            "text": "u=$(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits 2>/dev/null | head -1); [ -z \"$u\" ] && echo N/A && exit; n=$((u/10)); printf \"[\"; for i in $(seq 1 $n); do printf \"█\"; done; for i in $(seq $n 9); do printf \"░\"; done; printf \"] %s%%\" \"$u\""
+        },
+        {
+            "type": "display",
+            "format": "{inch}\" {refresh-rate}Hz {width}x{height} {name}",
+            "key": "{$6}├─   {$1}Display{$2}"
+        },
+        {
+            "type": "sound",
+            "key": "{$6}└─   {$1}Sound{$2}"
+        },
+        {
+            "type": "break"
+        },
+        {
+            "type": "custom",
+            "key": " ",
+            "format": " Memory"
+        },
+        {
+            "type": "memory",
+            "key": "{$8}├─   {$1}RAM{$2}",
+            "format": "{percentage-bar} {used} / {total}",
+            "percent": {
+                "type": 3,
+                "green": 20,
+                "yellow": 70
+            }
+        },
+        {
+            "type": "swap",
+            "key": "{$8}└─   {$1}SWAP{$2}",
+            "format": "{percentage-bar} {used} / {total}",
+            "percent": {
+                "type": 3,
+                "green": 20,
+                "yellow": 70
+            }
+        },
+        {
+            "type": "break"
+        },
+        {
+            "type": "custom",
+            "key": " ",
+            "format": " Storage"
+        },
+        {
+            "type": "disk",
+            "key": "{$10}└─ 󰋊  {$1}Disk{$2}",
+            "format": "{size-percentage-bar} {size-used} / {size-total} [{filesystem}] ({mountpoint})",
+            "percent": {
+                "type": 3,
+                "green": 20,
+                "yellow": 70
+            }
+        },
+        {
+            "type": "break"
+        },
+        {
+            "type": "custom",
+            "key": " ",
+            "format": " Network"
+        },
+        {
+            "type": "wifi",
+            "key": "{$12}├─   {$1}Wi-Fi{$2}"
+        },
+        {
+            "type": "localip",
+            "key": "{$12}├─   {$1}IP{$2}",
+            "format": "[{4}] {1}"
+        },
+        {
+            "type": "dns",
+            "key": "{$12}├─   {$1}DNS{$2}"
+        },
+        {
+            "type": "bluetooth",
+            "key": "{$12}├─   {$1}BT Dev{$2}",
+            "keyColor": "blue",
+            "format": "{1} - {4}"
+        },
+        {
+            "type": "bluetoothradio",
+            "key": "{$12}└─   {$1}BT Ver{$2}",
+            "keyColor": "blue",
+            "format": "{5}"
+        },
+        {
+            "type": "break"
+        },
+        {
+            "type": "custom",
+            "key": " ",
+            "format": " Desktop"
+        },
+        {
+            "type": "de",
+            "key": "{$13}├─   {$1}Desktop{$2}"
+        },
+        {
+            "type": "wm",
+            "key": "{$13}├─   {$1}Session{$2}"
+        },
+        {
+            "type": "theme",
+            "key": "{$13}├─   Qt Theme{$2}",
+            "format": "{1}"
+        },
+        {
+            "type": "theme",
+            "key": "{$13}├─   GTK Theme{$2}",
+            "format": "{2}"
+        },
+        {
+            "type": "icons",
+            "key": "{$13}├─   Icon Set{$2}"
+        },
+        {
+            "type": "font",
+            "key": "{$13}├─   Font{$2}"
+        },
+        {
+            "type": "cursor",
+            "key": "{$13}├─ 󰇀  Cursor{$2}"
+        },
+        {
+            "type": "lm",
+            "key": "{$13}├─ 󰍂  Login Manager{$2}"
+        },
+        {
+            "type": "bootmgr",
+            "key": "{$13}├─ 󰯔  Boot Manager{$2}"
+        },
+        {
+            "type": "command",
+            "key": "{$13}└─ 󰔟  {$1}OS Age{$2}",
+            "text": "birth_install=$(stat -c %W /); current=$(date +%s); time_progression=$((current - birth_install)); days_difference=$((time_progression / 86400)); echo $days_difference days"
+        },
+        {
+            "type": "break"
+        },
+        {
+            "type": "custom",
+            "key": " ",
+            "format": " Terminal"
+        },
+        {
+            "type": "shell",
+            "key": "{$14}├─   {$1}Shell{$2}"
+        },
+        {
+            "type": "terminal",
+            "key": "{$14}├─   {$1}Terminal{$2}"
+        },
+        {
+            "type": "terminalfont",
+            "key": "{$14}├─ 󰛖  Font{$2}"
+        },
+        {
+            "type": "terminaltheme",
+            "key": "{$14}└─   Colors{$2}"
+        },
+        {
+            "type": "break"
+        },
+        {
+            "type": "custom",
+            "key": " ",
+            "format": "⎊ Development"
+        },
+        {
+            "type": "command",
+            "keyIcon": "󰎙",
+            "key": "{#magenta}├─ {icon} NodeJS{$2}",
+            "text": "node --version",
+            "format": "node {~1}"
+        },
+        {
+            "type": "command",
+            "keyIcon": "󰌠",
+            "key": "{#magenta}├─ {icon} Python{$2}",
+            "text": "python --version",
+            "format": "python {~7}"
+        },
+        {
+            "type": "command",
+            "keyIcon": "󰊢",
+            "key": "{#magenta}└─ {icon} Git{$2}",
+            "text": "git version",
+            "format": "git {~12}"
+        },
+        {
+            "type": "break"
+        },
+        {
+            "type": "custom",
+            "key": " ",
+            "format": " System"
+        },
+        {
+            "type": "uptime",
+            "key": "{$11}├─   {$1}Uptime{$2}"
+        },
+        {
+            "type": "datetime",
+            "key": "{$11}└─   {$1}Date Time{$2}"
+        },
+        {
+            "type": "break"
+        },
+        {
+            "type": "custom",
+            "key": " ",
+            "format": "⌖ Miscellaneous"
+        },
+        {
+            "type": "media",
+            "key": "{$3}├─   {$1}Media{$2}",
+            "format": "{5}: <{#underline_yellow}{1}{#}> {?3}by {#1}{3}{#}{?}"
+        },
+        {
+            "type": "player",
+            "key": "{$3}├─ 󰥠  {$1}Player{$2}"
+        },
+        {
+            "type": "break"
+        },
+        {
+            "type": "custom",
+            "format": "{#bright_yellow}󰮯{#dim_white} ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ {#37} 󰊠 {#36} 󰊠 {#35} 󰊠 {#34} 󰊠 {#33} 󰊠 {#32} 󰊠 {#31} 󰊠"
+        }
+    ]
+}

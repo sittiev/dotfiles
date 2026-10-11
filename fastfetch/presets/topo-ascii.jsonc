@@ -1,0 +1,174 @@
+// Logo no topo (DRAK0NUS) — fonte: discussao fastfetch #971 (topo-ascii).
+// Cores do schema (paleta do terminal); nenhum hex/RGB fixo.
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "type": "auto",
+        "padding": {
+            "top": 1,
+            "left": 2,
+            "right": 2
+        }
+    },
+    "display": {
+        "separator": "  ",
+        "key": {
+            "width": 20
+        },
+        "percent": {
+            "type": 9
+        },
+        "size": {
+            "binaryPrefix": "iec",
+            "ndigits": 1
+        }
+    },
+    "modules": [
+        {
+            "type": "custom",
+            "format": "\u001b[90m┌────────────────────────────────────────  \u001b[37mSYSTEM  \u001b[90m────────────────────────────────────────┐"
+        },
+        {
+            "type": "os",
+            "key": "  \u001b[35m  OS",
+            "format": "{pretty-name} {arch}"
+        },
+        {
+            "type": "kernel",
+            "key": "  \u001b[35m  Kernel",
+            "format": "{sysname} {release}"
+        },
+        {
+            "type": "de",
+            "key": "  \u001b[35m  Desktop",
+            "format": "{pretty-name} {version}"
+        },
+        {
+            "type": "wm",
+            "key": "  \u001b[35m  WM",
+            "format": "{pretty-name} ({protocol-name})"
+        },
+        {
+            "type": "terminal",
+            "key": "  \u001b[35m  Terminal",
+            "format": "{pretty-name} {version}"
+        },
+        {
+            "type": "terminalfont",
+            "key": "  \u001b[35m󰛖  Font",
+            "format": "{name}"
+        },
+        {
+            "type": "shell",
+            "key": "  \u001b[35m  Shell",
+            "format": "{pretty-name} {version}"
+        },
+        {
+            "type": "packages",
+            "key": "  \u001b[35m  Packages",
+            "format": "{all} (all), {pacman} (pacman), {flatpak-all} (flatpak), {appimage} (appimage)"
+        },
+        {
+            "type": "locale",
+            "key": "  \u001b[35m  Locale",
+            "format": "{result}"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[90m└──────────────────────────────────────────────────────────────────────────────────────────┘"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[90m┌───────────────────────────────────────  \u001b[37mHARDWARE  \u001b[90m───────────────────────────────────────┐"
+        },
+        {
+            "type": "host",
+            "key": "  \u001b[36m  Host",
+            "format": "{name}"
+        },
+        {
+            "type": "command",
+            "key": "  \u001b[36m  CPU",
+            "text": "N=$(grep -m1 \"model name\" /proc/cpuinfo | cut -d: -f2 | sed -E \"s/\\(R\\)|\\(TM\\)|[0-9]+th Gen |CPU|@.*//g; s/^ +| +$//g; s/  +/ /g\"); F=$(lscpu | awk -F: \"/max MHz/{printf \\\"%.2f\\\", \\$2/1000; exit}\"); echo \"$N @ ${F} GHz\""
+        },
+        {
+            "type": "gpu",
+            "key": "  \u001b[36m󰢮  GPU",
+            "format": "{name} ({type}, {driver})"
+        },
+        {
+            "type": "display",
+            "key": "  \u001b[36m󰍹  Resolution",
+            "format": "{width}x{height} @ {refresh-rate}Hz"
+        },
+        {
+            "type": "memory",
+            "key": "  \u001b[36m  Memory",
+            "format": "{used} / {total} ({percentage})"
+        },
+        {
+            "type": "swap",
+            "key": "  \u001b[36m  Swap",
+            "format": "{used} / {total} ({percentage}) - zram"
+        },
+        {
+            "type": "disk",
+            "key": "  \u001b[36m  Disk",
+            "format": "{size-used} / {size-total} ({size-percentage}) - {filesystem}  [{mountpoint}]",
+            "folders": "/:/mnt/Data"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[90m└──────────────────────────────────────────────────────────────────────────────────────────┘"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[90m┌────────────────────────────────────────  \u001b[37mSTATUS  \u001b[90m────────────────────────────────────────┐"
+        },
+        {
+            "type": "localip",
+            "key": "  \u001b[34m  Local IP",
+            "format": "{ipv4} ({ifname})",
+            "showIpv6": false,
+            "showPrefixLen": false
+        },
+        {
+            "type": "datetime",
+            "key": "  \u001b[34m  Date",
+            "format": "{day-in-month}.{month-pretty}.{year}  {hour-pretty}:{minute-pretty}:{second-pretty}"
+        },
+        {
+            "type": "processes",
+            "key": "  \u001b[34m  Processes",
+            "format": "{result} running"
+        },
+        {
+            "type": "command",
+            "key": "  \u001b[34m  Installed",
+            "text": "LC_ALL=C date -d \"@$(stat -c %W /)\" \"+%d.%m.%Y %H:%M\" 2>/dev/null || echo N/A"
+        },
+        {
+            "type": "command",
+            "key": "  \u001b[34m  OS Age",
+            "text": "echo \"$(( ($(date +%s) - $(stat -c %W /)) / 86400 )) days since install\""
+        },
+        {
+            "type": "uptime",
+            "key": "  \u001b[34m  Uptime",
+            "format": "{days}d {hours}h {minutes}m"
+        },
+        {
+            "type": "battery",
+            "key": "  \u001b[34m  Battery",
+            "format": "{capacity} - {status}"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[90m└──────────────────────────────────────────────────────────────────────────────────────────┘"
+        },
+        {
+            "type": "custom",
+            "format": "                                                                    \u001b[31m  \u001b[32m  \u001b[33m  \u001b[34m  \u001b[35m  \u001b[36m  \u001b[37m  \u001b[90m "
+        }
+    ]
+}

@@ -1,0 +1,95 @@
+// Jirachi arquivo (OpalAayan) — fonte: discussao fastfetch #971 (jirachi).
+// Cores do schema (paleta do terminal); nenhum hex/RGB fixo.
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "type": "auto",
+        "padding": {
+            "top": 2,
+            "left": 2,
+            "right": 4
+        }
+    },
+    "display": {
+        "separator": "  ",
+        "key": {
+            "width": 14
+        }
+    },
+    "modules": [
+        {
+            "type": "title"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[90m ───────────────\u001b[0m"
+        },
+        {
+            "type": "os",
+            "key": " 󰣇 OS",
+            "keyColor": "green",
+            "format": "{pretty-name}"
+        },
+        {
+            "type": "kernel",
+            "key": " 󰌽 Kernel",
+            "keyColor": "yellow"
+        },
+        {
+            "type": "packages",
+            "key": " 󰏖 Packages",
+            "keyColor": "blue"
+        },
+        {
+            "type": "shell",
+            "key": "  Shell",
+            "keyColor": "magenta",
+            "format": "{pretty-name}"
+        },
+        {
+            "type": "wm",
+            "key": "  WM",
+            "keyColor": "cyan",
+            "format": "{pretty-name}"
+        },
+        {
+            "type": "cpu",
+            "key": "  CPU",
+            "keyColor": "red"
+        },
+        {
+            "type": "gpu",
+            "key": " 󰢮 GPU",
+            "keyColor": "green"
+        },
+        {
+            "type": "display",
+            "key": " 󰍹 Screen",
+            "keyColor": "yellow",
+            "format": "{width}x{height} @ {refresh-rate}Hz"
+        },
+        {
+            "type": "memory",
+            "key": "  Ram",
+            "keyColor": "blue",
+            "format": "{used} / {total}"
+        },
+        {
+            "type": "disk",
+            "key": " 󰋊 Disk",
+            "keyColor": "magenta",
+            "format": "{size-used} / {size-total}"
+        },
+        {
+            "type": "uptime",
+            "key": " 󰔚 Uptime",
+            "keyColor": "cyan"
+        },
+        "break",
+        {
+            "type": "custom",
+            "key": " 󰸱 Color",
+            "format": "\u001b[31m󰮯 \u001b[32m \u001b[33m󰊠 \u001b[34m󰊠 \u001b[35m󰊠 \u001b[36m󰊠 \u001b[31m󰊠 \u001b[0m"
+        }
+    ]
+}

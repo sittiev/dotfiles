@@ -1,0 +1,147 @@
+// Cores + caixas (31712578) — fonte: discussao fastfetch #971 (cores-caixas).
+// Cores do schema (paleta do terminal); nenhum hex/RGB fixo.
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "type": "auto",
+        "padding": {
+            "top": 1,
+            "right": 10
+        }
+    },
+    "display": {
+        "separator": " ",
+        "constants": [
+            "─────────────────",
+            "│",
+            " "
+        ],
+        "key": {
+            "width": 12
+        }
+    },
+    "modules": [
+        {
+            "type": "colors",
+            "symbol": "cirlce",
+            "paddingLeft": 11,
+            "block": {
+                "range": [
+                    1,
+                    7
+                ]
+            }
+        },
+        "break",
+        {
+            "type": "custom",
+            "format": "{#90}┌───────{#} {#green}>> Meow! Welcome back! << {#}{#90}───────┐{#}"
+        },
+        {
+            "type": "title",
+            "key": "User:",
+            "format": "{#green}{user-name}{#}{#yellow}@{#}{#blue}{host-name} {#}{#90}│{#}"
+        },
+        {
+            "type": "custom",
+            "format": "{#90}└─────────────────────────────────────────┘{#}"
+        },
+        "break",
+        {
+            "type": "custom",
+            "format": "{#90}┌────────── {#}{#green}Soft- and Hardware {#}{#90}──────────┐{#}"
+        },
+        {
+            "type": "os",
+            "key": "OS:",
+            "keyColor": "green",
+            "format": "{name} {version} {codename} {arch<13} {#90}│{#}"
+        },
+        {
+            "type": "cpu",
+            "key": "CPU:",
+            "showPeCoreCount": true,
+            "keyColor": "yellow",
+            "format": "{name<29} {#90}│{#}"
+        },
+        {
+            "type": "bios",
+            "key": "BIOS:",
+            "keyColor": "blue",
+            "format": "{version<29} {#90}│{#}"
+        },
+        {
+            "type": "gpu",
+            "key": "GPU:",
+            "keyColor": "blue",
+            "format": "{name<24}      {#90}│{#}"
+        },
+        {
+            "type": "memory",
+            "key": "MEMORY:",
+            "keyColor": "magenta",
+            "format": "{used} / {total} ({#green}{percentage}){#}   {#90}│{#}"
+        },
+        {
+            "type": "disk",
+            "key": "DISK:",
+            "keyColor": "cyan",
+            "format": "{size-used} / {size-total} ({#green}{size-percentage}){#} {#90}│{#}"
+        },
+        {
+            "type": "custom",
+            "format": "{#90}└────────────────────────────────────────┘{#}"
+        },
+        "break",
+        {
+            "type": "custom",
+            "format": "{#90}┌────── {#}{#green}Cat Intelligence Agency (C.I.A.){#}{#90} ───────┐{#}"
+        },
+        {
+            "type": "Users",
+            "key": "LOGIN:",
+            "keyColor": "green",
+            "format": "{name}; log-in @ {login-time<20} {#90}│{#}"
+        },
+        {
+            "type": "Uptime",
+            "key": "UPTIME:",
+            "keyColor": "cyan",
+            "format": "{hours>2} h {minutes>2} min.                         {#90}│{#}"
+        },
+        {
+            "type": "LocalIp",
+            "key": "LOC. IP:",
+            "keyColor": "cyan",
+            "format": "{ipv4<37}{#90}│{#}"
+        },
+        {
+            "type": "DateTime",
+            "key": "DATE:",
+            "keyColor": "cyan",
+            "format": "Date: {day-in-month>2}.{month>2}.{year<25}{#90}│{#}"
+        },
+        {
+            "type": "Mouse",
+            "key": "Mouse:",
+            "keyColor": "cyan",
+            "format": "{name<37}{#90}│{#}"
+        },
+        {
+            "type": "custom",
+            "format": "{#90}└───────────────────────────────────────────────┘{#}"
+        },
+        "break",
+        {
+            "type": "colors",
+            "symbol": "cirlce",
+            "paddingLeft": 11,
+            "block": {
+                "range": [
+                    1,
+                    7
+                ]
+            }
+        }
+    ]
+}

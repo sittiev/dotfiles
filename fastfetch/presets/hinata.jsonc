@@ -1,0 +1,135 @@
+// Separadores finos (N4GR Hinata) — fonte: discussao fastfetch #971 (hinata).
+// Cores do schema (paleta do terminal); nenhum hex/RGB fixo.
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "type": "auto",
+        "padding": {
+            "top": 1,
+            "left": 2,
+            "right": 2
+        }
+    },
+    "display": {
+        "separator": ""
+    },
+    "modules": [
+        {
+            "type": "custom",
+            "key": "",
+            "keyColor": "white"
+        },
+        {
+            "type": "title",
+            "outputColor": "white",
+            "format": "{user-name} {home-dir}",
+            "key": " PRFIL  ",
+            "keyColor": "green"
+        },
+        {
+            "type": "custom",
+            "key": "",
+            "keyColor": "white"
+        },
+        {
+            "type": "cpu",
+            "outputColor": "white",
+            "format": "",
+            "key": " PROCS  ",
+            "keyColor": "green"
+        },
+        {
+            "type": "gpu",
+            "outputColor": "white",
+            "format": "",
+            "key": " GRAPH 󰊗 ",
+            "keyColor": "green"
+        },
+        {
+            "type": "memory",
+            "outputColor": "white",
+            "format": "",
+            "key": " MEMRY  ",
+            "keyColor": "green"
+        },
+        {
+            "type": "custom",
+            "key": "",
+            "keyColor": "white"
+        },
+        {
+            "type": "os",
+            "outputColor": "white",
+            "format": "{pretty-name}",
+            "key": " OPSYS 󰒓 ",
+            "keyColor": "green"
+        },
+        {
+            "type": "custom",
+            "key": "",
+            "keyColor": "white"
+        },
+        {
+            "type": "display",
+            "outputColor": "white",
+            "format": "{inch}\" {refresh-rate}Hz {width}x{height} {name}",
+            "key": " DISPY 󰍹 ",
+            "keyColor": "green"
+        },
+        {
+            "type": "custom",
+            "key": "",
+            "keyColor": "white"
+        },
+        {
+            "type": "shell",
+            "outputColor": "white",
+            "format": "{process-name} - {pretty-name}",
+            "key": " SHELL  ",
+            "keyColor": "green"
+        },
+        {
+            "type": "terminal",
+            "outputColor": "white",
+            "format": "{pretty-name}",
+            "key": " TRMAL  ",
+            "keyColor": "green"
+        },
+        {
+            "type": "terminalfont",
+            "outputColor": "white",
+            "format": "{name}",
+            "key": " TRFNT  ",
+            "keyColor": "green"
+        },
+        {
+            "type": "custom",
+            "key": "",
+            "keyColor": "white"
+        },
+        {
+            "type": "disk",
+            "outputColor": "white",
+            "format": "",
+            "key": " DISKS  ",
+            "keyColor": "green"
+        },
+        {
+            "type": "custom",
+            "key": "",
+            "keyColor": "white"
+        },
+        {
+            "type": "localip",
+            "outputColor": "white",
+            "format": "{ifname} {ipv4}",
+            "key": " IPADD 󰩟 ",
+            "keyColor": "green"
+        },
+        {
+            "type": "custom",
+            "key": "",
+            "keyColor": "white"
+        }
+    ]
+}

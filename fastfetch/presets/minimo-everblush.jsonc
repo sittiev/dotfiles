@@ -1,0 +1,82 @@
+// Minimo classico (Aditya1770 everblush) — fonte: discussao fastfetch #971 (minimo-everblush).
+// Cores do schema (paleta do terminal); nenhum hex/RGB fixo.
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "type": "auto",
+        "padding": {
+            "left": 2,
+            "top": 2
+        }
+    },
+    "display": {
+        "key": {
+            "width": 14
+        },
+        "separator": "  "
+    },
+    "modules": [
+        {
+            "type": "title"
+        },
+        "break",
+        {
+            "format": "{pretty-name}",
+            "key": " os",
+            "keyColor": "green",
+            "type": "os"
+        },
+        {
+            "key": " kernel",
+            "keyColor": "yellow",
+            "type": "kernel"
+        },
+        {
+            "format": "{pretty-name}",
+            "key": " wm",
+            "keyColor": "blue",
+            "type": "wm"
+        },
+        {
+            "format": "{pretty-name}",
+            "key": " shell",
+            "keyColor": "magenta",
+            "type": "shell"
+        },
+        {
+            "key": " uptime",
+            "keyColor": "cyan",
+            "type": "uptime"
+        },
+        {
+            "format": "{name}",
+            "key": " cpu",
+            "keyColor": "cyan",
+            "type": "cpu"
+        },
+        {
+            "format": "",
+            "key": " gpu",
+            "keyColor": "magenta",
+            "type": "gpu"
+        },
+        {
+            "format": "{used} / {total}",
+            "key": " ram",
+            "keyColor": "green",
+            "type": "memory"
+        },
+        {
+            "format": "{name} {size}",
+            "key": " font",
+            "keyColor": "yellow",
+            "type": "terminalfont"
+        },
+        {
+            "format": "{pretty-name}",
+            "key": " color",
+            "symbol": "circle",
+            "type": "colors"
+        }
+    ]
+}

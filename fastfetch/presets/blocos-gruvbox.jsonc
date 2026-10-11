@@ -1,0 +1,200 @@
+// Blocos por secao (LukeAllinson gruvbox) — fonte: discussao fastfetch #971 (blocos-gruvbox).
+// Cores do schema (paleta do terminal); nenhum hex/RGB fixo.
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "type": "auto",
+        "padding": {
+            "top": 2,
+            "right": 2
+        }
+    },
+    "display": {
+        "separator": " \u001b[2C",
+        "constants": [
+            "\u001b[s",
+            "\u001b[u\u001b[14C",
+            "\u001b[32m",
+            "\u001b[33m",
+            "\u001b[34m",
+            "\u001b[35m",
+            "\u001b[36m",
+            "\u001b[31m",
+            "\u001b[32m",
+            "\u001b[33m",
+            "\u001b[34m",
+            "\u001b[35m",
+            "\u001b[36m",
+            "\u001b[31m"
+        ],
+        "brightColor": false
+    },
+    "modules": [
+        {
+            "type": "break"
+        },
+        {
+            "type": "version",
+            "key": " ",
+            "format": "🚀\u001b[1m {$3}{1} - {2} "
+        },
+        {
+            "type": "title",
+            "keyIcon": "",
+            "key": "{$4}├─ {icon}  {$1}Login{$2}"
+        },
+        {
+            "type": "os",
+            "key": "{$4}├─ {icon}  {$1}{sysname}{$2}"
+        },
+        {
+            "type": "shell",
+            "key": "{$4}├─ {icon}  {$1}Shell{$2}"
+        },
+        {
+            "type": "terminal",
+            "key": "{$4}├─ {icon}  {$1}Terminal{$2}"
+        },
+        {
+            "type": "packages",
+            "key": "{$4}├─ {icon}  {$1}Packages{$2}"
+        },
+        {
+            "type": "command",
+            "keyIcon": "",
+            "key": "{$4}╰─ {icon}  {$1}Starship{$2}",
+            "text": "starship --version | head -1 | awk '{print $2}'"
+        },
+        {
+            "type": "break"
+        },
+        {
+            "type": "custom",
+            "key": " ",
+            "format": "🔧️ {$5}Hardware "
+        },
+        {
+            "type": "host",
+            "key": "{$6}├─ {icon}  {$1}Chassis{$2}"
+        },
+        {
+            "type": "cpu",
+            "key": "{$6}├─ {icon}  {$1}CPU{$2}",
+            "keyIcon": ""
+        },
+        {
+            "type": "gpu",
+            "key": "{$6}├─ {icon}  {$1}GPU{$2}",
+            "keyIcon": ""
+        },
+        {
+            "type": "display",
+            "key": "{$6}├─ {icon}  {$1}Display{$2}"
+        },
+        {
+            "type": "memory",
+            "key": "{$6}├─ {icon}  {$1}RAM{$2}",
+            "format": "{percentage-bar} {used} / {total}",
+            "percent": {
+                "type": [
+                    "bar"
+                ]
+            }
+        },
+        {
+            "type": "disk",
+            "key": "{$6}╰─ {icon}  {$1}Disk{$2}",
+            "keyIcon": "󰉉",
+            "format": "{size-percentage-bar} {size-used} / {size-total} [{filesystem}] ({mountpoint})",
+            "percent": {
+                "type": [
+                    "bar"
+                ]
+            }
+        },
+        {
+            "type": "break"
+        },
+        {
+            "type": "custom",
+            "key": " ",
+            "format": "🌍 {$7}Network "
+        },
+        {
+            "type": "wifi",
+            "key": "{$8}├─ {icon}  {$1}Wifi{$2}"
+        },
+        {
+            "type": "localip",
+            "key": "{$8}├─ {icon}  {$1}IP Addr{$2}",
+            "keyIcon": "󰩠",
+            "format": "[{4}] {1}"
+        },
+        {
+            "type": "dns",
+            "key": "{$8}╰─ {icon}  {$1}DNS{$2}",
+            "keyIcon": "󰇖"
+        },
+        {
+            "type": "break"
+        },
+        {
+            "type": "custom",
+            "key": " ",
+            "format": "🔋️ {$9}Peripherals "
+        },
+        {
+            "type": "bluetooth",
+            "key": "{$10}├─ {icon}  {$1}Bluetooth{$2}"
+        },
+        {
+            "type": "poweradapter",
+            "key": "{$10}├─ {icon}  {$1}Power Adapter{$2}"
+        },
+        {
+            "type": "battery",
+            "key": "{$10}╰─ {icon}  {$1}Battery{$2}"
+        },
+        {
+            "type": "break"
+        },
+        {
+            "type": "custom",
+            "key": " ",
+            "format": "🎧 {$11}Media "
+        },
+        {
+            "type": "media",
+            "key": "{$12}├─ {icon}  {$1}Now Playing{$2}",
+            "format": "{1:30}"
+        },
+        {
+            "type": "player",
+            "key": "{$12}╰─ {icon}  {$1}Player{$2}"
+        },
+        {
+            "type": "break"
+        },
+        {
+            "type": "custom",
+            "key": " ",
+            "format": "🕔 {$13}Date/Time "
+        },
+        {
+            "type": "datetime",
+            "key": "{$14}├─ {icon}  {$1}Date/Time{$2}",
+            "format": "{day-pretty}-{month-name-short}-{year} / {hour-pretty}:{minute-pretty}:{second-pretty} {timezone-name}"
+        },
+        {
+            "type": "uptime",
+            "key": "{$14}╰─ {icon}  {$1}Uptime{$2}"
+        },
+        {
+            "type": "break"
+        },
+        {
+            "type": "colors",
+            "key": " "
+        }
+    ]
+}

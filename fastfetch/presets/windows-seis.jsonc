@@ -1,0 +1,159 @@
+// Sixel Windows (28114703) — fonte: discussao fastfetch #971 (windows-seis).
+// Cores do schema (paleta do terminal); nenhum hex/RGB fixo.
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "type": "auto",
+        "padding": {
+            "top": 1,
+            "right": 2
+        }
+    },
+    "display": {
+        "separator": " ==> ",
+        "color": {
+            "keys": "yellow",
+            "title": "blue",
+            "separator": "cyan",
+            "output": "white"
+        },
+        "key": {
+            "width": 22
+        }
+    },
+    "modules": [
+        {
+            "type": "title",
+            "format": "{#bright_blue}{user-name}{#}{#bright_white}@{#}{#bright_blue}{host-name}{#}"
+        },
+        {
+            "type": "separator",
+            "string": "============================================================="
+        },
+        {
+            "type": "os",
+            "key": "{#bright_blue}󰍛{#yellow} OS"
+        },
+        {
+            "type": "host",
+            "key": "{#bright_blue}󰌢{#yellow} Host"
+        },
+        {
+            "type": "kernel",
+            "key": "{#bright_blue}󰒋{#yellow} Kernel"
+        },
+        {
+            "type": "uptime",
+            "key": "{#bright_blue}󰅐{#yellow} Uptime"
+        },
+        {
+            "type": "shell",
+            "key": "{#bright_blue}{#yellow} Shell"
+        },
+        {
+            "type": "display",
+            "key": "{#bright_blue}󰍹{#yellow} Display",
+            "format": "{name}: {width}x{height} @ {refresh-rate} Hz {?is-primary}[principal]{?}"
+        },
+        {
+            "type": "wm",
+            "key": "{#bright_blue}󰖲{#yellow} WM"
+        },
+        {
+            "type": "wmtheme",
+            "key": "{#bright_blue}󰉼{#yellow} WM Theme"
+        },
+        {
+            "type": "theme",
+            "key": "{#bright_blue}󰏘{#yellow} Theme"
+        },
+        {
+            "type": "icons",
+            "key": "{#bright_blue}󰀻{#yellow} Icons"
+        },
+        {
+            "type": "font",
+            "key": "{#bright_blue}󰛖{#yellow} Font"
+        },
+        {
+            "type": "cursor",
+            "key": "{#bright_blue}󰍽{#yellow} Cursor"
+        },
+        {
+            "type": "terminal",
+            "key": "{#bright_blue}{#yellow} Terminal"
+        },
+        {
+            "type": "terminalfont",
+            "key": "{#bright_blue}󰛖{#yellow} Term Font"
+        },
+        {
+            "type": "cpu",
+            "key": "{#bright_blue}󰻠{#yellow} CPU"
+        },
+        {
+            "type": "gpu",
+            "key": "{#bright_blue}󰢮{#yellow} GPU"
+        },
+        {
+            "type": "memory",
+            "key": "{#bright_blue}󰍛{#yellow} Memory"
+        },
+        {
+            "type": "swap",
+            "key": "{#bright_blue}󰓡{#yellow} Swap"
+        },
+        {
+            "type": "disk",
+            "key": "{#bright_blue}󰋊{#yellow} Disk ({mountpoint})",
+            "format": "{size-used} / {size-total} ({size-percentage}) - {filesystem}"
+        },
+        {
+            "type": "localip",
+            "key": "{#bright_blue}󰩟{#yellow} Local IP",
+            "showIpv4": true,
+            "showIpv6": false,
+            "compact": false
+        },
+        {
+            "type": "battery",
+            "key": "{#bright_blue}󰁹{#yellow} Battery",
+            "format": "{capacity} [{status}]"
+        },
+        {
+            "type": "locale",
+            "key": "{#bright_blue}󰗊{#yellow} Locale"
+        },
+        {
+            "type": "command",
+            "key": "{#bright_blue}{#yellow} Claude Code",
+            "shell": "pwsh",
+            "param": "-NoProfile -ExecutionPolicy Bypass -Command",
+            "text": "Claude -v",
+            "format": "{result}"
+        },
+        {
+            "type": "command",
+            "key": "{#bright_blue}{#yellow} Kiro Client",
+            "shell": "pwsh",
+            "param": "-NoProfile -ExecutionPolicy Bypass -Command",
+            "text": "Kiro-cli -V",
+            "format": "{result}"
+        },
+        {
+            "type": "command",
+            "key": "{#bright_blue}󰌢{#yellow} Serial",
+            "shell": "pwsh",
+            "param": "-NoProfile -ExecutionPolicy Bypass -Command",
+            "text": "(Get-CimInstance -ClassName Win32_BIOS).SerialNumber",
+            "format": "{result}"
+        },
+        {
+            "type": "separator",
+            "string": "   "
+        },
+        {
+            "type": "colors"
+        }
+    ]
+}

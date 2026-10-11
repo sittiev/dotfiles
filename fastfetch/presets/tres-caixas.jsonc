@@ -1,0 +1,194 @@
+// Tres caixas System/Hardware/Status (BilgeGates) — fonte: discussao fastfetch #971 (tres-caixas).
+// Cores do schema (paleta do terminal); nenhum hex/RGB fixo.
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "type": "builtin",
+        "source": "arch",
+        "padding": {
+            "top": 5,
+            "left": 3,
+            "right": 5
+        }
+    },
+    "display": {
+        "separator": "  ",
+        "key": {
+            "width": 20
+        },
+        "percent": {
+            "type": 9
+        },
+        "size": {
+            "binaryPrefix": "iec",
+            "ndigits": 1
+        }
+    },
+    "modules": [
+        {
+            "type": "custom",
+            "format": "\u001b[32m┌───────────────────────────  System  ───────────────────────────┐"
+        },
+        {
+            "type": "os",
+            "key": "  \u001b[32m  OS",
+            "keyColor": "yellow",
+            "format": "{pretty-name} {arch}"
+        },
+        {
+            "type": "kernel",
+            "key": "  \u001b[32m  Kernel",
+            "keyColor": "yellow",
+            "format": "{sysname} {release}"
+        },
+        {
+            "type": "de",
+            "key": "  \u001b[32m  Desktop",
+            "keyColor": "yellow",
+            "format": "{pretty-name} {version}"
+        },
+        {
+            "type": "wm",
+            "key": "  \u001b[32m  WM",
+            "keyColor": "yellow",
+            "format": "{pretty-name} ({protocol-name})"
+        },
+        {
+            "type": "terminal",
+            "key": "  \u001b[32m  Terminal",
+            "keyColor": "yellow",
+            "format": "{pretty-name} {version}"
+        },
+        {
+            "type": "terminalfont",
+            "key": "  \u001b[32m󰛖  Font",
+            "keyColor": "yellow",
+            "format": "{name}"
+        },
+        {
+            "type": "shell",
+            "key": "  \u001b[32m  Shell",
+            "keyColor": "yellow",
+            "format": "{pretty-name} {version}"
+        },
+        {
+            "type": "packages",
+            "key": "  \u001b[32m  Packages",
+            "keyColor": "yellow",
+            "format": "{pacman} (pacman), {flatpak-all} (flatpak)"
+        },
+        {
+            "type": "locale",
+            "key": "  \u001b[32m  Locale",
+            "keyColor": "yellow",
+            "format": "{result}"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[32m└────────────────────────────────────────────────────────────────┘"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[33m┌──────────────────────────  Hardware  ──────────────────────────┐"
+        },
+        {
+            "type": "host",
+            "key": "  \u001b[34m  Host",
+            "keyColor": "magenta",
+            "format": "{name}"
+        },
+        {
+            "type": "command",
+            "key": "  \u001b[34m  CPU",
+            "keyColor": "magenta",
+            "text": "N=$(grep -m1 \"model name\" /proc/cpuinfo | cut -d: -f2 | sed -E \"s/\\(R\\)|\\(TM\\)|[0-9]+th Gen |CPU|@.*//g; s/^ +| +$//g; s/  +/ /g\"); F=$(lscpu | awk -F: \"/max MHz/{printf \\\"%.2f\\\", \\$2/1000; exit}\"); echo \"$N @ ${F} GHz\""
+        },
+        {
+            "type": "gpu",
+            "key": "  \u001b[34m󰢮  GPU",
+            "keyColor": "magenta",
+            "format": "{name} ({type}, {driver})"
+        },
+        {
+            "type": "display",
+            "key": "  \u001b[34m󰍹  Resolution",
+            "keyColor": "magenta",
+            "format": "{width}x{height} @ {refresh-rate}Hz"
+        },
+        {
+            "type": "memory",
+            "key": "  \u001b[34m  Memory",
+            "keyColor": "magenta",
+            "format": "{used} / {total} ({percentage})"
+        },
+        {
+            "type": "swap",
+            "key": "  \u001b[34m  Swap",
+            "keyColor": "magenta",
+            "format": "{used} / {total} ({percentage}) - zram"
+        },
+        {
+            "type": "disk",
+            "key": "  \u001b[34m  Disk",
+            "keyColor": "magenta",
+            "format": "{size-used} / {size-total} ({size-percentage}) - {filesystem}  [{mountpoint}]",
+            "folders": "/:/mnt/Data"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[33m└────────────────────────────────────────────────────────────────┘"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[31m┌───────────────────────────  Status  ───────────────────────────┐"
+        },
+        {
+            "type": "localip",
+            "key": "  \u001b[36m  Local IP",
+            "keyColor": "red",
+            "format": "{ipv4} ({ifname})",
+            "showIpv6": false,
+            "showPrefixLen": false
+        },
+        {
+            "type": "datetime",
+            "key": "  \u001b[36m  Date",
+            "keyColor": "red",
+            "format": "{day-in-month}.{month-pretty}.{year}  {hour-pretty}:{minute-pretty}:{second-pretty}"
+        },
+        {
+            "type": "processes",
+            "key": "  \u001b[36m  Processes",
+            "keyColor": "red",
+            "format": "{result} running"
+        },
+        {
+            "type": "command",
+            "key": "  \u001b[36m  Installed",
+            "keyColor": "red",
+            "text": "LC_ALL=C date -d \"@$(stat -c %W /)\" \"+%d.%m.%Y %H:%M\" 2>/dev/null || echo N/A"
+        },
+        {
+            "type": "command",
+            "key": "  \u001b[36m  OS Age",
+            "keyColor": "red",
+            "text": "echo \"$(( ($(date +%s) - $(stat -c %W /)) / 86400 )) days since install\""
+        },
+        {
+            "type": "uptime",
+            "key": "  \u001b[36m  Uptime",
+            "keyColor": "red",
+            "format": "{days}d {hours}h {minutes}m"
+        },
+        {
+            "type": "battery",
+            "key": "  \u001b[36m  Battery",
+            "keyColor": "red",
+            "format": "{capacity} - {status}"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[31m└────────────────────────────────────────────────────────────────┘"
+        }
+    ]
+}

@@ -108,6 +108,11 @@ fm_label() {
     esac
 }
 tofi_label() { cat "$HOME/.cache/tofi-layout" 2>/dev/null || printf 'padrao'; }
+fastfetch_label() {
+    s=$(cat "${XDG_CACHE_HOME:-$HOME/.cache}/fastfetch-style" 2>/dev/null || printf 'padrao')
+    sed -n '1p' "$HOME/.config/fastfetch/presets/$s.jsonc" 2>/dev/null | sed -e 's|^// ||' -e 's| — .*||' || printf '%s' "$s"
+    unset s
+}
 lock_label() { # segundos de ~/.cache/lock-timeout → "5 min" / "1 h" / "Nunca"
     v=$(cat "${XDG_CACHE_HOME:-$HOME/.cache}/lock-timeout" 2>/dev/null || printf '300')
     case "$v" in '' | *[!0-9]*) v=300 ;; esac
@@ -272,6 +277,7 @@ sub_look() {
             "${PAD}Modo escuro${mescuro}" \
             "$GAP" \
             "${PAD}Esquemas de cores · $(scheme_label)" \
+            "${PAD}Estilo do fastfetch · $(fastfetch_label)" \
             "${PAD}Tema do Tofi · $(tofi_label)" \
             "$GAP" \
             "${PAD}Fonte · $(font_label)" \
@@ -290,6 +296,7 @@ sub_look() {
             *claro*) "$script_dir/theme-toggle.sh" light ;;
             *escuro*) "$script_dir/theme-toggle.sh" dark ;;
             *Esquemas*) "$script_dir/scheme-menu.sh" ;;
+            *fastfetch*) "$script_dir/fastfetch-menu.sh" ;;
             *Tamanho*) "$script_dir/ui-font-size.sh" ;;
             *Tema*) "$script_dir/tofi-themes.sh" ;;
             *terminal*) "$script_dir/term-font.sh" ;;

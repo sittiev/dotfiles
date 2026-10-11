@@ -1,0 +1,164 @@
+// macOS limpo (minkim26) — fonte: discussao fastfetch #971 (macos-limpo).
+// Cores do schema (paleta do terminal); nenhum hex/RGB fixo.
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "type": "builtin",
+        "source": "arch",
+        "padding": {
+            "top": 3,
+            "left": 1,
+            "right": 3
+        }
+    },
+    "display": {
+        "bar": {
+            "width": 8
+        }
+    },
+    "modules": [
+        {
+            "type": "custom",
+            "format": "\u001b[90m┌─────────────────────────Hardware─────────────────────────┐"
+        },
+        {
+            "type": "host",
+            "format": "{name}",
+            "key": " PC",
+            "keyColor": "green"
+        },
+        {
+            "type": "cpu",
+            "format": "CPU:  {name} ({cores-physical} cores) @ {freq-max}",
+            "key": "│ ├",
+            "keyColor": "green"
+        },
+        {
+            "type": "gpu",
+            "format": "GPU:  {name} ({core-count} cores) @ {frequency}",
+            "key": "│ ├󰍛",
+            "keyColor": "green"
+        },
+        {
+            "type": "memory",
+            "percent": {
+                "type": 3,
+                "green": 30,
+                "yellow": 80
+            },
+            "format": "lua:local args=...;local n=tonumber(args.percentage:match(\"[%d%.]+\"));local c=n<30 and 32 or (n<80 and 93 or 91);return string.format(\"RAM:  %s %s / %s (\\27[%dm%s\\27[0m)\",args.percentageBar,args.used,args.total,c,args.percentage)",
+            "key": "│ ├󰍛",
+            "keyColor": "green"
+        },
+        {
+            "type": "disk",
+            "percent": {
+                "type": 3,
+                "green": 30,
+                "yellow": 80
+            },
+            "format": "lua:local args=...;local n=tonumber(args.sizePercentage:match(\"[%d%.]+\"));local c=n<30 and 32 or (n<80 and 93 or 91);return string.format(\"SSD:  %s %s / %s (\\27[%dm%s\\27[0m)\",args.sizePercentageBar,args.sizeUsed,args.sizeTotal,c,args.sizePercentage)",
+            "key": "│ ├󰍛",
+            "keyColor": "green"
+        },
+        {
+            "type": "battery",
+            "temp": true,
+            "percent": {
+                "type": 3,
+                "yellow": 25,
+                "green": 50
+            },
+            "format": "lua:local args=...;local n=tonumber(args.capacity:match(\"[%d%.]+\"));local c=n<25 and 91 or (n<50 and 93 or 32);local remaining=args.timeFormatted~=\"\" and (args.timeFormatted..\" left\") or \"Charging\";return string.format(\"Power:%s \\27[%dm%s\\27[0m (%s) - %s\",args.capacityBar,c,args.capacity,remaining,args.temperature)",
+            "key": "└ └󰍛",
+            "keyColor": "green"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[90m└──────────────────────────────────────────────────────────┘"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[90m┌─────────────────────────Software─────────────────────────┐"
+        },
+        {
+            "type": "os",
+            "key": " OS",
+            "keyColor": "yellow"
+        },
+        {
+            "type": "kernel",
+            "format": "Kernel:    {sysname} {release}",
+            "key": "│ ├",
+            "keyColor": "yellow"
+        },
+        {
+            "type": "localip",
+            "format": "Local IP:  {ipv4}",
+            "key": "│ ├",
+            "keyColor": "yellow"
+        },
+        {
+            "type": "packages",
+            "format": "Packages:  {brew} (brew), {brew-cask} (brew-cask)",
+            "key": "│ ├󰏖",
+            "keyColor": "yellow"
+        },
+        {
+            "type": "shell",
+            "format": "Shell:     {exe-name} {version}",
+            "key": "└ └",
+            "keyColor": "yellow"
+        },
+        {
+            "type": "wm",
+            "format": "{pretty-name}{?version} {version}{?}{?plugin-name} (with {plugin-name}){?}",
+            "key": " Desktop",
+            "keyColor": "blue"
+        },
+        {
+            "type": "wmtheme",
+            "format": "Theme:     {result}",
+            "key": "│ ├󰉼",
+            "keyColor": "blue"
+        },
+        {
+            "type": "terminal",
+            "format": "Terminal:  {pretty-name} {version}",
+            "key": "│ ├",
+            "keyColor": "blue"
+        },
+        {
+            "type": "terminalfont",
+            "format": "Font:      {name} ({size}pt)",
+            "key": "└ └",
+            "keyColor": "blue"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[90m└──────────────────────────────────────────────────────────┘"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[90m┌───────────────────────System Status──────────────────────┐"
+        },
+        {
+            "type": "uptime",
+            "key": "  Uptime",
+            "keyColor": "magenta"
+        },
+        {
+            "type": "datetime",
+            "key": "  DateTime",
+            "keyColor": "magenta"
+        },
+        {
+            "type": "custom",
+            "format": "                                          \u001b[33m󰮯 \u001b[90m󰊠 \u001b[37m󰊠 \u001b[36m󰊠 \u001b[35m󰊠 \u001b[34m󰊠 \u001b[32m󰊠 \u001b[31m󰊠"
+        },
+        {
+            "type": "custom",
+            "format": "\u001b[90m└──────────────────────────────────────────────────────────┘"
+        }
+    ]
+}

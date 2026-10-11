@@ -1,0 +1,267 @@
+// Cachy completo (TomfromBerlin) — fonte: discussao fastfetch #971 (cachy-completo).
+// Cores do schema (paleta do terminal); nenhum hex/RGB fixo.
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "type": "auto",
+        "padding": {
+            "top": 2,
+            "left": 2,
+            "right": 2
+        }
+    },
+    "display": {
+        "color": {
+            "keys": "yellow"
+        },
+        "separator": "",
+        "constants": [
+            "─────────────────────────────────────────────────────────",
+            "\u001b[58D",
+            "\u001b[58C",
+            "\u001b[57C",
+            "│"
+        ],
+        "brightColor": false
+    },
+    "modules": [
+        "break",
+        {
+            "type": "version",
+            "key": "╭─────────────┬─{$1}╮\u001b[42D",
+            "format": "\u001b[1m{#keys} {1} - {2} "
+        },
+        {
+            "type": "os",
+            "key": "{$5}{#36}{icon}{#white}  \u001b[s{#34}{sysname}\u001b[u\u001b[10C{#keys}{$5}{$3}{#keys}{$5}{$2}"
+        },
+        {
+            "type": "kernel",
+            "key": "{$5}{#36}{icon}{#white}  \u001b[s{#34}Kernel\u001b[u\u001b[10C{#keys}{$5}{$3}{#keys}{$5}{$2}"
+        },
+        {
+            "type": "packages",
+            "key": "{$5}{#36}{icon}{#white}  \u001b[s{#34}Packages{#37}  {#keys}{$5} {$4}{#keys}{$5}{$2}"
+        },
+        {
+            "type": "localip",
+            "key": "{$5}{#36}{icon}{#white}  {#34}Local IP{#37}  {#keys}{$5}{$3}{$5}{$2}",
+            "showIpv4": false,
+            "showIpv6": false,
+            "showMac": false,
+            "showLoop": false,
+            "showPrefixLen": true,
+            "showMtu": false,
+            "showSpeed": true,
+            "showFlags": false,
+            "compact": true,
+            "defaultRouteOnly": true,
+            "showAllIps": false,
+            "namePrefix": ""
+        },
+        {
+            "type": "locale",
+            "key": "{$5}{#36}{icon}  {#34}Locale{#37}    {#keys}{$5}{$3}{#keys}{$5}{$2}"
+        },
+        {
+            "type": "custom",
+            "key": "├─────────────┴─{$1}┤",
+            "format": ""
+        },
+        {
+            "type": "custom",
+            "key": "{$5}{#white}╭────────────┬{$1}╮{#keys}{$5}\u001b[36D",
+            "format": "{#bright_white} Hardware "
+        },
+        {
+            "type": "board",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}Board{#37}    {$5}{$4}{$5}{#keys}{$5}{$2}"
+        },
+        {
+            "type": "bios",
+            "key": "{$5}{#white}{$5}{#white}╰─ {#34}Bios{#37}     {$5}{$4}{$5}{#keys}{$5}{$2}",
+            "format": "{4} ({1})"
+        },
+        {
+            "type": "chassis",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}Chassis{#37}  {$5}{$4}{$5}{#keys}{$5}{$2}"
+        },
+        {
+            "type": "cpu",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}CPU{#37}      {$5}{$4}{$5}{#keys}{$5}{$2}",
+            "format": "{name} @{freq-max}",
+            "showPeCoreCount": false
+        },
+        {
+            "type": "gpu",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}GPU{#37}      {$5}{$4}{$5}{#keys}{$5}{$2}",
+            "temp": true,
+            "showPeCoreCount": false
+        },
+        {
+            "type": "gpu",
+            "key": "{$5}{#white}{$5}{#white}╰─ {#34}Driver{#37}   {$5}{$4}{$5}{#keys}{$5}{$2}",
+            "format": "{driver}"
+        },
+        {
+            "type": "display",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}Display{#37}  {$5}{$4}{$5}{#keys}{$5}{$2}",
+            "compactType": "original-with-refresh-rate"
+        },
+        {
+            "type": "sound",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}Sound{#37}    {$5}{$4}{$5}{#keys}{$5}{$2}"
+        },
+        {
+            "type": "custom",
+            "key": "{$5}{#white}╰────────────┴{$1}╯{#keys}{$5}",
+            "format": ""
+        },
+        {
+            "type": "custom",
+            "key": "{$5}{#white}╭────────────┬{$1}╮{#keys}{$5}\u001b[36D",
+            "format": "{#bright_white} Memory & Storage "
+        },
+        {
+            "type": "memory",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}RAM{#37}      {$5}{$4}{$5}{#keys}{$5}{$2}",
+            "percent": {
+                "type": 3,
+                "green": 30,
+                "yellow": 70
+            }
+        },
+        {
+            "type": "swap",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}SWAP{#37}     {$5}{$4}{$5}{#keys}{$5}{$2}",
+            "percent": {
+                "type": 3,
+                "green": 30,
+                "yellow": 70
+            }
+        },
+        {
+            "type": "disk",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}DISK{#37}     {$5}{$4}{$5}{#keys}{$5}{$2}",
+            "percent": {
+                "type": 3,
+                "green": 30,
+                "yellow": 70
+            }
+        },
+        {
+            "type": "battery",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}Battery{#37}  {$5}{$4}{$5}{#keys}{$5}{$2}"
+        },
+        {
+            "type": "custom",
+            "key": "{$5}{#white}╰────────────┴{$1}╯{#keys}{$5}",
+            "format": ""
+        },
+        {
+            "type": "custom",
+            "key": "{$5}{#white}╭────────────┬{$1}╮{#keys}{$5}\u001b[36D",
+            "format": "{#bright_white} Desktop "
+        },
+        {
+            "type": "de",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}Desktop{#37}  {$5}{$4}{$5}{#keys}{$5}{$2}",
+            "slowVersionDetection": false
+        },
+        {
+            "type": "wm",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}Session{#37}  {$5}{$4}{$5}{#keys}{$5}{$2}",
+            "detectPlugin": false
+        },
+        {
+            "type": "theme",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}Qt Theme{#37} {$5}{$4}{$5}{#keys}{$5}{$2}",
+            "format": "{1}"
+        },
+        {
+            "type": "theme",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}GTK Theme{#37}{$5}{$4}{$5}{#keys}{$5}{$2}",
+            "format": "{2}"
+        },
+        {
+            "type": "icons",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}Icon Set{#37} {$5}{$4}{$5}{#keys}{$5}{$2}"
+        },
+        {
+            "type": "font",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}Font{#37}     {$5}{$4}{$5}{#keys}{$5}{$2}"
+        },
+        {
+            "type": "cursor",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}Cursor{#37}   {$5}{$4}{$5}{#keys}{$5}{$2}"
+        },
+        {
+            "type": "lm",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}LoginMgr{#37} {$5}{$4}{$5}{#keys}{$5}{$2}"
+        },
+        {
+            "type": "bootmgr",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}BootMgr{#37}  {$5}{$4}{$5}{#keys}{$5}{$2}"
+        },
+        {
+            "type": "custom",
+            "key": "{$5}{#white}╰────────────┴{$1}╯{#keys}{$5}",
+            "format": ""
+        },
+        {
+            "type": "custom",
+            "key": "{$5}{#white}╭────────────┬{$1}╮{#keys}{$5}\u001b[37D",
+            "format": "{#bright_white} Terminal "
+        },
+        {
+            "type": "shell",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}Shell{#37}    {$5}{$4}{$5}{#keys}{$5}{$2}"
+        },
+        {
+            "type": "terminal",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}Terminal{#37} {$5}{$4}{$5}{#keys}{$5}{$2}"
+        },
+        {
+            "type": "terminalfont",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}Term Font{#37}{$5}{$4}{$5}{#keys}{$5}{$2}"
+        },
+        {
+            "type": "terminaltheme",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}Colors{#37}   {$5}{$4}{$5}{#keys}{$5}{$2}"
+        },
+        {
+            "type": "custom",
+            "key": "{$5}{#white}╰────────────┴{$1}╯{#keys}{$5}",
+            "format": ""
+        },
+        {
+            "type": "custom",
+            "key": "{$5}{#white}╭────────────┬{$1}╮{#keys}{$5}\u001b[36D",
+            "format": "{#bright_white} Uptime "
+        },
+        {
+            "type": "uptime",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}Uptime{#37}   {$5}{$4}{$5}{#keys}{$5}{$2}"
+        },
+        {
+            "type": "datetime",
+            "key": "{$5}{#white}{$5}{#36}{icon}  {#34}Fetched{#37}  {$5}{$4}{$5}{#keys}{$5}{$2}",
+            "format": "{day-pretty}-{month-pretty}-{year} {hour-pretty}:{minute-pretty}:{second-pretty} {timezone-name}"
+        },
+        {
+            "type": "custom",
+            "key": "{$5}{#white}╰────────────┴{$1}╯{#keys}{$5}",
+            "format": ""
+        },
+        {
+            "type": "custom",
+            "key": "{$5} {$3}             {$5}{$2}",
+            "format": "{#bright_yellow}󰮯{#dim_white} ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ ⚬ {#36} 󰊠 {#35} 󰊠 {#34} 󰊠 {#33} 󰊠 {#32} 󰊠 {#31} 󰊠"
+        },
+        {
+            "type": "custom",
+            "key": "╰───────────────{$1}╯",
+            "format": ""
+        }
+    ]
+}

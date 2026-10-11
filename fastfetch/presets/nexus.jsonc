@@ -1,0 +1,123 @@
+// Nexus arquivo (centralos) — fonte: discussao fastfetch #971 (nexus).
+// Cores do schema (paleta do terminal); nenhum hex/RGB fixo.
+{
+    "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+    "logo": {
+        "type": "auto",
+        "padding": {
+            "bottom": 1
+        }
+    },
+    "display": {
+        "separator": " "
+    },
+    "modules": [
+        {
+            "key": "╭───────────╮",
+            "type": "custom"
+        },
+        {
+            "key": "│  user    │",
+            "type": "title",
+            "format": "{user-name}"
+        },
+        {
+            "key": "│ 󰇅 hname   │",
+            "type": "title",
+            "format": "{host-name}"
+        },
+        {
+            "key": "│ 󰅐 uptime  │",
+            "type": "uptime"
+        },
+        {
+            "key": "│  distro  │",
+            "type": "os"
+        },
+        {
+            "key": "│  kernel  │",
+            "type": "kernel"
+        },
+        {
+            "key": "│  wm      │",
+            "type": "wm"
+        },
+        {
+            "key": "│  term    │",
+            "type": "terminal"
+        },
+        {
+            "key": "│ 󰘳 pakgs   │",
+            "type": "packages"
+        },
+        {
+            "key": "│  shell   │",
+            "type": "shell"
+        },
+        {
+            "key": "│ 󰍛 cpu     │",
+            "type": "cpu",
+            "showPeCoreCount": true
+        },
+        {
+            "key": "│ 󰍛 CPU-Temp│",
+            "type": "command",
+            "text": "printf '\\033[32m%s\\033[0m\\n' \"$(sensors | awk '/Package id 0:/ {print $4}')\""
+        },
+        {
+            "key": "│ 󰉉 disk    │",
+            "type": "disk",
+            "folders": "/"
+        },
+        {
+            "key": "│ 󰢮 memory  │",
+            "type": "memory"
+        },
+        {
+            "key": "│ 󰓡 swap    │",
+            "type": "swap"
+        },
+        {
+            "key": "├───────────┤",
+            "type": "custom"
+        },
+        {
+            "key": "│ PC        │",
+            "type": "host",
+            "format": "{5} {1} ({2})"
+        },
+        {
+            "key": "│ ├ ◉ conn  │",
+            "type": "command",
+            "text": "ping -c 1 -W 1 1.1.1.1 >/dev/null 2>&1 && printf '\\033[32m✓ Online\\033[0m' || printf '\\033[31m✗ Offline\\033[0m'"
+        },
+        {
+            "key": "│ ├ 󰢮 gpu   │",
+            "type": "gpu",
+            "format": "{1} {2} @ {12}"
+        },
+        {
+            "key": "│ ├  disp  │",
+            "type": "monitor",
+            "format": "{1} px @ {2} Hz - {3} mm ({4} inches, {5} pp)"
+        },
+        {
+            "key": "│ ├ 󰂀 Batt  │",
+            "type": "battery"
+        },
+        {
+            "key": "│ └  dtime │",
+            "type": "command",
+            "text": "birth_install=$(stat -c %W /); current=$(date +%s); time_progression=$((current - birth_install)); days_difference=$((time_progression / 86400)); echo $days_difference days"
+        },
+        {
+            "key": "│  colors  │",
+            "type": "colors",
+            "symbol": "circle"
+        },
+        {
+            "key": "╰───────────╯",
+            "type": "custom"
+        }
+    ]
+}
