@@ -46,7 +46,7 @@ Tofi menu; `LY_CONF=<path>` retargets the ly writer; `SCHEME_STATE`,
 | Piece | State |
 |---|---|
 | swaytiles | Git clone em `~/.local/src/swaytiles` (instalado por `./install.sh` em `~/.local/{bin,lib}`); daemon Python stdlib via `systemctl --user enable --now swaytiles.service`. Bindings: `$mod+Shift+t` menu (tofi), `$mod+m` swap |
-| sway-alttab-gui | Pacman (AUR `sway-alttab-gui-bin` 0.0.6 + `gtk4-layer-shell`); daemon Rust/GTK iniciado por `exec_always` no config do sway (pidfile auto-desduplica em reload). Binding: `Mod1+Tab` (Alt+Tab) |
+| sway-alttab-gui | Pacman (AUR `sway-alttab-gui-bin` 0.0.6 + `gtk4-layer-shell`); daemon Rust/GTK iniciado por `exec_always` no config do sway (pidfile auto-desduplica em reload), `--mode all` (janelas de todas as workspaces; focar troca de workspace). Binding: `Mod1+Tab` (Alt+Tab) |
 | autotiling-rs | Inalterado; convive com o swaytiles enquanto os workspaces ficam no layout `default` (swaytiles não toca na árvore). Ao escolher um layout num workspace, desligar via menu Janelas (`~/.cache/autotiling-off`) |
 
 Runtime model dos dois novos daemons: orientados a evento, inscritos no IPC

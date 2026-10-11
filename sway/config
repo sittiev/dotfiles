@@ -256,9 +256,11 @@ bindsym $mod+m exec /home/rafael/.local/bin/swaytiles swap
 # evento, inscrito no IPC do sway — sem polling, custo ~0% CPU com jogo
 # rodando. O bind nao abre processo GTK: so manda um SIGUSR1 ao daemon via
 # pidfile; a janela fica pre-realizada escondida e so aparece no switch.
+# --mode all: lista janelas de todas as workspaces; focar uma delas faz o
+# sway trocar pra workspace da janela automaticamente.
 # Segunda instancia sai sozinha pelo pidfile (nao duplica em reload); stderr
 # descartado para nao poluir o log do sway, mesmo padrao do autotiling-rs.
-exec_always dash -c 'sway-alttab-gui daemon >/dev/null 2>&1'
+exec_always dash -c 'sway-alttab-gui daemon --mode all >/dev/null 2>&1'
 bindsym Mod1+Tab exec sway-alttab-gui show
 
 # Cursor theme and size are intentionally not configured here.
