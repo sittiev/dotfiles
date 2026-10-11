@@ -14,6 +14,8 @@ falta — nada no pipeline quebra sem eles.
 | `overskride` (AUR) | bluetooth GUI (bluez) | `paru -S overskride`; backend `bluez` + `bluez-utils` já instalados → `sudo systemctl enable --now bluetooth.service`. Menu Mod+Shift+x → Bluetooth. |
 | `iwgtk` (AUR) | wifi GUI (iwd puro) | `paru -S iwgtk`. NM e wpa_supplicant REMOVIDOS; rede = iwd + systemd-networkd (`/etc/systemd/network/25-wireless.network`, DHCP) + systemd-resolved. iwgtk fala com iwd via D-Bus. Menu Mod+Shift+x → Rede. |
 | ly (já instalado) | greeter | `/etc/ly/config.ini` é root-only ⇒ o writer pula. Para ativar: `sudo chown $USER /etc/ly/config.ini` (as cores entram no próximo apply; pacman pode voltar a assumir o dono após update — repetir). As cores só valem no próximo login/greeter. |
+| `papirus-icon-theme` | ícones Papirus (base, Dark, Light) | `sudo pacman -S papirus-icon-theme`. Sem ele o seletor `Aparência → Ícones` avisa e mantém o YAMIS-wal; com ele, `theme-mode.sh apply` usa a variante (`Automática` segue o modo claro/escuro) no GTK, KDE e XWayland. |
+| `papirus-folders` (AUR) | cor das pastas do Papirus | `paru -S papirus-folders-git`. Sem ele a escolha `Variante do Papirus → Cor das pastas` avisa e nada muda; com ele, `Automática` pinta as pastas com o matiz do ACCENT da paleta (`-C <cor> --theme <variante>`). O tema em `/usr/share/icons` é root-owned: se o apply falhar por permissão, rode o comando com `sudo` uma vez. |
 | `wallust` (opcional) | template engine de cor | Não faz falta hoje: o pipeline é pywal + `theme-mode.sh`. Só considerar se quiser templates por-app gerenciados por um template engine dedicado. |
 
 ## Notas

@@ -906,22 +906,41 @@ PY
     if [ "$mode" = dark ]; then
         gsettings set org.gnome.desktop.interface color-scheme prefer-dark 2>/dev/null || true
         GTK_THEME="$(gtk_theme_pick Default Qogir-Dark)"
-        ICON_THEME="$(icon_theme_pick yet-another-monochrome-icon-set)"
         GTK_PREFER="true"
     else
         gsettings set org.gnome.desktop.interface color-scheme prefer-light 2>/dev/null || true
         GTK_THEME="$(gtk_theme_pick Default Qogir-Light)"
-        ICON_THEME="$(icon_theme_pick yet-another-monochrome-icon-set)"
         GTK_PREFER="false"
     fi
 
-    # YAMIS-wal recolorido pela paleta (cópia gerada em
-    # ~/.local/share/icons/yamis-wal; o tema base fica intocado) é o padrão:
-    # cobre tudo em mono puxando FG/ACCENT/MUTED da paleta.
-    ICON_WAL="$("$HOME/.config/sway/scripts/icon-recolor.sh" 2>/dev/null || true)"
-    if [ -n "$ICON_WAL" ]; then
-        ICON_THEME="$ICON_WAL"
+    # Família de ícones (icon-theme.sh; ausente = yamis, o comportamento atual).
+    # Papirus ausente no disco ⇒ _resolve falha e o YAMIS-wal assume.
+    ICON_FAMILY=$(cat "${XDG_CACHE_HOME:-$HOME/.cache}/icon-theme" 2>/dev/null || printf 'yamis')
+    case "$ICON_FAMILY" in papirus|yamis) ;; *) ICON_FAMILY=yamis ;; esac
+    ICON_THEME="$(icon_theme_pick yet-another-monochrome-icon-set)"
+    if [ "$ICON_FAMILY" = papirus ]; then
+        ICON_PAPIRUS=$("$HOME/.config/sway/scripts/icon-theme.sh" _resolve "$mode" 2>/dev/null || true)
+        if [ -n "$ICON_PAPIRUS" ]; then
+            ICON_THEME="$ICON_PAPIRUS"
+        else
+            ICON_WAL="$("$HOME/.config/sway/scripts/icon-recolor.sh" 2>/dev/null || true)"
+            if [ -n "$ICON_WAL" ]; then
+                ICON_THEME="$ICON_WAL"
+            fi
+            unset ICON_WAL
+        fi
+        unset ICON_PAPIRUS
+    else
+        # YAMIS-wal recolorido pela paleta (cópia gerada em
+        # ~/.local/share/icons/yamis-wal; o tema base fica intocado) é o padrão:
+        # cobre tudo em mono puxando FG/ACCENT/MUTED da paleta.
+        ICON_WAL="$("$HOME/.config/sway/scripts/icon-recolor.sh" 2>/dev/null || true)"
+        if [ -n "$ICON_WAL" ]; then
+            ICON_THEME="$ICON_WAL"
+        fi
+        unset ICON_WAL
     fi
+    unset ICON_FAMILY
 
     # yamis-wal é monocromático nativo (FollowsColorScheme recolorido).
     gsettings set org.gnome.desktop.interface gtk-theme "$GTK_THEME" 2>/dev/null || true

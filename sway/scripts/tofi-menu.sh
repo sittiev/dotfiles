@@ -9,8 +9,8 @@
 # títulos decorativos.
 # Nível 2 (diálogos): um tofi por categoria. Alternadores ficam abertos e
 # atualizam o estado; sub-diálogos (Energia, Bloqueio automático, Monitores,
-# Luz noturna/Temperatura, Esquemas, Fonte, Tofi, área de transferência,
-# Emoji) rodam e VOLTAM ao
+# Luz noturna/Temperatura, Esquemas, Fonte, Tofi, Ícones, Variante do Papirus,
+# área de transferência, Emoji) rodam e VOLTAM ao
 # mesmo diálogo da categoria, já com o estado novo. Apps externos
 # (Terminal, Arquivos, Navegador, papel de parede, bloqueio, Rede,
 # Bluetooth) trocam de processo. Todo diálogo tem "< Voltar" como primeira
@@ -78,6 +78,29 @@ mono_label() {
     esac
 }
 scheme_label() { cat "${XDG_CACHE_HOME:-$HOME/.cache}/theme-scheme" 2>/dev/null || printf 'Apprentice'; }
+icon_label() {
+    case "$(cat "${XDG_CACHE_HOME:-$HOME/.cache}/icon-theme" 2>/dev/null || printf 'yamis')" in
+        papirus) printf 'Papirus' ;;
+        *) printf 'YAMIS' ;;
+    esac
+}
+papirus_variant_label() {
+    case "$(cat "${XDG_CACHE_HOME:-$HOME/.cache}/icon-theme-papirus-variant" 2>/dev/null || printf 'auto')" in
+        Papirus) printf 'Base' ;;
+        Papirus-Dark) printf 'Escura' ;;
+        Papirus-Light) printf 'Clara' ;;
+        *) printf 'Automática' ;;
+    esac
+}
+papirus_folders_label() {
+    cur=$(cat "${XDG_CACHE_HOME:-$HOME/.cache}/icon-theme-papirus-folders" 2>/dev/null || printf 'auto')
+    case "$cur" in
+        auto) printf 'Automática' ;;
+        default) printf 'Padrão' ;;
+        *) printf '%s' "$cur" ;;
+    esac
+    unset cur
+}
 fm_label() {
     case "$(cat "${XDG_CACHE_HOME:-$HOME/.cache}/file-manager" 2>/dev/null || printf 'pcmanfm')" in
         dolphin) printf 'Dolphin' ;;
@@ -255,11 +278,12 @@ sub_look() {
             "${PAD}Tamanho da fonte · $(size_label)" \
             "${PAD}Fonte do terminal · $(term_label)" \
             "${PAD}Fonte mono · $(mono_label)" \
+            "${PAD}Ícones · $(icon_label) >" \
             "$GAP" \
             "${PAD}Papel de parede" \
             "${PAD}Luz noturna · $(night_label) >" \
             "${PAD}Barra inferior · $(yambar_label)" \
-            "${PAD}Relógio da barra · $(clock_label)" | ask "Aparência" 520)
+            "${PAD}Relógio da barra · $(clock_label)" | ask "Aparência" 560)
         [ -n "$c" ] || return 0
         case "$c" in
             *Voltar*|"$GAP") continue ;;
@@ -270,6 +294,7 @@ sub_look() {
             *Tema*) "$script_dir/tofi-themes.sh" ;;
             *terminal*) "$script_dir/term-font.sh" ;;
             *mono*) "$script_dir/mono-font.sh" ;;
+            *Ícones*) sub_icons ;;
             *Fonte*) "$script_dir/ui-font.sh" ;;
             *Papel*) exec "$script_dir/wallpaper.sh" ;;
             *noturna*) sub_noite ;;
@@ -277,6 +302,71 @@ sub_look() {
             *Relógio*) "$script_dir/yambar-clock-toggle.sh" ;;
         esac
         unset mclaro mescuro
+    done
+}
+
+sub_icons() {
+    while true; do
+        if [ "$(icon_label)" = Papirus ]; then mpapirus=' · Padrão'; myamis=''; else mpapirus=''; myamis=' · Padrão'; fi
+        if [ "$(icon_label)" = Papirus ]; then
+            c=$(printf '%s\n' "${PAD}< Voltar" "${PAD}YAMIS-wal${myamis}" "${PAD}Papirus${mpapirus}" \
+                "${PAD}Variante do Papirus · $(papirus_variant_label) >" | ask "Ícones")
+        else
+            c=$(printf '%s\n' "${PAD}< Voltar" "${PAD}YAMIS-wal${myamis}" "${PAD}Papirus${mpapirus}" | ask "Ícones")
+        fi
+        [ -n "$c" ] || return 0
+        case "$c" in
+            *Voltar*) return 0 ;;
+            *Variante*) sub_papirus ;;
+            *YAMIS*) "$script_dir/icon-theme.sh" yamis || true ;;
+            *Papirus*) "$script_dir/icon-theme.sh" papirus || true ;;
+        esac
+        unset myamis mpapirus
+    done
+}
+
+sub_papirus() {
+    while true; do
+        case "$(papirus_variant_label)" in
+            Base) mb=' · Ativo'; me=''; mc=''; ma='' ;;
+            Escura) mb=''; me=' · Ativo'; mc=''; ma='' ;;
+            Clara) mb=''; me=''; mc=' · Ativo'; ma='' ;;
+            *) mb=''; me=''; mc=''; ma=' · Ativo' ;;
+        esac
+        c=$(printf '%s\n' "${PAD}< Voltar" "${PAD}Automática${ma}" "${PAD}Base${mb}" "${PAD}Escura${me}" "${PAD}Clara${mc}" \
+            "$GAP" \
+            "${PAD}Cor das pastas · $(papirus_folders_label) >" \
+            "${PAD}Corrigir ícones fixos" | ask "Variante do Papirus")
+        [ -n "$c" ] || return 0
+        case "$c" in
+            *Voltar*|"$GAP") continue ;;
+            *Automática*) "$script_dir/icon-theme.sh" variant auto || true ;;
+            *Base*) "$script_dir/icon-theme.sh" variant Papirus || true ;;
+            *Escura*) "$script_dir/icon-theme.sh" variant Papirus-Dark || true ;;
+            *Clara*) "$script_dir/icon-theme.sh" variant Papirus-Light || true ;;
+            *pastas*) sub_papirus_folders ;;
+            *fixos*) "$script_dir/icon-theme.sh" hardcode || true ;;
+        esac
+        unset ma mb me mc
+    done
+}
+
+sub_papirus_folders() {
+    while true; do
+        cur=$(papirus_folders_label)
+        c=$(printf '%s\n' "${PAD}< Voltar" "${PAD}Automática" "${PAD}Padrão" \
+            "${PAD}adwaita" "${PAD}black" "${PAD}blue" "${PAD}bluegrey" "${PAD}breeze" "${PAD}brown" \
+            "${PAD}carmine" "${PAD}cyan" "${PAD}darkcyan" "${PAD}deeporange" "${PAD}green" "${PAD}grey" \
+            "${PAD}indigo" "${PAD}magenta" "${PAD}nordic" "${PAD}orange" "${PAD}palebrown" "${PAD}paleorange" \
+            "${PAD}pink" "${PAD}teal" "${PAD}white" "${PAD}yellow" | ask "Cor das pastas")
+        [ -n "$c" ] || return 0
+        case "$c" in
+            *Voltar*) return 0 ;;
+            *Automática*) "$script_dir/icon-theme.sh" folders auto || true ;;
+            *Padrão*) "$script_dir/icon-theme.sh" folders default || true ;;
+            *) "$script_dir/icon-theme.sh" folders "$c" || true ;;
+        esac
+        unset cur
     done
 }
 
