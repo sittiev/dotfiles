@@ -158,6 +158,14 @@ icon_apply() {
     "$script_dir/theme-mode.sh" apply >/dev/null 2>&1 || true
 }
 
+kde_refresh() {
+    # Apps KDE (Dolphin) leem o tema de ícones do cache do ksycoca: sem
+    # rebuild, a troca só aparece em processo novo sem cache — ou nunca.
+    if command -v kbuildsycoca6 >/dev/null 2>&1; then
+        kbuildsycoca6 --noincremental >/dev/null 2>&1 || true
+    fi
+}
+
 icon_set() {
     pick=$1
     case "$pick" in yamis|papirus) ;; *) echo "uso: icon-theme.sh [yamis|papirus|menu|variant [V]|folders [C]|hardcode]" >&2; exit 1 ;; esac
@@ -171,6 +179,7 @@ icon_set() {
     mkdir -p -- "${state%/*}"
     icon_write "$state" "$pick"
     icon_apply
+    kde_refresh
     if [ "$pick" = papirus ]; then name='Papirus'; else name='YAMIS-wal'; fi
     notify-send "Ícones" "$name aplicado. Reinicie apps abertos para ver a troca." 2>/dev/null || true
     unset pick name
@@ -203,6 +212,7 @@ variant_set() {
     mkdir -p -- "${state_variant%/*}"
     icon_write "$state_variant" "$pick"
     icon_apply
+    kde_refresh
     notify-send "Variante do Papirus" "Aplicada. Reinicie apps abertos para ver a troca." 2>/dev/null || true
     unset pick
 }
