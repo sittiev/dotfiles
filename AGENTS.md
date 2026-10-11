@@ -19,6 +19,9 @@ section.
   for code; prefer surgical patches over rewrites.
 - Sway/i3: https://github.com/swaywm/sway/wiki |
   https://i3wm.org/docs/userguide.html
+- Tiling/switcher: https://github.com/sertacartun/swaytiles |
+  https://github.com/itsjfx/sway-alttab-gui |
+  https://github.com/nwg-piotr/autotiling
 - Login (ly): https://codeberg.org/fairyglade/ly |
   https://wiki.archlinux.org/title/Ly
 - Shell (dash-first): https://man7.org/linux/man-pages/man1/dash.1.html |
