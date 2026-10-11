@@ -133,24 +133,26 @@ PY
 
 folders_apply() {
     # folders_apply <variante> [ruidoso] — best effort, nunca quebra o apply.
-    variant=$1
-    noisy=${2:-0}
+    # Nomes fa_* propositais: dash não tem escopo de função e o chamador
+    # (_resolve) usa $variant depois desta chamada — unset genérico o mataria.
+    fa_variant=$1
+    fa_noisy=${2:-0}
     command -v papirus-folders >/dev/null 2>&1 || return 1
-    want=$(icon_folders)
-    if [ "$want" = default ]; then
-        if papirus-folders -D --theme "$variant" >/dev/null 2>&1; then unset variant noisy want; return 0; fi
+    fa_want=$(icon_folders)
+    if [ "$fa_want" = default ]; then
+        if papirus-folders -D --theme "$fa_variant" >/dev/null 2>&1; then unset fa_variant fa_noisy fa_want; return 0; fi
     else
-        if [ "$want" = auto ]; then want=$(folders_auto_color || true); fi
-        [ -n "${want:-}" ] || { unset variant noisy want; return 0; }
-        case " $folder_colors " in *" $want "*) ;;
-            *) unset variant noisy want; return 1 ;;
+        if [ "$fa_want" = auto ]; then fa_want=$(folders_auto_color || true); fi
+        [ -n "${fa_want:-}" ] || { unset fa_variant fa_noisy fa_want; return 0; }
+        case " $folder_colors " in *" $fa_want "*) ;;
+            *) unset fa_variant fa_noisy fa_want; return 1 ;;
         esac
-        if papirus-folders -C "$want" --theme "$variant" >/dev/null 2>&1; then unset variant noisy want; return 0; fi
+        if papirus-folders -C "$fa_want" --theme "$fa_variant" >/dev/null 2>&1; then unset fa_variant fa_noisy fa_want; return 0; fi
     fi
-    if [ "$noisy" = 1 ]; then
-        notify-send "Cor das pastas indisponível" "Para aplicar, rode: sudo papirus-folders -C $want --theme $variant." 2>/dev/null || true
+    if [ "$fa_noisy" = 1 ]; then
+        notify-send "Cor das pastas indisponível" "Para aplicar, rode: sudo papirus-folders -C $fa_want --theme $fa_variant." 2>/dev/null || true
     fi
-    unset variant noisy want
+    unset fa_variant fa_noisy fa_want
     return 1
 }
 
