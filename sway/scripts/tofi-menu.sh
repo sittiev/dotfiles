@@ -78,6 +78,12 @@ mono_label() {
     esac
 }
 scheme_label() { cat "${XDG_CACHE_HOME:-$HOME/.cache}/theme-scheme" 2>/dev/null || printf 'Apprentice'; }
+fm_label() {
+    case "$(cat "${XDG_CACHE_HOME:-$HOME/.cache}/file-manager" 2>/dev/null || printf 'pcmanfm')" in
+        dolphin) printf 'Dolphin' ;;
+        *) printf 'PCManFM' ;;
+    esac
+}
 tofi_label() { cat "$HOME/.cache/tofi-layout" 2>/dev/null || printf 'padrao'; }
 lock_label() { # segundos de ~/.cache/lock-timeout → "5 min" / "1 h" / "Nunca"
     v=$(cat "${XDG_CACHE_HOME:-$HOME/.cache}/lock-timeout" 2>/dev/null || printf '300')
@@ -183,14 +189,29 @@ open_rede() {
 
 sub_apps() {
     while true; do
-        c=$(printf '%s\n' "${PAD}< Voltar" "${PAD}Terminal" "${PAD}Arquivos" "${PAD}Navegador" | ask "Aplicativos")
+        c=$(printf '%s\n' "${PAD}< Voltar" "${PAD}Terminal" "${PAD}Arquivos · $(fm_label)" "${PAD}Gerenciador padrão · $(fm_label) >" "${PAD}Navegador" | ask "Aplicativos")
         [ -n "$c" ] || return 0
         case "$c" in
             *Voltar*) return 0 ;;
             *Terminal*) exec foot ;;
-            *Arquivos*) exec pcmanfm ;;
+            *Gerenciador*) sub_fm ;;
+            *Arquivos*) exec "$script_dir/file-manager.sh" open ;;
             *Navegador*) exec librewolf ;;
         esac
+    done
+}
+
+sub_fm() {
+    while true; do
+        if [ "$(fm_label)" = Dolphin ]; then mdolphin=' · Padrão'; mpcmanfm=''; else mdolphin=''; mpcmanfm=' · Padrão'; fi
+        c=$(printf '%s\n' "${PAD}< Voltar" "${PAD}PCManFM${mpcmanfm}" "${PAD}Dolphin${mdolphin}" | ask "Gerenciador padrão")
+        [ -n "$c" ] || return 0
+        case "$c" in
+            *Voltar*) return 0 ;;
+            *PCManFM*) "$script_dir/file-manager.sh" pcmanfm ;;
+            *Dolphin*) "$script_dir/file-manager.sh" dolphin ;;
+        esac
+        unset mdolphin mpcmanfm
     done
 }
 
