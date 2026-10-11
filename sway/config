@@ -260,7 +260,9 @@ bindsym $mod+m exec /home/rafael/.local/bin/swaytiles swap
 # sway trocar pra workspace da janela automaticamente.
 # Segunda instancia sai sozinha pelo pidfile (nao duplica em reload); stderr
 # descartado para nao poluir o log do sway, mesmo padrao do autotiling-rs.
-exec_always dash -c 'sway-alttab-gui daemon --mode all >/dev/null 2>&1'
+# pidfile stale derruba o show em erro silencioso (ESRCH): remove antes de
+# subir o daemon para o reload ressuscitar mesmo apos kill externo.
+exec_always dash -c 'rm -f ${XDG_RUNTIME_DIR:-/run/user/$UID}/sway-alttab-gui.pid; sway-alttab-gui daemon --mode all >/dev/null 2>&1'
 bindsym Mod1+Tab exec sway-alttab-gui show
 
 # Cursor theme and size are intentionally not configured here.
