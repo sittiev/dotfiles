@@ -40,3 +40,22 @@ Test hooks (all optional): `TOFI_SCHEME=<name>` applies a scheme without the
 Tofi menu; `LY_CONF=<path>` retargets the ly writer; `SCHEME_STATE`,
 `SCHEME_JSON`, and `SCHEME_OVERRIDE_DIR` retarget the schemelib inputs;
 `XDG_CONFIG_HOME` retargets the qt6ct/qt5ct writers.
+
+## Window tiling and switching (2026-10-11)
+
+| Piece | State |
+|---|---|
+| swaytiles | Git clone em `~/.local/src/swaytiles` (instalado por `./install.sh` em `~/.local/{bin,lib}`); daemon Python stdlib via `systemctl --user enable --now swaytiles.service`. Bindings: `$mod+Shift+t` menu (tofi), `$mod+m` swap |
+| sway-alttab-gui | Pacman (AUR `sway-alttab-gui-bin` 0.0.6 + `gtk4-layer-shell`); daemon Rust/GTK iniciado por `exec_always` no config do sway (pidfile auto-desduplica em reload). Binding: `Mod1+Tab` (Alt+Tab) |
+| autotiling-rs | Inalterado; convive com o swaytiles enquanto os workspaces ficam no layout `default` (swaytiles não toca na árvore). Ao escolher um layout num workspace, desligar via menu Janelas (`~/.cache/autotiling-off`) |
+
+Runtime model dos dois novos daemons: orientados a evento, inscritos no IPC
+do sway (socket Unix) — sem polling. Medido parado em sessão ativa:
+~0,5% de um core cada; em jogo fullscreen (sem eventos de janela) o
+swaytiles fica bloqueado no socket e o custo tende a 0. O `show` do
+alt-tab é um SIGUSR1 via pidfile (spawn de processo só no keypress); a
+janela GTK fica pre-realizada escondida no daemon.
+
+Manutenção: swaytiles atualiza com `git pull` + `./install.sh` no clone
+(reinicia o serviço sozinho); remove com `./install.sh --uninstall`.
+sway-alttab-gui atualiza com o pacman/paru junto do resto do sistema.

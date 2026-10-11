@@ -243,4 +243,22 @@ exec swaymsg focus output HDMI-A-1 >/dev/null 2>&1
 # o reload nao ressuscita o processo (volta só pelo menu ou game-mode off).
 exec_always dash -c 'pkill -x autotiling-rs >/dev/null 2>&1; sleep 0.2; [ -f "${XDG_CACHE_HOME:-$HOME/.cache}/autotiling-off" ] || autotiling-rs >/dev/null 2>&1'
 
+# swaytiles: layouts por workspace (master, dwindle, grid, tabs...). O daemon
+# roda como servico systemd --user (nao precisa de exec aqui). Enquanto um
+# workspace esta no layout "default" o swaytiles nao toca na arvore, entao ele
+# convive com o autotiling-rs acima; ao escolher um layout num workspace,
+# desligue o autotiling-rs (menu Janelas, arquivo ~/.cache/autotiling-off)
+# para os dois nao brigarem pelo controle das janelas.
+bindsym $mod+Shift+t exec /home/rafael/.local/bin/swaytiles menu --launcher tofi
+bindsym $mod+m exec /home/rafael/.local/bin/swaytiles swap
+
+# Alt-Tab estilo Windows (sway-alttab-gui, Rust/GTK): daemon orientado a
+# evento, inscrito no IPC do sway — sem polling, custo ~0% CPU com jogo
+# rodando. O bind nao abre processo GTK: so manda um SIGUSR1 ao daemon via
+# pidfile; a janela fica pre-realizada escondida e so aparece no switch.
+# Segunda instancia sai sozinha pelo pidfile (nao duplica em reload); stderr
+# descartado para nao poluir o log do sway, mesmo padrao do autotiling-rs.
+exec_always dash -c 'sway-alttab-gui daemon >/dev/null 2>&1'
+bindsym Mod1+Tab exec sway-alttab-gui show
+
 # Cursor theme and size are intentionally not configured here.
