@@ -24,6 +24,37 @@ scheme_data_ok() {
 check 'scheme data (gogh json)' scheme_data_ok
 check 'scheme tests' dash "$ROOT/scripts/test-schemelib.sh"
 
+c_core_ok() {
+    tmp=${TMPDIR:-/tmp}/tasks-core-test-$$
+    if cc -std=c17 -O2 -Wall -Wextra -DTASKS_CORE_TEST -o "$tmp" \
+        "$ROOT/sway/scripts/tasks-core.c" 2>"$tmp.err" && "$tmp"; then
+        rm -f "$tmp" "$tmp.err"
+        return 0
+    fi
+    cat "$tmp.err" >&2
+    rm -f "$tmp" "$tmp.err"
+    return 1
+}
+check 'tasks core selftest' c_core_ok
+
+c_ui_ok() {
+    # Link-check da UI (rodar exige TTY): compila p/ $TMPDIR, sem artefato.
+    tmp=${TMPDIR:-/tmp}/yambar-tasks-c-check-$$
+    # shellcheck disable=SC2046
+    cc -std=c17 -O2 -Wall -Wextra -o "$tmp" \
+        "$ROOT/sway/scripts/yambar-tasks.c" \
+        "$ROOT/sway/scripts/tasks-core.c" \
+        $(pkg-config --cflags --libs notcurses) 2>&1
+    rc=$?
+    rm -f "$tmp"
+    return "$rc"
+}
+if pkg-config --exists notcurses 2>/dev/null; then
+    check 'tasks UI builds' c_ui_ok
+else
+    printf '[SKIP] tasks UI builds (sem notcurses: sudo pacman -S notcurses)\n'
+fi
+
 action_ok() {
     grep -q '^\[Desktop Entry\]$' "$1" &&
         grep -q '^Type=Action$' "$1" &&

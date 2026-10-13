@@ -4,6 +4,11 @@
 *.swp
 *~
 .DS_Store
+__pycache__/
+
+# Binários C compilados localmente (make em sway/scripts).
+sway/scripts/yambar-tasks-c
+sway/scripts/core-test
 
 # Agent tooling stays local.
 .opencode/

@@ -12,7 +12,7 @@ Official repos:
 ```sh
 sudo pacman -S sway foot mako kanshi swaybg waypaper grim slurp wl-clipboard wtype \
     cliphist lxqt-policykit jq dash python glib2 \
-    ttf-jetbrains-mono-nerd noto-fonts
+    ttf-jetbrains-mono-nerd noto-fonts notcurses
 ```
 
 AUR, via `paru`:
@@ -49,11 +49,13 @@ Two menu entries drive the desktop:
 - **Mod+Shift+x → Papel de parede**: wallpaper, palette, light/dark
 - **Mod+Shift+x → Esquemas de cores**: one of the 1247 Gogh schemes
 - **Clique no chip de tarefas (yambar)**: abre a TUI de tarefas do vault
-  Obsidian (`yambar-tasks.py`, em `foot` floating) — espaço conclui/reabre
+  Obsidian (binário C `yambar-tasks-c` em `foot` floating, notcurses;
+  `yambar-tasks.py` de fallback) — espaço conclui/reabre
   o checkbox no arquivo (carimbando `✅`), `/` busca sem acento,
   `o` alterna a ordem (recentes, antigas, texto A–Z, arquivo, criadas),
   d mostra detalhes (criada/concluída), n cria tarefa nova no
-  `Inbox/Notepad.md` (carimbo `➕`), Enter abre a nota no Obsidian
+  `Inbox/Notepad.md` (carimbo `➕`), Enter abre a nota no Obsidian.
+  Compila com `make -C sway/scripts yambar-tasks-c` (exige `notcurses`)
 - **Mod+Shift+f → Busca de arquivos**: FSearch-like instantânea via
   `plocate` + tofi (`fsearch.sh`) — índice do timer systemd, zero daemon
 - **Clique no chip "directories" (extremo esquerdo do yambar)**: TUI em
