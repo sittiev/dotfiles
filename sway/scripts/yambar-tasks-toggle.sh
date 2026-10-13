@@ -8,6 +8,8 @@ set -eu
 
 app_id=yambar-tasks
 
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+
 # Binário C primeiro (make em sway/scripts); .py de fallback.
 if [ -x "$script_dir/yambar-tasks-c" ]; then
     bin="$script_dir/yambar-tasks-c"
