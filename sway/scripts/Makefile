@@ -5,10 +5,14 @@
 CC ?= cc
 CFLAGS ?= -std=c17 -O2 -Wall -Wextra -Werror
 
-all: yambar-tasks-c
+all: yambar-tasks-c yambar-dirs-c
 
 yambar-tasks-c: yambar-tasks.c tasks-core.c tasks-core.h
 	$(CC) $(CFLAGS) -o $@ yambar-tasks.c tasks-core.c \
+	    $(shell pkg-config --cflags --libs notcurses)
+
+yambar-dirs-c: yambar-dirs.c tasks-core.c tasks-core.h
+	$(CC) $(CFLAGS) -o $@ yambar-dirs.c tasks-core.c \
 	    $(shell pkg-config --cflags --libs notcurses)
 
 core-test: tasks-core.c tasks-core.h
@@ -22,4 +26,4 @@ test: tasks-core.c tasks-core.h
 	/tmp/opencode-tasks-core-asan
 
 clean:
-	rm -f yambar-tasks-c core-test
+	rm -f yambar-tasks-c yambar-dirs-c core-test

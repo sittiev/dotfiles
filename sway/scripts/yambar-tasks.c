@@ -471,15 +471,19 @@ static void do_search(ui_t *u) {
 }
 
 static void open_obsidian(ui_t *u, const char *path) {
-    char abs[4096];
+    char *abs = NULL;
     if (path[0] == '/') { /* abspath sem resolver symlink (paridade .py) */
-        snprintf(abs, sizeof abs, "%s", path);
+        abs = strdup(path);
     } else {
         char cwd[4096];
         if (getcwd(cwd, sizeof cwd))
-            snprintf(abs, sizeof abs, "%s/%s", cwd, path);
+            asprintf(&abs, "%s/%s", cwd, path);
         else
-            snprintf(abs, sizeof abs, "%s", path);
+            abs = strdup(path);
+    }
+    if (!abs) {
+        snprintf(u->flash, sizeof u->flash, "sem memória");
+        return;
     }
     char uri[12400]; /* 21 + 3x PATH_MAX cabem com folga */
     size_t o = 0;
@@ -518,6 +522,7 @@ static void open_obsidian(ui_t *u, const char *path) {
             ;
         snprintf(u->flash, sizeof u->flash, "aberta no Obsidian");
     }
+    free(abs);
 }
 
 static void do_toggle(ui_t *u) {

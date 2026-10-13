@@ -8,6 +8,7 @@ __pycache__/
 
 # Binários C compilados localmente (make em sway/scripts).
 sway/scripts/yambar-tasks-c
+sway/scripts/yambar-dirs-c
 sway/scripts/core-test
 
 # Agent tooling stays local.

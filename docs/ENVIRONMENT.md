@@ -41,7 +41,7 @@ for a separate `ov`/selkies automation environment.
 |---|---|
 | Search | `Mod+Shift+f` → `fsearch.sh`: tofi (`config-search`, 780x420 central) asks the term, `plocate -b` matches substring on basename (case-insensitive), second tofi lists up to 200 home paths; Enter opens via `xdg-open` (dirs go to the default file manager) |
 | Index | `plocate` db (`/var/lib/plocate`, 58M) refreshed daily by the stock `plocate-updatedb.timer`; no daemon running — 3–15ms per query |
-| Dirs chip | static-left yambar particle; click abre a TUI `yambar-dirs.py` em foot floating (toggle `yambar-dirs-toggle.sh`, regra `app_id="yambar-dirs"`); pinned list in `~/.cache/dirs-pinadas` (seeded with Vault/dotfiles/Documentos/Downloads), `a`/`+` pins a validated path, `d`/`-` unpicks, Enter opens |
+| Dirs chip | static-left yambar particle; click abre a TUI `yambar-dirs-c` (C/notcurses, `sway/scripts/yambar-dirs.c`, `yambar-dirs.py` de fallback) em foot floating (toggle `yambar-dirs-toggle.sh`, regra `app_id="yambar-dirs"`); pinned list in `~/.cache/dirs-pinadas` (seeded with Vault/dotfiles/Documentos/Downloads), `a`/`+` pins a validated path, `d`/`-` unpicks, Enter opens |
 
 ## Scheme pipeline (2026-09-25)
 

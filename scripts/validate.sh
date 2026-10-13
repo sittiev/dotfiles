@@ -31,15 +31,19 @@ c_core_ok() {
 check 'tasks core selftest (asan+ubsan)' c_core_ok
 
 c_ui_ok() {
-    # Link-check da UI (rodar exige TTY): compila p/ $TMPDIR, sem artefato.
-    tmp=${TMPDIR:-/tmp}/yambar-tasks-c-check-$$
+    # Link-check das UIs (rodar exige TTY): compila p/ $TMPDIR, sem artefato.
+    tmp=${TMPDIR:-/tmp}/yambar-c-check-$$
     # shellcheck disable=SC2046
-    cc -std=c17 -O2 -Wall -Wextra -Werror -o "$tmp" \
+    cc -std=c17 -O2 -Wall -Wextra -Werror -o "$tmp-tasks" \
         "$ROOT/sway/scripts/yambar-tasks.c" \
+        "$ROOT/sway/scripts/tasks-core.c" \
+        $(pkg-config --cflags --libs notcurses) 2>&1 &&
+    cc -std=c17 -O2 -Wall -Wextra -Werror -o "$tmp-dirs" \
+        "$ROOT/sway/scripts/yambar-dirs.c" \
         "$ROOT/sway/scripts/tasks-core.c" \
         $(pkg-config --cflags --libs notcurses) 2>&1
     rc=$?
-    rm -f "$tmp"
+    rm -f "$tmp-tasks" "$tmp-dirs"
     return "$rc"
 }
 if pkg-config --exists notcurses 2>/dev/null; then
