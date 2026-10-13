@@ -48,6 +48,78 @@ Two menu entries drive the desktop:
 
 - **Mod+Shift+x → Papel de parede**: wallpaper, palette, light/dark
 - **Mod+Shift+x → Esquemas de cores**: one of the 1247 Gogh schemes
+- **Clique no chip de tarefas (yambar)**: abre a TUI de tarefas do vault
+  Obsidian (`yambar-tasks.py`, em `foot` floating) — espaço conclui/reabre
+  o checkbox no arquivo (carimbando `✅`), `/` busca sem acento,
+  `o` alterna a ordem (recentes, antigas, texto A–Z, arquivo, criadas),
+  d mostra detalhes (criada/concluída), n cria tarefa nova no
+  `Inbox/Notepad.md` (carimbo `➕`), Enter abre a nota no Obsidian
+- **Mod+Shift+f → Busca de arquivos**: FSearch-like instantânea via
+  `plocate` + tofi (`fsearch.sh`) — índice do timer systemd, zero daemon
+- **Clique no chip "directories" (extremo esquerdo do yambar)**: TUI em
+  `foot` floating com diretórios pinados (`~/.cache/dirs-pinadas`,
+  `yambar-dirs.py`); `a` fixa, `d` remove, Enter abre no gerenciador
+
+## Stack
+
+Coleção awesome do rice: componente, 1 linha, onde mora aqui, fonte.
+`—` = autoral/local, sem upstream.
+
+### Compositor e sessão
+
+| Componente | Descrição | Neste repo | Fonte |
+| --- | --- | --- | --- |
+| [Sway](https://github.com/swaywm/sway/wiki) | Compositor Wayland tiling | `sway/` | [wiki](https://github.com/swaywm/sway/wiki) · [guia i3](https://i3wm.org/docs/userguide.html) |
+| autotiling-rs | Alterna split h/v pela proporção da janela | `sway/config` (exec_always) | binário AUR |
+| [swaytiles](https://github.com/sertacartun/swaytiles) | Layouts por workspace (master, dwindle, grid) | `Mod+Shift+t` | [repo](https://github.com/sertacartun/swaytiles) |
+| [sway-alttab-gui](https://github.com/itsjfx/sway-alttab-gui) | Alt-Tab estilo Windows via IPC, daemon sem polling | `Alt+Tab` | [repo](https://github.com/itsjfx/sway-alttab-gui) |
+| [kanshi](https://github.com/emersion/kanshi) | Perfis de saída no hotplug | `kanshi/` | [repo](https://github.com/emersion/kanshi) |
+| [ly](https://codeberg.org/fairyglade/ly) | Login TUI leve | — | [repo](https://codeberg.org/fairyglade/ly) · [archwiki](https://wiki.archlinux.org/title/Ly) |
+| [swayidle](https://github.com/swaywm/swayidle) + idle.sh | Bloqueio/suspend por inatividade | `sway/scripts/idle.sh` | [repo](https://github.com/swaywm/swayidle) |
+| [swaylock-effects](https://github.com/mortie/swaylock-effects) | Locker com efeitos | `sway/scripts/swaylock.sh` | [repo](https://github.com/mortie/swaylock-effects) · [man](https://man.archlinux.org/man/swaylock.1.en) |
+
+### Barra e menus
+
+| Componente | Descrição | Neste repo | Fonte |
+| --- | --- | --- | --- |
+| [Yambar](https://github.com/neonkore/yambar) | Barra leve e configurável p/ Wayland | `yambar/` | [repo](https://github.com/neonkore/yambar) · [AUR](https://aur.archlinux.org/packages/yambar) |
+| Tarefas | Chip + TUI curses dos checkboxes do vault | `sway/scripts/yambar-tasks.py` | — |
+| Directories | Chip + TUI curses de diretórios pinados | `sway/scripts/yambar-dirs.py` | — |
+| Relógio | Chip hora; clique alterna data+hora | `sway/scripts/yambar-clock.sh` | — |
+| Tofi | Launcher/dmenu Wayland | `tofi/` | pacote AUR |
+| Hub tofi-menu | Menu estilo Ajustes Apple (busca flat + categorias) | `sway/scripts/tofi-menu.sh` | — |
+
+### Terminal e shell
+
+| Componente | Descrição | Neste repo | Fonte |
+| --- | --- | --- | --- |
+| [Foot](https://codeberg.org/dnkl/foot) | Terminal Wayland leve | `foot/` | [repo](https://codeberg.org/dnkl/foot) |
+| [dash](https://wiki.archlinux.org/title/Dash) | Shell de todos os scripts (latência) | `sway/scripts/*.sh` | [archwiki](https://wiki.archlinux.org/title/Dash) |
+| Bash | Shell interativo | `shell/` | — |
+
+### Tema e aparência
+
+| Componente | Descrição | Neste repo | Fonte |
+| --- | --- | --- | --- |
+| python-pywal16 | Paleta extraída do wallpaper | `sway/scripts/theme.sh` | pacote AUR |
+| Gogh (1247) | Biblioteca de esquemas p/ clamp de contraste | `sway/schemes/` | `scripts/update-schemes.sh` |
+| [Qogir](https://github.com/vinceliuice/Qogir-theme) | Tema GTK | — | [repo](https://github.com/vinceliuice/Qogir-theme) |
+| [Kvantum](https://github.com/tsujan/Kvantum) + qt5ct/qt6ct | Qt com cara de GTK | — | [repo](https://github.com/tsujan/Kvantum) · [guia](https://wiki.archlinux.org/title/Uniform_look_for_Qt_and_GTK_applications) |
+| [nwg-look](https://github.com/nwg-piotr/nwg-look) | Ajuste GTK com preview ao vivo | — | [repo](https://github.com/nwg-piotr/nwg-look) |
+| YAMIS | Ícones monocromáticos (cópia `yamis-wal` recolorida) | `~/.local/share/icons/` | — |
+| Waypaper | Seletor de wallpaper (dono do swaybg) | `sway/scripts/wallpaper.sh` | pacote oficial |
+
+### Apps e captura
+
+| Componente | Descrição | Neste repo | Fonte |
+| --- | --- | --- | --- |
+| [PCManFM](https://wiki.archlinux.org/title/PCManFM) | Gerenciador de arquivos + actions | `pcmanfm/` | [archwiki](https://wiki.archlinux.org/title/PCManFM) |
+| [Mako](https://github.com/emersion/mako) | Daemon de notificações/OSD | `mako/` | [repo](https://github.com/emersion/mako) |
+| [grim](https://github.com/emersion/grim) + [slurp](https://github.com/emersion/slurp) | Screenshot de região p/ clipboard | binds `Print` | [grim](https://github.com/emersion/grim) · [slurp](https://github.com/emersion/slurp) |
+| [cliphist](https://github.com/sentriz/cliphist) | Histórico do clipboard | `sway/scripts/cliphist-watch.sh` | [repo](https://github.com/sentriz/cliphist) |
+| plocate + fsearch.sh | Busca de arquivos instantânea, zero daemon | `Mod+Shift+f` | pacote oficial |
+| [Obsidian](https://obsidian.md) | Vault fonte das tarefas do chip | TUI de tarefas | [site](https://obsidian.md) |
+| [fastfetch](https://github.com/fastfetch-cli/fastfetch) | Sysinfo no terminal | `fastfetch/` | [repo](https://github.com/fastfetch-cli/fastfetch) |
 
 ## Layout
 
@@ -75,6 +147,8 @@ Edit the source files, not generated output:
 - `sway/scripts/colorlib.sh`, `schemelib.sh`, `theme-mode.sh`, `render.sh`,
   `theme.sh`, `wallpaper.sh`, `scheme-menu.sh`
 - `tofi/themes/*/config`
+- `sway/scripts/yambar-tasks.py` (TUI de tarefas do vault; `yambar-tasks.sh`
+  emite a contagem do chip e o clique delega a `yambar-tasks-toggle.sh`)
 
 `sway/schemes/gogh-themes-min.json` is vendored data: refresh it with
 `scripts/update-schemes.sh`, never by hand. The `overrides/*.env` files are

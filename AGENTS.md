@@ -168,3 +168,18 @@ exceção; inglês só em código, logs, comandos e nomes de pacote.
 - Errors: no blame, no "ops!"/"nós"; say what happened + how to fix it.
 - Tone follows context (celebrate wins, stay direct on errors); one
   capitalization style per element type.
+
+## 11. Stack (resumo; tabela cheia no README ## Stack)
+
+Núcleo: Sway + Foot + Tofi + Yambar, tema Pywal/Gogh, scripts em dash,
+TUIs em Python stdlib. Mapa curto — detalhe e upstreams no README:
+
+- Compositor: Sway (`sway/`), autotiling-rs, swaytiles, sway-alttab-gui,
+  kanshi, ly, swayidle, swaylock-effects
+- Barra/menus: Yambar (`yambar/`), TUIs tasks/dirs (`sway/scripts/
+  yambar-tasks.py`, `yambar-dirs.py`), Tofi (`tofi/`, `tofi-menu.sh`)
+- Terminal/shell: Foot (`foot/`), dash nos scripts, Bash em `shell/`
+- Tema: pywal16, Gogh (`sway/schemes/`), Qogir, Kvantum, nwg-look,
+  YAMIS, waypaper — dono: `render.sh`
+- Apps: PCManFM (`pcmanfm/`), Mako (`mako/`), grim/slurp, cliphist,
+  plocate (`fsearch.sh`), Obsidian (vault), fastfetch

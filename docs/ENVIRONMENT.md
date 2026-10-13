@@ -26,6 +26,23 @@ repository was created.
 `ov`, `wlrctl`, and `wlr-randr` are not currently installed; the `wl` skill is
 for a separate `ov`/selkies automation environment.
 
+## Vault tasks chip (2026-10-11)
+
+| Piece | State |
+|---|---|
+| Chip | `render.sh` writes a second yambar particle (left of the clock): `yambar-tasks.sh` polled every 2s emits `NN` open checkboxes |
+| Scan | `sway/scripts/yambar-tasks.py` is the single source of task scope: `~/Documentos/Vault/**/*.md`, skipping `Arquivo/`, `Memória de Agentes/`, `Recursos/AI/`, dot dirs, and fenced code blocks; open first, then file mtime desc |
+| TUI | click opens `foot -a yambar-tasks` (floating rule in `sway/config`); space toggles the checkbox in place (tmp+rename), stamping `✅ YYYY-MM-DD HH:MM` when completing (removed on reopen; Tasks-plugin style, plain text); Enter opens the note via `obsidian://open`, d shows details (created/done stamps, file birth time fallback), n creates a task appended under `## todo` in `Inbox/Notepad.md` stamped `➕ YYYY-MM-DD HH:MM`, r reloads, q quits |
+| Deps | Python 3 (stdlib only: curses, glob, urllib); no Obsidian CLI/plugin needed — sync is the markdown file itself |
+
+## File search & dirs chip (2026-10-12)
+
+| Piece | State |
+|---|---|
+| Search | `Mod+Shift+f` → `fsearch.sh`: tofi (`config-search`, 780x420 central) asks the term, `plocate -b` matches substring on basename (case-insensitive), second tofi lists up to 200 home paths; Enter opens via `xdg-open` (dirs go to the default file manager) |
+| Index | `plocate` db (`/var/lib/plocate`, 58M) refreshed daily by the stock `plocate-updatedb.timer`; no daemon running — 3–15ms per query |
+| Dirs chip | static-left yambar particle; click abre a TUI `yambar-dirs.py` em foot floating (toggle `yambar-dirs-toggle.sh`, regra `app_id="yambar-dirs"`); pinned list in `~/.cache/dirs-pinadas` (seeded with Vault/dotfiles/Documentos/Downloads), `a`/`+` pins a validated path, `d`/`-` unpicks, Enter opens |
+
 ## Scheme pipeline (2026-09-25)
 
 | Piece | State |
