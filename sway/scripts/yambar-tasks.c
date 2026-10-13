@@ -104,38 +104,24 @@ static pal_t load_palette(void) {
     return p;
 }
 
+/* decode único via núcleo; controle/inválido rendem largura 0. */
+static size_t next_cp(const char **s, uint32_t *cp, int *cols) {
+    size_t l = tasks_utf8_decode(*s, cp);
+    int cw = wcwidth((wchar_t)*cp);
+    *cols = cw > 0 ? cw : 0;
+    *s += l;
+    return l;
+}
+
 /* Largura em colunas (wcwidth por codepoint; controle = 0). */
 static int disp_width(const char *s) {
     int w = 0;
     while (*s) {
-        size_t l = 0;
         uint32_t cp = 0;
-        unsigned char c = (unsigned char)*s;
-        if (c < 0x80) {
-            l = 1;
-            cp = c;
-        } else if ((c & 0xE0) == 0xC0 && (s[1] & 0xC0) == 0x80) {
-            l = 2;
-            cp = ((uint32_t)(c & 0x1F) << 6) | (s[1] & 0x3F);
-        } else if ((c & 0xF0) == 0xE0 && (s[1] & 0xC0) == 0x80 &&
-                   (s[2] & 0xC0) == 0x80) {
-            l = 3;
-            cp = ((uint32_t)(c & 0x0F) << 12) |
-                 ((uint32_t)(s[1] & 0x3F) << 6) | (s[2] & 0x3F);
-        } else if ((c & 0xF8) == 0xF0 && (s[1] & 0xC0) == 0x80 &&
-                   (s[2] & 0xC0) == 0x80 && (s[3] & 0xC0) == 0x80) {
-            l = 4;
-            cp = ((uint32_t)(c & 0x07) << 18) |
-                 ((uint32_t)(s[1] & 0x3F) << 12) |
-                 ((uint32_t)(s[2] & 0x3F) << 6) | (s[3] & 0x3F);
-        } else {
-            s++;
-            continue;
-        }
-        int cw = wcwidth((wchar_t)cp);
-        if (cw > 0)
-            w += cw;
-        s += l;
+        int cw = 0;
+        next_cp(&s, &cp, &cw);
+        (void)cp;
+        w += cw;
     }
     return w;
 }
@@ -147,33 +133,11 @@ static void cut_cols(char *dst, size_t dstn, const char *src, int maxcols) {
     int cut = 0;
     while (*src) {
         const char *start = src;
-        size_t l = 0;
         uint32_t cp = 0;
-        unsigned char c = (unsigned char)*src;
-        if (c < 0x80) {
-            l = 1;
-            cp = c;
-        } else if ((c & 0xE0) == 0xC0 && (src[1] & 0xC0) == 0x80) {
-            l = 2;
-            cp = ((uint32_t)(c & 0x1F) << 6) | (src[1] & 0x3F);
-        } else if ((c & 0xF0) == 0xE0 && (src[1] & 0xC0) == 0x80 &&
-                   (src[2] & 0xC0) == 0x80) {
-            l = 3;
-            cp = ((uint32_t)(c & 0x0F) << 12) |
-                 ((uint32_t)(src[1] & 0x3F) << 6) | (src[2] & 0x3F);
-        } else if ((c & 0xF8) == 0xF0 && (src[1] & 0xC0) == 0x80 &&
-                   (src[2] & 0xC0) == 0x80 && (src[3] & 0xC0) == 0x80) {
-            l = 4;
-            cp = ((uint32_t)(c & 0x07) << 18) |
-                 ((uint32_t)(src[1] & 0x3F) << 12) |
-                 ((uint32_t)(src[2] & 0x3F) << 6) | (src[3] & 0x3F);
-        } else {
-            src++;
-            continue;
-        }
-        int cw = wcwidth((wchar_t)cp);
-        if (cw < 0)
-            cw = 0;
+        int cw = 0;
+        next_cp(&src, &cp, &cw);
+        (void)cp;
+        size_t l = (size_t)(src - start);
         if (w + cw > maxcols) {
             cut = 1;
             break;
@@ -185,7 +149,6 @@ static void cut_cols(char *dst, size_t dstn, const char *src, int maxcols) {
         memcpy(dst + o, start, l);
         o += l;
         w += cw;
-        src += l;
     }
     if (cut && o + 4 < dstn)
         memcpy(dst + o, "…", 3), o += 3;
@@ -428,14 +391,31 @@ static char *read_line(ui_t *u, const char *prompt) {
     }
 }
 
+/* apara espaços ASCII nas bordas (paridade query.strip() do .py) */
+static void strip_q(char *q) {
+    size_t s = 0;
+    while (q[s] == ' ' || q[s] == '\t')
+        s++;
+    if (s) {
+        size_t l = strlen(q + s) + 1;
+        memmove(q, q + s, l);
+    }
+    size_t l = strlen(q);
+    while (l && (q[l - 1] == ' ' || q[l - 1] == '\t'))
+        q[--l] = 0;
+}
+
 static void do_search(ui_t *u) {
     char prev[sizeof u->query], prevn[sizeof u->query_n];
     memcpy(prev, u->query, sizeof prev);
     memcpy(prevn, u->query_n, sizeof prevn);
     unsigned h, w;
+    char sq[sizeof u->query]; /* query aparada p/ norm (paridade .strip()) */
     for (;;) {
         ncplane_dim_yx(u->sp, &h, &w);
-        tasks_norm(u->query, u->query_n, sizeof u->query_n);
+        snprintf(sq, sizeof sq, "%s", u->query);
+        strip_q(sq);
+        tasks_norm(sq, u->query_n, sizeof u->query_n);
         refresh_view(u, 1);
         draw_main(u);
         row_colors(u, 1, 0);
@@ -447,14 +427,18 @@ static void do_search(ui_t *u) {
         uint32_t id = get_key(u, NULL);
         if (id == NCKEY_ENTER || id == 10 || id == 13) {
             notcurses_cursor_disable(u->nc);
-            tasks_norm(u->query, u->query_n, sizeof u->query_n);
+            snprintf(sq, sizeof sq, "%s", u->query);
+            strip_q(sq);
+            tasks_norm(sq, u->query_n, sizeof u->query_n);
             refresh_view(u, 1);
             if (!u->query_n[0]) {
                 u->query[0] = 0;
                 snprintf(u->flash, sizeof u->flash, "filtro limpo");
             } else {
-                snprintf(u->flash, sizeof u->flash, "%zu resultado(s)",
-                         u->nview);
+                char qs[80];
+                cut_cols(qs, sizeof qs, u->query, 40);
+                snprintf(u->flash, sizeof u->flash,
+                         "%zu resultado(s) p/ “%s”", u->nview, qs);
             }
             return;
         }
@@ -488,18 +472,29 @@ static void do_search(ui_t *u) {
 
 static void open_obsidian(ui_t *u, const char *path) {
     char abs[4096];
-    if (!realpath(path, abs))
+    if (path[0] == '/') { /* abspath sem resolver symlink (paridade .py) */
         snprintf(abs, sizeof abs, "%s", path);
-    char uri[8192];
+    } else {
+        char cwd[4096];
+        if (getcwd(cwd, sizeof cwd))
+            snprintf(abs, sizeof abs, "%s/%s", cwd, path);
+        else
+            snprintf(abs, sizeof abs, "%s", path);
+    }
+    char uri[12400]; /* 21 + 3x PATH_MAX cabem com folga */
     size_t o = 0;
     o += (size_t)snprintf(uri + o, sizeof uri - o, "obsidian://open?path=");
-    for (const char *p = abs; *p && o + 4 < sizeof uri; p++) {
+    for (const char *p = abs; *p; p++) {
         unsigned char c = (unsigned char)*p;
         if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') ||
             (c >= '0' && c <= '9') || c == '-' || c == '_' || c == '.' ||
             c == '~') {
             uri[o++] = (char)c;
         } else {
+            if (o + 4 >= sizeof uri) {
+                snprintf(u->flash, sizeof u->flash, "caminho muito longo");
+                return;
+            }
             o += (size_t)snprintf(uri + o, sizeof uri - o, "%%%02X", c);
         }
     }
@@ -530,17 +525,31 @@ static void do_toggle(ui_t *u) {
         return;
     task_t *t = &u->tasks[u->view[u->sel]];
     char newtext[4096];
+    if (strlen(t->text) + 64 >= sizeof newtext) {
+        snprintf(u->flash, sizeof u->flash, "linha muito longa; edite na nota");
+        return;
+    }
     if (t->done)
         tasks_reopen(t->text, newtext, sizeof newtext);
     else
         tasks_complete(t->text, newtext, sizeof newtext);
     if (tasks_write(t->path, t->line, !t->done, newtext)) {
         struct stat st;
+        char *ntxt = strdup(newtext);
+        size_t nn = strlen(newtext) * 2 + 1;
+        char *nnorm = realloc(t->ntext, nn);
+        if (!ntxt || !nnorm) {
+            free(ntxt); /* ntext original intacto se realloc falhou */
+            load_tasks(u);
+            snprintf(u->flash, sizeof u->flash, "sem memória; recarregado");
+            return;
+        }
         free(t->text);
-        t->text = strdup(newtext);
+        t->text = ntxt;
+        t->ntext = nnorm;
         t->done = !t->done;
         tasks_created_at(t->text, t->path, t->created);
-        tasks_norm(t->text, t->ntext, strlen(t->text) * 2 + 1);
+        tasks_norm(t->text, t->ntext, nn);
         if (stat(t->path, &st) == 0)
             t->mtime = (long)st.st_mtime;
         refresh_view(u, 0);
@@ -583,33 +592,12 @@ static size_t wrap_text(const char *text, int maxw, char lines[][1024],
             char piece[1024];
             size_t o = 0;
             while (r < e && o + 8 < sizeof piece) {
-                size_t l = 0;
+                const char *start = r;
                 uint32_t cp = 0;
-                unsigned char c = (unsigned char)*r;
-                if (c < 0x80) {
-                    l = 1;
-                    cp = c;
-                } else if ((c & 0xE0) == 0xC0 && (r[1] & 0xC0) == 0x80) {
-                    l = 2;
-                    cp = ((uint32_t)(c & 0x1F) << 6) | (r[1] & 0x3F);
-                } else if ((c & 0xF0) == 0xE0 && (r[1] & 0xC0) == 0x80 &&
-                           (r[2] & 0xC0) == 0x80) {
-                    l = 3;
-                    cp = ((uint32_t)(c & 0x0F) << 12) |
-                         ((uint32_t)(r[1] & 0x3F) << 6) | (r[2] & 0x3F);
-                } else if ((c & 0xF8) == 0xF0 && (r[1] & 0xC0) == 0x80 &&
-                           (r[2] & 0xC0) == 0x80 && (r[3] & 0xC0) == 0x80) {
-                    l = 4;
-                    cp = ((uint32_t)(c & 0x07) << 18) |
-                         ((uint32_t)(r[1] & 0x3F) << 12) |
-                         ((uint32_t)(r[2] & 0x3F) << 6) | (r[3] & 0x3F);
-                } else {
-                    r++;
-                    continue;
-                }
-                int cw = wcwidth((wchar_t)cp);
-                if (cw < 0)
-                    cw = 0;
+                int cw = 0;
+                next_cp(&r, &cp, &cw);
+                (void)cp;
+                size_t l = (size_t)(r - start);
                 if (curw + (cur[0] ? 1 : 0) + ww + cw > maxw) {
                     if (cur[0]) {
                         snprintf(lines[n++], 1024, "%s", cur);
@@ -622,11 +610,10 @@ static size_t wrap_text(const char *text, int maxw, char lines[][1024],
                     o = 0;
                     piece[0] = 0;
                 }
-                memcpy(piece + o, r, l);
+                memcpy(piece + o, start, l);
                 o += l;
                 piece[o] = 0;
                 ww += cw;
-                r += l;
             }
             if (n >= maxlines)
                 break;
@@ -665,21 +652,21 @@ static void do_details(ui_t *u) {
     char full[4096];
     snprintf(full, sizeof full, " %s", t->text);
     size_t nt = wrap_text(full, inner - 4, tlines, 64);
-    char info[3][1024];
-    int has_stamp = strstr(t->text, "➕") != NULL;
+    char info[4][1024];
     snprintf(info[0], sizeof info[0], "  criada: %s%s", created,
-             has_stamp ? "" : " (birth do arquivo)");
+             tasks_has_created(t->text) ? "" : " (birth do arquivo)");
     snprintf(info[1], sizeof info[1], "  concluída: %s",
              doneat[0] ? doneat : "—");
     snprintf(info[2], sizeof info[2], "  arquivo: %s:%d", relpath_of(t->path),
              t->line);
+    snprintf(info[3], sizeof info[3], "  qualquer tecla volta");
     int maxl = 10;
     for (size_t i = 0; i < nt; i++) {
         int c = disp_width(tlines[i]);
         if (c > maxl)
             maxl = c;
     }
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 4; i++) {
         int c = disp_width(info[i]);
         if (c > maxl)
             maxl = c;
@@ -687,7 +674,7 @@ static void do_details(ui_t *u) {
     int pw = maxl + 6;
     if (pw > (int)w - 2)
         pw = (int)w - 2;
-    int ph = (int)nt + 3 + 2;
+    int ph = (int)nt + 4 + 2;
     if (ph > (int)h - 1)
         ph = (int)h - 1;
     int py = ((int)h - ph) / 2;
@@ -719,7 +706,7 @@ static void do_details(ui_t *u) {
     for (size_t i = 0; i < nt && (int)i + 1 < ph - 1; i++)
         ncplane_putstr_yx(u->sp, py + 1 + (int)i, px + 2, tlines[i]);
     row_colors(u, 1, 0);
-    for (int i = 0; i < 3 && (int)nt + 1 + i < ph - 1; i++)
+    for (int i = 0; i < 4 && (int)nt + 1 + i < ph - 1; i++)
         ncplane_putstr_yx(u->sp, py + 1 + (int)nt + i, px + 2, info[i]);
     notcurses_render(u->nc);
     get_key(u, NULL);

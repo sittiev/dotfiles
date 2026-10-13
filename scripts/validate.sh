@@ -25,23 +25,16 @@ check 'scheme data (gogh json)' scheme_data_ok
 check 'scheme tests' dash "$ROOT/scripts/test-schemelib.sh"
 
 c_core_ok() {
-    tmp=${TMPDIR:-/tmp}/tasks-core-test-$$
-    if cc -std=c17 -O2 -Wall -Wextra -DTASKS_CORE_TEST -o "$tmp" \
-        "$ROOT/sway/scripts/tasks-core.c" 2>"$tmp.err" && "$tmp"; then
-        rm -f "$tmp" "$tmp.err"
-        return 0
-    fi
-    cat "$tmp.err" >&2
-    rm -f "$tmp" "$tmp.err"
-    return 1
+    # Núcleo sob ASan/UBSan via Makefile (sem artefato no repo).
+    make -C "$ROOT/sway/scripts" test
 }
-check 'tasks core selftest' c_core_ok
+check 'tasks core selftest (asan+ubsan)' c_core_ok
 
 c_ui_ok() {
     # Link-check da UI (rodar exige TTY): compila p/ $TMPDIR, sem artefato.
     tmp=${TMPDIR:-/tmp}/yambar-tasks-c-check-$$
     # shellcheck disable=SC2046
-    cc -std=c17 -O2 -Wall -Wextra -o "$tmp" \
+    cc -std=c17 -O2 -Wall -Wextra -Werror -o "$tmp" \
         "$ROOT/sway/scripts/yambar-tasks.c" \
         "$ROOT/sway/scripts/tasks-core.c" \
         $(pkg-config --cflags --libs notcurses) 2>&1

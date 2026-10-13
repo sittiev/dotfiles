@@ -32,13 +32,15 @@ typedef enum {
     SORT_N
 } sort_mode_t;
 
-/* Diretório do vault: $VAULT_DIR ou ~/Documentos/Vault. Retorna buffer
- * estático; "" se o HOME é desconhecido. */
+/* Diretório do vault: $VAULT_DIR (costura de teste do selftest) ou
+ * ~/Documentos/Vault. Retorna buffer estático; "" se o HOME é desconhecido. */
 const char *tasks_vault_dir(void);
 
 /*norm: minúsculas sem acento (á->a, ç->c). Cobre Latin-1, Latin Extended-A,
- * grego/cirílico básicos + strip de combining marks; fora disso passa o
- * codepoint (sem libunistring de propósito). dst tem dstn bytes. */
+ * grego e cirílico + 1-para-2 do casefold (ß→ss, ﬁ→fi, ﬂ→fl, K→k) e strip
+ * de combining marks (0300–036F e faixas Ext/Aux/Sup). Fora disso o
+ * codepoint passa intacto (sem libunistring de propósito; CJK não dobra,
+ * igual ao NFD do .py). dst tem dstn bytes. */
 void tasks_norm(const char *src, char *dst, size_t dstn);
 
 /* scan: todas as tarefas do vault (abertas primeiro, mtime desc).
@@ -48,7 +50,7 @@ void tasks_free(task_t *t, size_t n);
 
 /* Ordena cópia de índices em tasks segundo mode+filtro (filtro já em norm).
  * view tem ao menos n slots; retorna o nº visível. */
-size_t tasks_view(task_t *t, size_t n, sort_mode_t mode, const char *qn,
+size_t tasks_view(task_t *t, size_t n, sort_mode_t mode, const char *query_norm,
                   size_t *view);
 
 /* rewrite da linha do checkbox (tmp+rename, preserva modo). newtext NULL
@@ -75,6 +77,12 @@ void tasks_now(char out[17]);
 
 /* utf8_encode: codepoint -> 1-4 bytes; retorna o tamanho. */
 size_t tasks_utf8_encode(uint32_t cp, char out[4]);
+
+/* utf8_decode: 1-4 bytes em *cp; nunca retorna 0 (byte inválido passa). */
+size_t tasks_utf8_decode(const char *s, uint32_t *cp);
+
+/* has_created: 1 se o texto tem carimbo ➕ válido. */
+int tasks_has_created(const char *text);
 
 /* complete: garante ➕ e adiciona "✅ now" (estilo Tasks plugin). */
 void tasks_complete(const char *text, char *dst, size_t dstn);
