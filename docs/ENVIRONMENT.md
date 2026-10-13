@@ -76,3 +76,14 @@ janela GTK fica pre-realizada escondida no daemon.
 Manutenção: swaytiles atualiza com `git pull` + `./install.sh` no clone
 (reinicia o serviço sozinho); remove com `./install.sh --uninstall`.
 sway-alttab-gui atualiza com o pacman/paru junto do resto do sistema.
+
+## Menu de utilitários Rust (2026-10-13)
+
+| Piece | State |
+|---|---|
+| Binding | `$mod+Shift+x` → `sway/scripts/menu.sh`: `foot -a menu --override="initial-window-size-chars=110x34"` (regra floating `app_id="menu"` centrada, junto das do yambar-tasks/dirs); toggle fecha a janela; sem o binário cai no `tofi-menu.sh` |
+| Binário | `menu/` (Rust 2024, ratatui 0.29 + crossterm 0.28 + serde_json; perfil release LTO/codegen-units=1/strip/panic=abort ≈ 770 KB) → `~/.local/bin/menu` via `make -C menu install` |
+| UI | Abas (Todas/Aplicativos/Conectividade/Aparência/Janelas/Sistema) + filtro fuzzy com fold de acentos (subsequência com score; highlight do match) + estados vivos ao lado dos itens + submenus (Esquemas dos 1247 Gogh, fastfetch, temas do tofi, fontes, Papirus, energia, monitores, lock, temperatura) + painel direito com a paleta do pywal (16 cores + BG/FG). Texto herda o tema do terminal; cor absoluta só nos swatches (colors.sh defasado do terminal deixa o menu ilegível) |
+| Ações | Executam os scripts do rice pelos hooks `TOFI_*` (TOFI_SCHEME/TOFI_PICK/TOFI_FASTFETCH) + args diretos; toggles de divisão/avisos replicados do tofi-menu (flag `autotiling-off`, `makoctl mode`). keep=true mantém o menu aberto e recarrega estados; apps externos fecham. Estados com TTL (pgrep 2 s, bateria 5 s, hora 10 s) — zero fork por frame |
+| Verificação | `make -C menu e2e` (MENU_SEQ injeta teclas no binário: casos de estados, filtro+Hora, toggle da divisão ida/volta) + `cargo test`/`clippy -D warnings`; no `scripts/validate.sh` (SKIP sem cargo). E2E visual validado em workspace limpo (Zen fullscreen no ws 1 esconde janelas novas — normal do sway) |
+| Fallback | `tofi-menu.sh` intacto no repo; quem quiser volta trocando o binding |

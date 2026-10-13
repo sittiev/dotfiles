@@ -52,6 +52,16 @@ else
     printf '[SKIP] tasks UI builds (sem notcurses: sudo pacman -S notcurses)\n'
 fi
 
+menu_ok() {
+    # Menu Rust: testes + E2E headless (ações reais via MENU_SEQ).
+    ( cd "$ROOT/menu" && cargo test -q && ./scripts/e2e.sh )
+}
+if command -v cargo >/dev/null 2>&1; then
+    check 'menu Rust (testes + e2e)' menu_ok
+else
+    printf '[SKIP] menu Rust (sem cargo: pacman -S rust)\n'
+fi
+
 action_ok() {
     grep -q '^\[Desktop Entry\]$' "$1" &&
         grep -q '^Type=Action$' "$1" &&
