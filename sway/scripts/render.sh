@@ -93,16 +93,22 @@ cat > "$HOME/.config/fontconfig/fonts.conf" <<EOF
 </fontconfig>
 EOF
 
-# Yambar: default so horario; clique no horario alterna para data+horario
-# via on-click nativo da particula (yambar-particles(5)). Estado em
-# $XDG_RUNTIME_DIR/yambar-clock-full (some no logout => volta ao default).
-# Tipografia (MS/Apple): barra e relogio via mono-font.sh (auto segue a
-# fonte da UI: Noto/SF/Segoe), relogio em mono tabular para nao pulsar a
+# Yambar: chip "directories" na EXTREMIDADE ESQUERDA (left:, string pura
+# sem script/poll — rótulo fixo; clique abre a TUI yambar-dirs-toggle.sh,
+# foot flutuante em cima do chip) e dois chips à direita. Tarefas do vault
+# Obsidian (chip esquerdo: contagem de checkboxes abertos via
+# yambar-tasks.sh, clique abre a TUI yambar-tasks-toggle.sh; o script .py
+# é a única fonte da verdade do escaneio/estado) e o relógio (default só
+# horário; clique alterna para data+horário via on-click nativo da
+# partícula — yambar-particles(5) — com estado em
+# $XDG_RUNTIME_DIR/yambar-clock-full, some no logout).
+# Tipografia (MS/Apple): barra e relógio via mono-font.sh (auto segue a
+# fonte da UI: Noto/SF/Segoe), relógio em mono tabular para não pulsar a
 # largura. Noto tem caixa win de 1.362em: size=12 rende 16.3px,
 # cabe nos 18px da barra (size=14 daria 19.1px e cortaria).
-# Sem margins: o espacamento e so via gaps do sway (inner/outer). Sem monitor
-# fixo: com HDMI conectado o eDP fica desligado (outputs.sh auto), entao ha
-# um unico output ativo e a bar vai sempre pro principal.
+# Sem margins: o espaçamento é só via gaps do sway (inner/outer). Sem monitor
+# fixo: com HDMI conectado o eDP fica desligado (outputs.sh auto), então há
+# um único output ativo e a bar vai sempre pro principal.
 YF=$(ensure_contrast "$FG" "$BG" 4.5 | tr 'a-f' 'A-F')
 YBG=$(printf '%s' "$BG" | tr 'a-f' 'A-F')
 cat > "$HOME/.config/yambar/config.yml" <<EOF
@@ -115,7 +121,26 @@ bar:
   font: "${MONO_UI}:size=12"
   font-shaping: none
   spacing: 4
+  left:
+    - script:
+        path: ~/.config/sway/scripts/yambar-dirs.sh
+        poll-interval: 3600000
+        content:
+          string:
+            text: "{display}"
+            font: "${MONO}:size=12"
+            on-click: ~/.config/sway/scripts/yambar-dirs-toggle.sh
+            deco: {background: {color: ${YBG}ff}}
   right:
+    - script:
+        path: ~/.config/sway/scripts/yambar-tasks.sh
+        poll-interval: 2000
+        content:
+          string:
+            text: " {display}"
+            font: "${MONO}:size=12"
+            on-click: ~/.config/sway/scripts/yambar-tasks-toggle.sh
+            deco: {background: {color: ${YBG}ff}}
     - script:
         path: ~/.config/sway/scripts/yambar-clock.sh
         poll-interval: 1000

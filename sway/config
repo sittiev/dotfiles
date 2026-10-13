@@ -64,6 +64,7 @@ input type:pointer {
     bindsym $mod+period exec ~/.config/sway/scripts/emoji.sh
     bindsym $mod+Shift+v exec ~/.config/sway/scripts/clipboard.sh
     bindsym $mod+Shift+x exec ~/.config/sway/scripts/tofi-menu.sh
+    bindsym $mod+Shift+f exec ~/.config/sway/scripts/fsearch.sh
     bindsym $mod+Shift+Escape exec ~/.config/sway/scripts/swaylock.sh
     bindsym $mod+x exec ~/.config/sway/scripts/yambar-toggle.sh
     bindsym $mod+n exec ~/.config/sway/scripts/nightlight.sh
@@ -201,12 +202,12 @@ smart_borders off
 # Sem borda visivel em janela inativa: border/indicator/child_border das
 # classes nao-focadas sao transparentes (render.sh regenera estas linhas;
 # nao volte para a cor de fundo — em wallpaper claro ela vira borda branca).
-client.focused   #79929F #53646C #DEDFE0 #79929F #53646C
-client.unfocused #00000000 #1c1f21 #7A7F81 #00000000 #00000000
-client.focused_inactive #00000000 #1c1f21 #7A7F81 #00000000 #00000000
-client.placeholder      #00000000 #1c1f21 #7A7F81 #00000000 #00000000
-client.background       #1c1f21
-client.urgent           #79929F #3C4B55 #B9BDBF #79929F #3C4B55
+client.focused   #7F7C60 #AFAD9C #373734 #7F7C60 #AFAD9C
+client.unfocused #00000000 #f7f7f7 #80807D #00000000 #00000000
+client.focused_inactive #00000000 #f7f7f7 #80807D #00000000 #00000000
+client.placeholder      #00000000 #f7f7f7 #80807D #00000000 #00000000
+client.background       #f7f7f7
+client.urgent           #7F7C60 #D3D1C4 #373734 #7F7C60 #D3D1C4
 
 for_window [window_type="dialog"] floating enable, move position center
 for_window [window_type="utility"] floating enable, move position center
@@ -214,6 +215,8 @@ for_window [app_id="pavucontrol"] floating enable, move position center
 for_window [app_id="blueman-manager"] floating enable, move position center
 for_window [app_id="overskride"] floating enable, move position center
 for_window [app_id="iwgtk"] floating enable, move position center
+for_window [app_id="yambar-tasks"] floating enable, move position center
+for_window [app_id="yambar-dirs"] floating enable, move position center
 
 # Native lightweight Wayland clients; wallpaper and theme are refreshed by Waypaper.
 exec ~/.config/sway/scripts/theme.sh

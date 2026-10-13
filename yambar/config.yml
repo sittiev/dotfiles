@@ -3,17 +3,36 @@ bar:
   height: 18
   location: bottom
   background: 00000000
-  foreground: 3A3936ff
-  font: "Noto Sans:size=12"
+  foreground: 373734ff
+  font: "Atkinson Hyperlegible Mono:size=12"
   font-shaping: none
   spacing: 4
+  left:
+    - script:
+        path: ~/.config/sway/scripts/yambar-dirs.sh
+        poll-interval: 3600000
+        content:
+          string:
+            text: "{display}"
+            font: "Atkinson Hyperlegible Mono:size=12"
+            on-click: ~/.config/sway/scripts/yambar-dirs-toggle.sh
+            deco: {background: {color: F7F7F7ff}}
   right:
+    - script:
+        path: ~/.config/sway/scripts/yambar-tasks.sh
+        poll-interval: 2000
+        content:
+          string:
+            text: " {display}"
+            font: "Atkinson Hyperlegible Mono:size=12"
+            on-click: ~/.config/sway/scripts/yambar-tasks-toggle.sh
+            deco: {background: {color: F7F7F7ff}}
     - script:
         path: ~/.config/sway/scripts/yambar-clock.sh
         poll-interval: 1000
         content:
           string:
             text: "{display}"
-            font: "Noto Sans Mono:size=12"
+            font: "Atkinson Hyperlegible Mono:size=12"
             on-click: ~/.config/sway/scripts/yambar-clock-toggle.sh
-            deco: {background: {color: E8E7E3ff}}
+            deco: {background: {color: F7F7F7ff}}
