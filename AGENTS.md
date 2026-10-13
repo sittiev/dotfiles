@@ -143,6 +143,13 @@ After a change, run:
 ./scripts/validate.sh
 ```
 
+Prove e2e, then restart it yourself: exercise the real path (TUIs via
+CLI flags and simulated input, chip on-click targets, toggle scripts),
+then reload/restart the affected services (`swaymsg reload`, restart
+yambar/mako, …) and confirm they come back healthy — no user action
+needed. Human-in-the-loop / grill-me only for destructive, ambiguous,
+or high-blast-radius calls; routine verification never waits on the user.
+
 Show the diff before committing. Commit after validation without an extra
 confirmation; never push automatically.
 
