@@ -633,6 +633,7 @@ static size_t wrap_text(const char *text, int maxw, char lines[][1024],
             }
             q = e;
         }
+        p = e; /* consome a palavra: sem isso o loop repete a primeira */
     }
     if (cur[0] && n < maxlines)
         snprintf(lines[n++], 1024, "%s", cur);
