@@ -1,6 +1,10 @@
 #!/usr/bin/dash
 # tofi-menu.sh — hub estilo Ajustes Apple (categorias → diálogo → ação).
 #
+# Padrão (Mod+Shift+x): busca global flat — todas as ações numa lista só,
+# digita filtra, Enter executa e volta à lista (toggles atualizam o estado
+# na hora). Fallback hierárquico: ./tofi-menu.sh --hub (categorias).
+#
 # Nível 1 (menu): Aplicativos, Conectividade, Aparência, Janelas, Sistema,
 # com o estado atual à direita (" · Ativada", " · 99%") e " >" onde há
 # subnível. Setas ASCII minimalistas (< voltar, > avançar); o prompt vira
@@ -427,6 +431,99 @@ sub_sys() {
     done
 }
 
+run_global() {
+    # Busca global: uma lista flat com todas as folhas + entradas de
+    # pickers (>). Sem GAPs (poluem o filtro); contexto vai no prefixo
+    # "Categoria · ". Ordem do case: folhas longas antes das curtas
+    # ("Fonte do terminal" antes de "Terminal", "Variante" antes de
+    # "Papirus", "Bloquear" antes de "Bloqueio").
+    while true; do
+        if [ "$(theme_label)" = Claro ]; then mclaro=' · Ativo'; mescuro=''; else mclaro=''; mescuro=' · Ativo'; fi
+        if [ "$(fm_label)" = Dolphin ]; then mdolphin=' · Padrão'; mpcmanfm=''; else mdolphin=''; mpcmanfm=' · Padrão'; fi
+        if [ "$(icon_label)" = Papirus ]; then mpapirus=' · Padrão'; myamis=''; else mpapirus=''; myamis=' · Padrão'; fi
+        c=$(printf '%s\n' \
+            "${PAD}Terminal" \
+            "${PAD}Arquivos · $(fm_label)" \
+            "${PAD}PCManFM como padrão${mpcmanfm}" \
+            "${PAD}Dolphin como padrão${mdolphin}" \
+            "${PAD}Navegador" \
+            "${PAD}Rede" \
+            "${PAD}Bluetooth" \
+            "${PAD}Modo claro${mclaro}" \
+            "${PAD}Modo escuro${mescuro}" \
+            "${PAD}Esquemas de cores · $(scheme_label) >" \
+            "${PAD}Estilo do fastfetch · $(fastfetch_label) >" \
+            "${PAD}Tema do Tofi · $(tofi_label) >" \
+            "${PAD}Fonte · $(font_label) >" \
+            "${PAD}Tamanho da fonte · $(size_label) >" \
+            "${PAD}Fonte do terminal · $(term_label) >" \
+            "${PAD}Fonte mono · $(mono_label) >" \
+            "${PAD}Ícones YAMIS${myamis}" \
+            "${PAD}Ícones Papirus${mpapirus}" \
+            "${PAD}Variante do Papirus · $(papirus_variant_label) >" \
+            "${PAD}Papel de parede" \
+            "${PAD}Luz noturna · $(night_label)" \
+            "${PAD}Temperatura da luz >" \
+            "${PAD}Barra inferior · $(yambar_label)" \
+            "${PAD}Relógio da barra · $(clock_label)" \
+            "${PAD}Divisão automática · $(div_label)" \
+            "${PAD}Avisos · $(dnd_label)" \
+            "${PAD}Modo jogo · $(game_label)" \
+            "${PAD}Área de transferência" \
+            "${PAD}Emoji" \
+            "${PAD}Monitores >" \
+            "${PAD}Energia >" \
+            "${PAD}Bloqueio automático · $(lock_label) >" \
+            "${PAD}Bateria · $(bat_label)" \
+            "${PAD}Hora · $(time_label)" \
+            "${PAD}Data" \
+            "${PAD}Bloquear tela" | ask "Ações" 560)
+        [ -n "$c" ] || exit 0
+        case "$c" in
+            *Esquemas*) "$script_dir/scheme-menu.sh" ;;
+            *fastfetch*) "$script_dir/fastfetch-menu.sh" ;;
+            *Tamanho*) "$script_dir/ui-font-size.sh" ;;
+            *Tema*Tofi*|*Tema*tofi*) "$script_dir/tofi-themes.sh" ;;
+            *Fonte*terminal*) "$script_dir/term-font.sh" ;;
+            *Fonte*mono*) "$script_dir/mono-font.sh" ;;
+            *Variante*) sub_papirus ;;
+            *YAMIS*) "$script_dir/icon-theme.sh" yamis || true ;;
+            *Papirus*) "$script_dir/icon-theme.sh" papirus || true ;;
+            *Fonte*|*fonte*) "$script_dir/ui-font.sh" ;;
+            *Modo*claro*) "$script_dir/theme-toggle.sh" light ;;
+            *Modo*escuro*) "$script_dir/theme-toggle.sh" dark ;;
+            *Terminal*) exec foot ;;
+            *Arquivos*) exec "$script_dir/file-manager.sh" open ;;
+            *PCManFM*) "$script_dir/file-manager.sh" pcmanfm ;;
+            *Dolphin*) "$script_dir/file-manager.sh" dolphin ;;
+            *Navegador*) exec librewolf ;;
+            *Rede*) open_rede ;;
+            *Bluetooth*) open_bluetooth ;;
+            *Papel*) exec "$script_dir/wallpaper.sh" ;;
+            *Temperatura*) "$script_dir/nightmenu.sh" ;;
+            *noturna*|*Noturna*) "$script_dir/nightlight.sh" ;;
+            *Relógio*|*Relogio*) "$script_dir/yambar-clock-toggle.sh" ;;
+            *Barra*) "$script_dir/yambar-toggle.sh" ;;
+            *Divisão*|*Divisao*) toggle_autotiling ;;
+            *Avisos*) toggle_dnd ;;
+            *jogo*|*Jogo*) "$script_dir/game-mode.sh" toggle ;;
+            *transferência*|*Transferencia*|*copiados*|*Copiados*) "$script_dir/clipboard.sh" ;;
+            *Emoji*|*emoji*) "$script_dir/emoji.sh" ;;
+            *Monitores*) "$script_dir/monitormenu.sh" ;;
+            *Energia*) "$script_dir/powermenu.sh" ;;
+            *Bloquear*) exec "$script_dir/swaylock.sh" ;;
+            *Bloqueio*) "$script_dir/lockmenu.sh" ;;
+            *Bateria*)
+                cap=$(cat /sys/class/power_supply/BAT*/capacity 2>/dev/null | head -n 1 || printf '?')
+                notify-send "Bateria" "$cap%"
+                unset cap ;;
+            *Hora*) notify-send "Hora" "$(date '+%H:%M')" ;;
+            *Data*) notify-send "Data" "$(date '+%A, %d de %B de %Y')" ;;
+        esac
+        unset mclaro mescuro mdolphin mpcmanfm myamis mpapirus
+    done
+}
+
 main() {
     if [ -n "${TOFI_SEQ+set}" ]; then
         TOFI_SEQ_FILE=$(mktemp "${TMPDIR:-/tmp}/tofi-menu-seq.XXXXXX")
@@ -434,6 +531,14 @@ main() {
         unset TOFI_SEQ
         trap 'rm -f "$TOFI_SEQ_FILE"' EXIT
     fi
+    case "${1:-}" in
+        --hub) hub_main ;;
+        --global|"") run_global ;;
+        *) run_global ;;
+    esac
+}
+
+hub_main() {
     while true; do
         choice=$(printf '%s\n' \
             "${PAD}Aplicativos >" \
