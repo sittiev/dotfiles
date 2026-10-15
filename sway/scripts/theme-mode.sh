@@ -1009,6 +1009,10 @@ EOF
         sed -i "s|^Net/IconThemeName .*|Net/IconThemeName \"$ICON_THEME\"|" "$XS"
         pkill -HUP xsettingsd 2>/dev/null || true
     fi
+    # O portal-gtk (popup de salvar/abrir do browser) le o tema no GtkSettings
+    # do PROCESSO e na re-le settings.ini/gtk.css: sem restart, o dialogo fica
+    # com o tema anterior a troca. try-restart so age se o servico esta ativo.
+    systemctl --user try-restart xdg-desktop-portal-gtk >/dev/null 2>&1 || true
 
     # ---- Qt/KDE: colorscheme e ícones mono ativos (best effort) ----
     # Qt mantém Kvantum PywalDark/Light + qt5ct/qt6ct com a paleta (a pedido);
