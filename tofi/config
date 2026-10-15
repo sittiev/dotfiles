@@ -5,7 +5,7 @@
 
 ### Fonts
 # Fonte via tofi-apply.sh (nome Pango p/ fallback emoji Noto Color Emoji).
-font-size = 12
+font-size = 14
 font-features = ""
 font-variations = ""
 hint-font = false
@@ -76,20 +76,20 @@ late-keyboard-init = false
 multi-instance = false
 ascii-input = false
 # tofi-colors-begin (gerado por tofi-apply.sh — nao editar este bloco)
-font = Noto Sans
-text-color = #3a3936
-background-color = #e8e7e3
-selection-color = #fafafa
-selection-background = #898365
+font = JetBrainsMono Nerd Font
+text-color = #c0bfba
+background-color = #141414
+selection-color = #141414
+selection-background = #b8b59d
 selection-match-color = #000000
-placeholder-color = #3a3936A8
+placeholder-color = #c0bfbaA8
 prompt-background = #00000000
 input-background = #00000000
-input-color = #3a3936
+input-color = #c0bfba
 alternate-result-background = #00000000
 default-result-background = #00000000
-prompt-color = #3a3936
-border-color = #898365
+prompt-color = #c0bfba
+border-color = #b8b59d
 outline-width = 0
 corner-radius = 0
 border-width = 2

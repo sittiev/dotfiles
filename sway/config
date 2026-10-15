@@ -63,9 +63,9 @@ input type:pointer {
     bindsym $mod+o exec ~/.config/sway/scripts/tofi-themes.sh
     bindsym $mod+period exec ~/.config/sway/scripts/emoji.sh
     bindsym $mod+Shift+v exec ~/.config/sway/scripts/clipboard.sh
-    bindsym $mod+Shift+x exec ~/.config/sway/scripts/tofi-menu.sh
+    bindsym $mod+Shift+x exec ~/.config/sway/scripts/menu.sh
     bindsym $mod+Shift+f exec ~/.config/sway/scripts/fsearch.sh
-    bindsym $mod+Shift+Escape exec ~/.config/sway/scripts/swaylock.sh
+    bindsym $mod+Shift+Escape exec ~/.config/sway/scripts/dewlock.sh
     bindsym $mod+x exec ~/.config/sway/scripts/yambar-toggle.sh
     bindsym $mod+n exec ~/.config/sway/scripts/nightlight.sh
     bindsym $mod+Shift+n exec ~/.config/sway/scripts/nightmenu.sh
@@ -202,12 +202,12 @@ smart_borders off
 # Sem borda visivel em janela inativa: border/indicator/child_border das
 # classes nao-focadas sao transparentes (render.sh regenera estas linhas;
 # nao volte para a cor de fundo — em wallpaper claro ela vira borda branca).
-client.focused   #7F7C60 #AFAD9C #373734 #7F7C60 #AFAD9C
-client.unfocused #00000000 #f7f7f7 #80807D #00000000 #00000000
-client.focused_inactive #00000000 #f7f7f7 #80807D #00000000 #00000000
-client.placeholder      #00000000 #f7f7f7 #80807D #00000000 #00000000
-client.background       #f7f7f7
-client.urgent           #7F7C60 #D3D1C4 #373734 #7F7C60 #D3D1C4
+client.focused   #B8B59D #767466 #FAFAFA #B8B59D #767466
+client.unfocused #00000000 #141414 #71706A #00000000 #00000000
+client.focused_inactive #00000000 #141414 #71706A #00000000 #00000000
+client.placeholder      #00000000 #141414 #71706A #00000000 #00000000
+client.background       #141414
+client.urgent           #B8B59D #666458 #E1E0DF #B8B59D #666458
 
 for_window [window_type="dialog"] floating enable, move position center
 for_window [window_type="utility"] floating enable, move position center
@@ -217,6 +217,17 @@ for_window [app_id="overskride"] floating enable, move position center
 for_window [app_id="iwgtk"] floating enable, move position center
 for_window [app_id="yambar-tasks"] floating enable, move position center
 for_window [app_id="yambar-dirs"] floating enable, move position center
+for_window [app_id="menu"] floating enable, move position center
+
+# Gerenciadores de arquivo sempre em float: pcmanfm, dolphin e os comuns
+# (thunar, nemo, nautilus, pcmanfm-qt, spacefm, doublecmd, krusader, qtfm,
+# xfe). Aqui o dolphin registra app_id "org.kde.dolphin" (confira com
+#   swaymsg -t get_tree | grep -o '"app_id": "[^"]*"')
+# por isso as duas variantes. (?i) ignora maiuscula/minuscula, ^...$ exige
+# app_id exato (nao casa substring). FMs de terminal (ranger/lf/yazi/nnn)
+# rodam dentro do terminal, nao tem app_id proprio. O resize set e opcional:
+# comente a parte se preferir o tamanho natural da janela.
+for_window [app_id="(?i)^(pcmanfm|pcmanfm-qt|dolphin|org\.kde\.dolphin|thunar|nemo|nautilus|org\.gnome\.nautilus|spacefm|doublecmd|krusader|qtfm|xfe)$"] floating enable, move position center, resize set 1024 640
 
 # Native lightweight Wayland clients; wallpaper and theme are refreshed by Waypaper.
 exec ~/.config/sway/scripts/theme.sh
@@ -234,7 +245,10 @@ bindswitch --reload --locked lid:on exec ~/.config/sway/scripts/outputs.sh lid o
 bindswitch --reload --locked lid:off exec ~/.config/sway/scripts/outputs.sh lid off
 exec_always ~/.config/sway/scripts/idle.sh
 exec_always ~/.config/sway/scripts/battery.sh
-exec /usr/bin/lxqt-policykit-agent
+# Buildo depois do compositor: stderr no /dev/null; antes do Wayland estar
+# pronto o Qt despeja "connection broke"/"wl_display" no TTY do ly e cobre a
+# tela por alguns segundos. O agente ignora a saída mesmo com sucesso.
+exec /usr/bin/lxqt-policykit-agent >/dev/null 2>&1
 exec swaymsg focus output HDMI-A-1 >/dev/null 2>&1
 
 # Alterna splith/splitv conforme a proporcao da janela em foco (autotiling-rs).
