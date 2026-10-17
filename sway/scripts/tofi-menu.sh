@@ -59,26 +59,33 @@ theme_label() {
     esac
 }
 font_label() {
-    case "$(cat "${XDG_CACHE_HOME:-$HOME/.cache}/ui-font" 2>/dev/null || printf 'noto')" in
-        sf) printf 'SF Pro' ;;
+    # ui-font.sh guarda a família direto; chaves antigas continuam válidas
+    v=$(cat "${XDG_CACHE_HOME:-$HOME/.cache}/ui-font" 2>/dev/null || printf 'noto')
+    case "$v" in
+        sf) printf 'SF Pro Display' ;;
         segoe) printf 'Segoe UI' ;;
-        *) printf 'Noto Sans' ;;
+        noto|"") printf 'Noto Sans' ;;
+        *) printf '%s' "$v" ;;
     esac
 }
 size_label() { cat "${XDG_CACHE_HOME:-$HOME/.cache}/ui-font-size" 2>/dev/null || printf '14'; }
 term_label() {
-    case "$(cat "${XDG_CACHE_HOME:-$HOME/.cache}/term-font" 2>/dev/null || printf 'jetbrains')" in
+    v=$(cat "${XDG_CACHE_HOME:-$HOME/.cache}/term-font" 2>/dev/null || printf 'jetbrains')
+    case "$v" in
+        jetbrains|"") printf 'JetBrains Mono' ;;
         lexend) printf 'Lexend' ;;
         atkinson) printf 'Atkinson Hyperlegible Mono' ;;
-        *) printf 'JetBrains Mono' ;;
+        *) printf '%s' "$v" ;;
     esac
 }
 mono_label() {
-    case "$(cat "${XDG_CACHE_HOME:-$HOME/.cache}/mono-font" 2>/dev/null || printf 'auto')" in
+    v=$(cat "${XDG_CACHE_HOME:-$HOME/.cache}/mono-font" 2>/dev/null || printf 'auto')
+    case "$v" in
+        auto|"") printf 'Automática' ;;
         noto) printf 'Noto Sans Mono' ;;
         jetbrains) printf 'JetBrains Mono' ;;
         atkinson) printf 'Atkinson Hyperlegible Mono' ;;
-        *) printf 'Automática' ;;
+        *) printf '%s' "$v" ;;
     esac
 }
 scheme_label() { cat "${XDG_CACHE_HOME:-$HOME/.cache}/theme-scheme" 2>/dev/null || printf 'Apprentice'; }
@@ -426,7 +433,7 @@ sub_sys() {
                 unset cap ;;
             *Hora*) notify-send "Hora" "$(date '+%H:%M')" ;;
             *Data*) notify-send "Data" "$(date '+%A, %d de %B de %Y')" ;;
-            *Bloquear*) exec "$script_dir/swaylock.sh" ;;
+            *Bloquear*) exec "$script_dir/dewlock.sh" ;;
         esac
     done
 }
@@ -511,7 +518,7 @@ run_global() {
             *Emoji*|*emoji*) "$script_dir/emoji.sh" ;;
             *Monitores*) "$script_dir/monitormenu.sh" ;;
             *Energia*) "$script_dir/powermenu.sh" ;;
-            *Bloquear*) exec "$script_dir/swaylock.sh" ;;
+            *Bloquear*) exec "$script_dir/dewlock.sh" ;;
             *Bloqueio*) "$script_dir/lockmenu.sh" ;;
             *Bateria*)
                 cap=$(cat /sys/class/power_supply/BAT*/capacity 2>/dev/null | head -n 1 || printf '?')

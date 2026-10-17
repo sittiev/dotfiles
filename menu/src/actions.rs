@@ -6,6 +6,7 @@
 
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::process::Command;
 
 use crate::state::{Kind, States, Value};
 
@@ -361,17 +362,110 @@ fn sub_tofi(s: &mut States, p: &Paths) -> Vec<SubEntry> {
     v
 }
 
+// ---------------------------------------------------------------------------
+// Fontes do sistema (fc-list) para os seletores de fonte
+// ---------------------------------------------------------------------------
+
+/// Todas as famílias instaladas; fc-list junta estilos com vírgula e ':'
+/// quebra a spec de fonte dos apps, então ambos saem da lista (mesmo filtro
+/// de ui-font.sh/term-font.sh/mono-font.sh).
+fn font_families() -> Vec<String> {
+    let Ok(out) = Command::new("fc-list").arg(":").arg("family").output() else {
+        return Vec::new();
+    };
+    let mut fams: Vec<String> = String::from_utf8_lossy(&out.stdout)
+        .lines()
+        .flat_map(|l| l.split(','))
+        .map(str::trim)
+        .filter(|f| !f.is_empty() && !f.contains(':'))
+        .map(str::to_string)
+        .collect();
+    fams.sort();
+    fams.dedup();
+    fams
+}
+
+/// Rótulo ativo: chave antiga vira família; valor novo já é a família.
+fn legacy_family(legacy: &[(&str, &str)], raw: &str) -> String {
+    legacy
+        .iter()
+        .find(|(k, _)| *k == raw)
+        .map(|(_, f)| (*f).to_string())
+        .unwrap_or_else(|| raw.to_string())
+}
+
+/// Lista dinâmica de fontes; a escolha vai ao script via hook `TOFI_*`
+/// (Run::Pick injeta o rótulo no env — mesmo caminho dos pickers do rice).
+fn sub_fonts(
+    s: &mut States,
+    kind: Kind,
+    script: &'static str,
+    env: &'static str,
+    auto: bool,
+    legacy: &[(&str, &str)],
+) -> Vec<SubEntry> {
+    let raw = s.get(kind).str().unwrap_or("").to_string();
+    let cur = legacy_family(legacy, &raw);
+    let mut v = vec![back()];
+    if auto {
+        v.push(SubEntry {
+            label: "Automática".into(),
+            active: raw.is_empty() || raw == "auto",
+            run: Some(Run::Pick { script, env, keep: true }),
+            sub: None,
+        });
+    }
+    for fam in font_families() {
+        v.push(SubEntry {
+            label: fam.clone(),
+            active: fam == cur,
+            run: Some(Run::Pick { script, env, keep: true }),
+            sub: None,
+        });
+    }
+    v
+}
+
 fn sub_uifont(s: &mut States, _p: &Paths) -> Vec<SubEntry> {
-    pick_radio(s, Kind::UiFont, "ui-font.sh", "noto", &[("Noto Sans", &["noto"]), ("SF Pro", &["sf"]), ("Segoe UI", &["segoe"])])
+    sub_fonts(
+        s,
+        Kind::UiFont,
+        "ui-font.sh",
+        "TOFI_UIFONT",
+        false,
+        &[("noto", "Noto Sans"), ("sf", "SF Pro Display"), ("segoe", "Segoe UI")],
+    )
 }
 fn sub_uisize(s: &mut States, _p: &Paths) -> Vec<SubEntry> {
     pick_radio(s, Kind::UiSize, "ui-font-size.sh", "14", &[("12", &["12"]), ("14", &["14"]), ("18", &["18"])])
 }
 fn sub_termfont(s: &mut States, _p: &Paths) -> Vec<SubEntry> {
-    pick_radio(s, Kind::TermFont, "term-font.sh", "jetbrains", &[("JetBrains Mono", &["jetbrains"]), ("Lexend", &["lexend"]), ("Atkinson Hyperlegible Mono", &["atkinson"])])
+    sub_fonts(
+        s,
+        Kind::TermFont,
+        "term-font.sh",
+        "TOFI_TERMFONT",
+        false,
+        &[
+            ("jetbrains", "JetBrainsMono Nerd Font"),
+            ("lexend", "Lexend"),
+            ("atkinson", "Atkinson Hyperlegible Mono"),
+        ],
+    )
 }
 fn sub_monofont(s: &mut States, _p: &Paths) -> Vec<SubEntry> {
-    pick_radio(s, Kind::MonoFont, "mono-font.sh", "auto", &[("Automática", &["auto"]), ("Noto Sans Mono", &["noto"]), ("JetBrains Mono", &["jetbrains"]), ("Atkinson Hyperlegible Mono", &["atkinson"])])
+    sub_fonts(
+        s,
+        Kind::MonoFont,
+        "mono-font.sh",
+        "TOFI_MONOFONT",
+        true,
+        &[
+            ("noto", "Noto Sans Mono"),
+            ("jetbrains", "JetBrainsMono Nerd Font"),
+            ("atkinson", "Atkinson Hyperlegible Mono"),
+        ],
+    )
 }
 
 fn pick_radio(

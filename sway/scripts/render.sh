@@ -20,24 +20,30 @@ scheme_init "$MODE"
 : "${BASE:=$BG}"
 : "${FAIL:=$ACCENT}"
 
-# Fonte da UI (ui-font.sh): noto=padrao, sf, segoe. Mono tabular fixo em
-# Noto Sans Mono (SF/Segoe instaladas nao tem variante mono).
-case "$(cat "$HOME/.cache/ui-font" 2>/dev/null || printf 'noto')" in
+# Fonte da UI (ui-font.sh): o cache guarda a família direto (fc-list); chaves
+# antigas noto/sf/segoe continuam válidas. Mono tabular fixo em Noto Sans Mono
+# (SF/Segoe instaladas nao tem variante mono).
+_uif=$(cat "$HOME/.cache/ui-font" 2>/dev/null || printf 'noto')
+case "$_uif" in
     sf) UI="SF Pro Display" ;;
     segoe) UI="Segoe UI" ;;
-    *) UI="Noto Sans" ;;
+    noto|"") UI="Noto Sans" ;;
+    *) UI=$_uif ;;
 esac
-# Fonte mono (mono-font.sh): auto=padrao segue a UI no yambar/tofi, relogio
-# e OSDs em Noto Sans Mono. Escolha explícita vale para os quatro.
-case "$(cat "$HOME/.cache/mono-font" 2>/dev/null || printf 'auto')" in
+# Fonte mono (mono-font.sh): o cache guarda a família direto; chaves antigas
+# continuam válidas. auto=padrao segue a UI no yambar/tofi, relogio e OSDs em
+# Noto Sans Mono. Escolha explícita vale para os quatro.
+_monof=$(cat "$HOME/.cache/mono-font" 2>/dev/null || printf 'auto')
+case "$_monof" in
     noto) _MONOFAM="Noto Sans Mono" ;;
     jetbrains) _MONOFAM="JetBrainsMono Nerd Font" ;;
     atkinson) _MONOFAM="Atkinson Hyperlegible Mono" ;;
-    *) _MONOFAM="" ;;
+    auto|"") _MONOFAM="" ;;
+    *) _MONOFAM=$_monof ;;
 esac
 MONO_UI="${_MONOFAM:-$UI}"
 MONO="${_MONOFAM:-Noto Sans Mono}"
-unset _MONOFAM
+unset _MONOFAM _uif _monof
 # Tamanho da fonte nos apps (GTK/Qt): 11pt, padrao desktop.
 UISIZE=11
 # Tamanho da UI mako+tofi (ui-font-size.sh): rampa MS/Apple 12 Caption, 14
@@ -202,15 +208,18 @@ width=172
 height=168
 EOF
 
-# Fonte do terminal (term-font.sh): jetbrains=padrao, lexend, atkinson.
-# Atkinson Mono e JetBrains sao mono de verdade. Lexend e proporcional: a
-# Nerd entra como fallback de glifos (icones), mas a grade do foot segue
-# fixa — glifo proporcional pode cortar/sobrepor. Tamanho 12pt em todas.
-case "$(cat "$HOME/.cache/term-font" 2>/dev/null || printf 'jetbrains')" in
+# Fonte do terminal (term-font.sh): o cache guarda a família direto (fc-list);
+# chaves antigas jetbrains/lexend/atkinson continuam válidas. A JetBrains Nerd
+# entra como fallback de glifos (ícones); fonte proporcional/pixel mantém a
+# grade fixa do foot — glifo fora da grade pode cortar/sobrepor. Tamanho 12pt.
+_termf=$(cat "$HOME/.cache/term-font" 2>/dev/null || printf 'jetbrains')
+case "$_termf" in
     lexend) TERMFONT="Lexend:size=12,JetBrainsMono Nerd Font:size=12" ;;
     atkinson) TERMFONT="Atkinson Hyperlegible Mono:size=12,JetBrainsMono Nerd Font:size=12" ;;
-    *) TERMFONT="JetBrainsMono Nerd Font:size=12" ;;
+    jetbrains|"") TERMFONT="JetBrainsMono Nerd Font:size=12" ;;
+    *) TERMFONT="$_termf:size=12,JetBrainsMono Nerd Font:size=12" ;;
 esac
+unset _termf
 
 # Foot: fonte via term-font.sh, resto da geometria preservado; só as cores
 # sao trocadas. Foot 1.28 usa

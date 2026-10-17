@@ -107,15 +107,21 @@ render_layout() {
     # cadeia de fallback do fontconfig e todo emoji vira caixa vazia.
     # Auto (padrao) segue a fonte da UI (rampa MS/Apple); tamanho Body via
     # ui-font-size.sh (só layouts Body seguem; fixos preservados pelo $3 vazio).
-    case "$(cat "$HOME/.cache/ui-font" 2>/dev/null || printf 'noto')" in
+    # Cache guarda a família direto (fc-list); chaves antigas continuam válidas.
+    _rl_uif=$(cat "$HOME/.cache/ui-font" 2>/dev/null || printf 'noto')
+    case "$_rl_uif" in
         sf) _rl_ui="SF Pro Display" ;;
         segoe) _rl_ui="Segoe UI" ;;
-        *) _rl_ui="Noto Sans" ;;
+        noto|"") _rl_ui="Noto Sans" ;;
+        *) _rl_ui=$_rl_uif ;;
     esac
-    case "$(cat "$HOME/.cache/mono-font" 2>/dev/null || printf 'auto')" in
+    _rl_monof=$(cat "$HOME/.cache/mono-font" 2>/dev/null || printf 'auto')
+    case "$_rl_monof" in
         noto) _rl_ui="Noto Sans Mono" ;;
         jetbrains) _rl_ui="JetBrainsMono Nerd Font" ;;
         atkinson) _rl_ui="Atkinson Hyperlegible Mono" ;;
+        auto|"") ;;
+        *) _rl_ui=$_rl_monof ;;
     esac
     cat >> "$_rl_dest.tmp" <<EOF
 # tofi-colors-begin (gerado por tofi-apply.sh — nao editar este bloco)
@@ -146,7 +152,7 @@ EOF
     # Write through the symlink; mv would replace it with a regular file.
     cat "$_rl_dest.tmp" > "$_rl_dest"
     rm -f "$_rl_dest.tmp"
-    unset _rl_src _rl_dest _rl_size _rl_ftmp
+    unset _rl_src _rl_dest _rl_size _rl_ftmp _rl_uif _rl_monof
 }
 
 # Tamanho Body compartilhado mako+tofi (ui-font-size.sh; mesmo default do
@@ -168,11 +174,16 @@ render_layout "$SRC" "$DEST" "$_rl_main_size"
 #   clipboard -> fixo 18: lista vertical (50 entradas do cliphist nao cabem
 #     numa barra); denso demais para acompanhar o Body.
 #   emoji -> Body como o launcher (mesmo aviso de metricas no layout).
-for _rl_extra in clipboard emoji; do
+#   search -> fixo 12: busca de arquivos estilo FSearch (plocate), paths
+#     longos; densa de propósito.
+#   dirs -> fixo 12: pop-up de diretórios pinados ancorado no canto
+#     inferior esquerdo (em cima do chip do yambar).
+for _rl_extra in clipboard emoji search dirs; do
     _rl_xsrc="$THEMES/$_rl_extra/config"
     if [ -f "$_rl_xsrc" ]; then
         case "$_rl_extra" in
             clipboard) render_layout "$_rl_xsrc" "$HOME/.config/tofi/config-$_rl_extra" "" ;;
+            search|dirs) render_layout "$_rl_xsrc" "$HOME/.config/tofi/config-$_rl_extra" "" ;;
             *) render_layout "$_rl_xsrc" "$HOME/.config/tofi/config-$_rl_extra" "$UISIZE_UI" ;;
         esac
     fi
