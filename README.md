@@ -110,6 +110,7 @@ Coleção awesome do rice: componente, 1 linha, onde mora aqui, fonte.
 | [nwg-look](https://github.com/nwg-piotr/nwg-look) | Ajuste GTK com preview ao vivo | — | [repo](https://github.com/nwg-piotr/nwg-look) |
 | YAMIS | Ícones monocromáticos (cópia `yamis-wal` recolorida) | `~/.local/share/icons/` | — |
 | Waypaper | Seletor de wallpaper (dono do swaybg) | `sway/scripts/wallpaper.sh` | pacote oficial |
+| Fontes pixel | Minecraft, Monocraft, VT323, Pixel Operator… vendidas no repo | `fonts/` · `scripts/install-fonts.sh` | `fonts/pixel/SOURCES.md` |
 
 ### Apps e captura
 
