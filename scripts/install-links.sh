@@ -54,6 +54,7 @@ link_path "$ROOT/apps/osu-lazer.desktop" "$HOME/.local/share/applications/osu-la
 link_path "$ROOT/pcmanfm/pcmanfm.conf" "$HOME/.config/pcmanfm/default/pcmanfm.conf"
 link_path "$ROOT/pcmanfm/libfm.conf" "$HOME/.config/libfm/libfm.conf"
 link_path "$ROOT/pcmanfm/actions" "$HOME/.local/share/file-manager/actions"
+link_path "$ROOT/tmux/tmux.conf" "$HOME/.tmux.conf"
 
 if [ "$DRY_RUN" = 1 ]; then
     printf '%s\n' 'dry run complete; no files changed'
