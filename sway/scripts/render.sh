@@ -211,13 +211,13 @@ EOF
 # Fonte do terminal (term-font.sh): o cache guarda a família direto (fc-list);
 # chaves antigas jetbrains/lexend/atkinson continuam válidas. A JetBrains Nerd
 # entra como fallback de glifos (ícones); fonte proporcional/pixel mantém a
-# grade fixa do foot — glifo fora da grade pode cortar/sobrepor. Tamanho 12pt.
+# grade fixa do foot — glifo fora da grade pode cortar/sobrepor. Tamanho 10pt.
 _termf=$(cat "$HOME/.cache/term-font" 2>/dev/null || printf 'jetbrains')
 case "$_termf" in
-    lexend) TERMFONT="Lexend:size=12,JetBrainsMono Nerd Font:size=12" ;;
-    atkinson) TERMFONT="Atkinson Hyperlegible Mono:size=12,JetBrainsMono Nerd Font:size=12" ;;
-    jetbrains|"") TERMFONT="JetBrainsMono Nerd Font:size=12" ;;
-    *) TERMFONT="$_termf:size=12,JetBrainsMono Nerd Font:size=12" ;;
+    lexend) TERMFONT="Lexend:size=10,JetBrainsMono Nerd Font:size=10" ;;
+    atkinson) TERMFONT="Atkinson Hyperlegible Mono:size=10,JetBrainsMono Nerd Font:size=10" ;;
+    jetbrains|"") TERMFONT="JetBrainsMono Nerd Font:size=10" ;;
+    *) TERMFONT="$_termf:size=10,JetBrainsMono Nerd Font:size=10" ;;
 esac
 unset _termf
 
