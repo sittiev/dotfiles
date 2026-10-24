@@ -1,0 +1,9 @@
+[Unit]
+Description=Trigger hora.service on the hour and every half hour
+
+[Timer]
+OnCalendar=*:00,30:00
+AccuracySec=1s
+
+[Install]
+WantedBy=timers.target
