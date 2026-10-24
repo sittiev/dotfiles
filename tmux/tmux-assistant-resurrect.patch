@@ -1,0 +1,77 @@
+diff --git a/scripts/lib-detect.awk b/scripts/lib-detect.awk
+index 4699bcb..50a4456 100644
+--- a/scripts/lib-detect.awk
++++ b/scripts/lib-detect.awk
+@@ -14,6 +14,9 @@ function detect_tool(line) {
+ 
+ 	first = word[1]
+ 	sub(/^.*\//, "", first)
++	# OpenCode ships a Go binary named opencode.exe (pnpm cmd-shim exec target);
++	# normalize it (and any other .exe) to the canonical tool token.
++	sub(/\.exe$/, "", first)
+ 	# Native-install Claude exec'd by its versioned path: see detect_tool in
+ 	# lib-detect.sh.
+ 	if (word[1] ~ /\/claude\/versions\/[0-9]/) first = "claude"
+@@ -31,6 +34,7 @@ function detect_tool(line) {
+ 		if (n < 2) return ""
+ 		tool = word[2]
+ 		sub(/^.*\//, "", tool)
++		sub(/\.exe$/, "", tool)
+ 		if (tool == "cursor-agent") {
+ 			tool = "cursor"
+ 		} else if (tool == "agent" && word[3] == "--use-system-ca" && word[4] ~ /\/index\.js$/) {
+diff --git a/scripts/lib-detect.sh b/scripts/lib-detect.sh
+index 6111686..cacfba0 100755
+--- a/scripts/lib-detect.sh
++++ b/scripts/lib-detect.sh
+@@ -48,8 +48,8 @@ detect_tool() {
+ 	*/claude/versions/[0-9]*) first="claude" ;;
+ 	esac
+ 	case "$first" in
+-	claude | copilot | opencode | codex | pi | omp | grok | agy)
+-		tool="$first"
++	claude | copilot | opencode | opencode.exe | codex | pi | omp | grok | agy)
++		tool="${first%.exe}"
+ 		shift
+ 		;;
+ 	cursor-agent)
+@@ -67,7 +67,7 @@ detect_tool() {
+ 	node | nodejs | bun | deno | bash | sh | dash | ksh | zsh)
+ 		[ "$#" -gt 1 ] || return 0
+ 		case "${2##*/}" in
+-		claude | copilot | opencode | codex | pi | omp | grok | agy) tool="${2##*/}" ;;
++		claude | copilot | opencode | opencode.exe | codex | pi | omp | grok | agy) tool="${2##*/}"; tool="${tool%.exe}";;
+ 		cursor-agent) tool="cursor" ;;
+ 		agent)
+ 			[ "${3:-}" = "--use-system-ca" ] || return 0
+diff --git a/scripts/py/opencode_db.py b/scripts/py/opencode_db.py
+index 7cf6e94..d5d4389 100644
+--- a/scripts/py/opencode_db.py
++++ b/scripts/py/opencode_db.py
+@@ -16,13 +16,19 @@ try:
+     db_uri = Path(os.path.abspath(sys.argv[1])).as_uri() + "?mode=ro"
+     conn = sqlite3.connect(db_uri, uri=True)
+     cur = conn.cursor()
+-    cur.execute(
+-        "SELECT id FROM session WHERE directory = ? ORDER BY time_updated DESC LIMIT 1",
+-        (sys.argv[2],),
+-    )
+-    row = cur.fetchone()
+-    if row and isinstance(row[0], str) and row[0]:
+-        print(row[0])
++    # OpenCode v2 uses `session_v2`; older v1 used `session`. Try both.
++    for table in ("session_v2", "session"):
++        try:
++            cur.execute(
++                f"SELECT id FROM {table} WHERE directory = ? ORDER BY time_updated DESC LIMIT 1",
++                (sys.argv[2],),
++            )
++        except Exception:  # noqa: BLE001
++            continue
++        row = cur.fetchone()
++        if row and isinstance(row[0], str) and row[0]:
++            print(row[0])
++            break
+ except Exception:  # noqa: BLE001, S110
+     pass
+ finally:
