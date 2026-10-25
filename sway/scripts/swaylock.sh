@@ -12,11 +12,12 @@ command -v swaylock >/dev/null 2>&1 || {
     exit 1
 }
 
-# Singleton: timeout 300 + evento lock + before-sleep disparam juntos no
-# suspend; sem isto cada instância empilhada cobra uma senha no resume.
-if command -v pgrep >/dev/null 2>&1 && pgrep -x swaylock >/dev/null 2>&1; then
-    exit 0
-fi
+# Singleton: flock no lugar do pgrep — o pgrep tem janela de corrida: timeout,
+# lock e before-sleep disparam juntos no suspend e instâncias empilhadas
+# cobram a senha duas vezes no resume. O fd 9 passa ao swaylock no exec e o
+# lock cai sozinho quando ele fecha.
+exec 9>"${XDG_RUNTIME_DIR:-/tmp}/swaylock.lock" 2>/dev/null || exec 9>"/tmp/swaylock.lock"
+flock -n 9 || exit 0
 
 # --pre-sleep (só para o before-sleep do swayidle): -f faz o swaylock
 # bifurcar após travar, liberando o delay lock do logind para suspender.
