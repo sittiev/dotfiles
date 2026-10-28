@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openbox_menu xmlns="http://openbox.org/3.4/menu">
+
+<menu id="apps-term-menu" label="Terminal">
+  <item label="st">
+    <action name="Execute"><command>st</command></action>
+  </item>
+  <item label="Monitor do sistema (btop)">
+    <action name="Execute"><command>st -e btop</command></action>
+  </item>
+  <item label="Editor (micro)">
+    <action name="Execute"><command>st -e micro</command></action>
+  </item>
+</menu>
+
+<menu id="apps-net-menu" label="Internet">
+  <item label="Firefox">
+    <action name="Execute">
+      <command>firefox</command>
+      <startupnotify><enabled>yes</enabled></startupnotify>
+    </action>
+  </item>
+  <item label="Google Chrome">
+    <action name="Execute">
+      <command>google-chrome</command>
+      <startupnotify><enabled>yes</enabled></startupnotify>
+    </action>
+  </item>
+  <item label="Zen Browser">
+    <action name="Execute">
+      <command>zen-browser</command>
+      <startupnotify><enabled>yes</enabled></startupnotify>
+    </action>
+  </item>
+</menu>
+
+<menu id="apps-files-menu" label="Arquivos">
+  <item label="PCManFM">
+    <action name="Execute">
+      <command>pcmanfm</command>
+      <startupnotify><enabled>yes</enabled></startupnotify>
+    </action>
+  </item>
+  <item label="Xarchiver">
+    <action name="Execute">
+      <command>xarchiver</command>
+      <startupnotify><enabled>yes</enabled></startupnotify>
+    </action>
+  </item>
+  <item label="Mousepad">
+    <action name="Execute">
+      <command>mousepad</command>
+      <startupnotify><enabled>yes</enabled></startupnotify>
+    </action>
+  </item>
+</menu>
+
+<menu id="apps-games-menu" label="Jogos">
+  <item label="Steam">
+    <action name="Execute">
+      <command>steam</command>
+      <startupnotify><enabled>yes</enabled></startupnotify>
+    </action>
+  </item>
+  <item label="Lutris">
+    <action name="Execute">
+      <command>lutris</command>
+      <startupnotify><enabled>yes</enabled></startupnotify>
+    </action>
+  </item>
+  <item label="Heroic">
+    <action name="Execute">
+      <command>heroic</command>
+      <startupnotify><enabled>yes</enabled></startupnotify>
+    </action>
+  </item>
+</menu>
+
+<menu id="apps-media-menu" label="Midia">
+  <item label="Celluloid">
+    <action name="Execute">
+      <command>celluloid</command>
+      <startupnotify><enabled>yes</enabled></startupnotify>
+    </action>
+  </item>
+  <item label="MPV">
+    <action name="Execute"><command>mpv</command></action>
+  </item>
+  <item label="OBS Studio">
+    <action name="Execute">
+      <command>obs</command>
+      <startupnotify><enabled>yes</enabled></startupnotify>
+    </action>
+  </item>
+  <item label="Calibre">
+    <action name="Execute">
+      <command>calibre</command>
+      <startupnotify><enabled>yes</enabled></startupnotify>
+    </action>
+  </item>
+</menu>
+
+<menu id="apps-tools-menu" label="Ferramentas">
+  <item label="Controle de volume">
+    <action name="Execute">
+      <command>pavucontrol</command>
+      <startupnotify><enabled>yes</enabled></startupnotify>
+    </action>
+  </item>
+  <item label="QPWGraph">
+    <action name="Execute"><command>qpwgraph</command></action>
+  </item>
+  <item label="EasyEffects">
+    <action name="Execute"><command>easyeffects</command></action>
+  </item>
+  <item label="Bluetooth (Overskride)">
+    <action name="Execute"><command>overskride</command></action>
+  </item>
+  <item label="Wi-Fi (iwgtk)">
+    <action name="Execute"><command>iwgtk</command></action>
+  </item>
+</menu>
+
+<menu id="monitors-menu" label="Monitores">
+  <item label="HDMI principal (estender)">
+    <action name="Execute"><command>sh -c 'xrandr --output HDMI-A-0 --primary --mode 1920x1080 --pos 0x0 --output eDP --mode 1920x1080 --pos 1920x0'</command></action>
+  </item>
+  <item label="Apenas HDMI">
+    <action name="Execute"><command>sh -c 'xrandr --output HDMI-A-0 --primary --mode 1920x1080 --pos 0x0 --output eDP --off'</command></action>
+  </item>
+  <item label="Apenas notebook">
+    <action name="Execute"><command>sh -c 'xrandr --output eDP --primary --mode 1920x1080 --pos 0x0 --output HDMI-A-0 --off'</command></action>
+  </item>
+  <item label="Espelhar">
+    <action name="Execute"><command>sh -c 'xrandr --output HDMI-A-0 --primary --mode 1920x1080 --pos 0x0 --output eDP --mode 1920x1080 --pos 0x0'</command></action>
+  </item>
+</menu>
+
+<menu id="system-menu" label="Sistema">
+  <item label="Configurar Openbox (ObConf)">
+    <action name="Execute">
+      <command>obconf-qt</command>
+      <startupnotify><enabled>yes</enabled></startupnotify>
+    </action>
+  </item>
+  <item label="Reconfigurar Openbox">
+    <action name="Reconfigure" />
+  </item>
+</menu>
+
+<menu id="root-menu" label="Openbox 3">
+  <item label="Terminal (st)">
+    <action name="Execute"><command>st</command></action>
+  </item>
+  <item label="Executar (dmenu)">
+    <action name="Execute"><command>dmenu_run</command></action>
+  </item>
+  <separator label="Aplicativos" />
+  <menu id="apps-net-menu"/>
+  <menu id="apps-files-menu"/>
+  <menu id="apps-games-menu"/>
+  <menu id="apps-media-menu"/>
+  <menu id="apps-term-menu"/>
+  <menu id="apps-tools-menu"/>
+  <separator label="Sistema" />
+  <menu id="monitors-menu"/>
+  <menu id="system-menu"/>
+  <separator />
+  <item label="Sair">
+    <action name="Exit"><prompt>yes</prompt></action>
+  </item>
+</menu>
+
+</openbox_menu>

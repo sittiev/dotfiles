@@ -1,0 +1,3 @@
+#!/bin/sh
+# Aplica monitor HDMI como principal ao iniciar a sessão Openbox.
+xrandr --output HDMI-A-0 --primary --mode 1920x1080 --pos 0x0 --output eDP --mode 1920x1080 --pos 1920x0

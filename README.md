@@ -46,15 +46,25 @@ The installer moves each replaced file to
 
 Two menu entries drive the desktop:
 
-- **Mod+Shift+x → Papel de parede**: wallpaper, palette, light/dark
-- **Mod+Shift+x → Esquemas de cores**: one of the 1247 Gogh schemes
+- **Mod+Shift+x → Menu de utilitários**: TUI Rust (`menu/`, ratatui +
+  crossterm, bare-metal) em `foot` flutuante (`app_id="menu"`); categorias
+  em abas (Todas/Aplicativos/Conectividade/Aparência/Janelas/Sistema),
+  filtro fuzzy com fold de acentos (busca `aparencia` casa `Aparência`),
+  estados vivos ao lado dos itens (` · Ativada`, ` · 99%`), submenus
+  (Esquemas, Fontes, Papirus, Energia…) e a paleta atual do pywal
+  no canto direito (16 cores + BG/FG). Ações executam os scripts do rice
+  pelos hooks `TOFI_*` — nada de lógica duplicada. Fallback: sem o binário
+  instalado (`make -C menu install`), volta ao `tofi-menu.sh` antigo.
+  Atalhos: digitar filtra, ↵ abre, Esc volta/sai, Tab troca aba, R
+  recarrega estados. Verificação headless: `make -C menu e2e`
 - **Clique no chip de tarefas (yambar)**: abre a TUI de tarefas do vault
   Obsidian (binário C `yambar-tasks-c` em `foot` floating, notcurses;
   `yambar-tasks.py` de fallback) — espaço conclui/reabre
   o checkbox no arquivo (carimbando `✅`), `/` busca sem acento,
   `o` alterna a ordem (recentes, antigas, texto A–Z, arquivo, criadas),
-  d mostra detalhes (criada/concluída), n cria tarefa nova no
-  `Inbox/Notepad.md` (carimbo `➕`), Enter abre a nota no Obsidian.
+  d mostra detalhes (criada/concluída), `?` mostra os atalhos, n cria
+  tarefa nova no `Inbox/Notepad.md` (carimbo `➕`), Enter abre a nota no
+  Obsidian.
   Compila com `make -C sway/scripts yambar-tasks-c` (exige `notcurses`)
 - **Mod+Shift+f → Busca de arquivos**: FSearch-like instantânea via
   `plocate` + tofi (`fsearch.sh`) — índice do timer systemd, zero daemon
@@ -78,7 +88,14 @@ Coleção awesome do rice: componente, 1 linha, onde mora aqui, fonte.
 | [kanshi](https://github.com/emersion/kanshi) | Perfis de saída no hotplug | `kanshi/` | [repo](https://github.com/emersion/kanshi) |
 | [ly](https://codeberg.org/fairyglade/ly) | Login TUI leve | — | [repo](https://codeberg.org/fairyglade/ly) · [archwiki](https://wiki.archlinux.org/title/Ly) |
 | [swayidle](https://github.com/swaywm/swayidle) + idle.sh | Bloqueio/suspend por inatividade | `sway/scripts/idle.sh` | [repo](https://github.com/swaywm/swayidle) |
-| [swaylock-effects](https://github.com/mortie/swaylock-effects) | Locker com efeitos | `sway/scripts/swaylock.sh` | [repo](https://github.com/mortie/swaylock-effects) · [man](https://man.archlinux.org/man/swaylock.1.en) |
+| [dewlock](https://github.com/shikaan/dewlock) | Locker mínimo (fork swaylock, mostra campo senha) | `sway/scripts/dewlock.sh` | [repo](https://github.com/shikaan/dewlock) |
+
+### X11 (Openbox)
+
+| Componente | Descrição | Neste repo | Fonte |
+| --- | --- | --- | --- |
+| [Openbox](https://openbox.org/) | WM X11 leve | `openbox/` | [archwiki](https://wiki.archlinux.org/title/Openbox) |
+| [dmenu](https://tools.suckless.org/dmenu/) | Launcher X11 (run) — padrão da sessão | `openbox/rc.xml` (`W-p`, `A-F2`) | [repo](https://git.suckless.org/dmenu) · [man](https://man.archlinux.org/man/dmenu.1) |
 
 ### Barra e menus
 
@@ -90,6 +107,7 @@ Coleção awesome do rice: componente, 1 linha, onde mora aqui, fonte.
 | Relógio | Chip hora; clique alterna data+hora | `sway/scripts/yambar-clock.sh` | — |
 | Tofi | Launcher/dmenu Wayland | `tofi/` | pacote AUR |
 | Hub tofi-menu | Menu estilo Ajustes Apple (busca flat + categorias) | `sway/scripts/tofi-menu.sh` | — |
+| Menu Rust | Hub de utilitários TUI (ratatui): abas, filtro, paleta ao lado | `menu/` | — (autoral, stack Rust do harness) |
 
 ### Terminal e shell
 
