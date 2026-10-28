@@ -9,7 +9,8 @@ Recorded from the live host on 2026-09-23.
 | Session | Wayland, `sway:wlroots` |
 | Window manager | Sway 1.12 |
 | Terminal | Foot 1.28.0 |
-| Launcher | Tofi |
+| Launcher (Wayland) | Tofi |
+| Launcher (X11/Openbox) | dmenu (`W-p`, `A-F2`) |
 | Status panel | Yambar 1.11.0 |
 | Theme backend | `python-pywal16` / `wal` |
 | Script shell | dash 0.5.13 |
@@ -32,7 +33,7 @@ for a separate `ov`/selkies automation environment.
 |---|---|
 | Chip | `render.sh` writes a second yambar particle (left of the clock): `yambar-tasks.sh` polled every 2s emits `NN` open checkboxes |
 | Scan | `sway/scripts/tasks-core.c` owns the task scope (C port of `yambar-tasks.py`, same contract): `~/Documentos/Vault/**/*.md`, skipping `Arquivo/`, `Memória de Agentes/`, `Recursos/AI/`, dot dirs, and fenced code blocks; open first, then file mtime desc |
-| TUI | `sway/scripts/yambar-tasks.c` (notcurses, built by `sway/scripts/Makefile` → `yambar-tasks-c`, gitignored); click opens `foot -a yambar-tasks` (floating rule in `sway/config`); space toggles the checkbox in place (tmp+rename), stamping `✅ YYYY-MM-DD HH:MM` when completing (removed on reopen; Tasks-plugin style, plain text); Enter opens the note via `obsidian://open`, `/` live search (fold manual Latin-1/Extended-A/grego/cirílico + ß/ﬁ/ﬂ, sem libunistring; paridade NFD em 400 linhas reais), `o` cycles order, d shows details (created/done stamps, statx birth fallback), n creates a task appended under `## todo` in `Inbox/Notepad.md` stamped `➕ YYYY-MM-DD HH:MM`, r reloads, q quits; `yambar-tasks.py` stays as fallback until dirs + menu land in C |
+| TUI | `sway/scripts/yambar-tasks.c` (notcurses, built by `sway/scripts/Makefile` → `yambar-tasks-c`, gitignored); click opens `foot -a yambar-tasks` (floating rule in `sway/config`); space toggles the checkbox in place (tmp+rename), stamping `✅ YYYY-MM-DD HH:MM` when completing (removed on reopen; Tasks-plugin style, plain text); Enter opens the note via `obsidian://open`, `/` live search (fold manual Latin-1/Extended-A/grego/cirílico + ß/ﬁ/ﬂ, sem libunistring; paridade NFD em 400 linhas reais), `o` cycles order, d shows details (created/done stamps, statx birth fallback), `?` shows shortcuts (any key closes), n creates a task appended under `## todo` in `Inbox/Notepad.md` stamped `➕ YYYY-MM-DD HH:MM`, r reloads, q quits; `yambar-tasks.py` stays as fallback until dirs + menu land in C |
 | Deps | `notcurses` 3.0.17 (extra; `sudo pacman -S notcurses`), `cc` C17; core selftest (`tasks-core.c -DTASKS_CORE_TEST`) is libc-only and runs in `validate.sh` without TTY; no Obsidian CLI/plugin needed — sync is the markdown file itself |
 
 ## File search & dirs chip (2026-10-12)
