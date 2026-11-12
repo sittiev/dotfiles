@@ -1,6 +1,6 @@
 # Rice dotfiles
 
-Sway desktop for CachyOS. A wallpaper gives the palette (Pywal), the
+Sway/i3 desktop. A wallpaper gives the palette (Pywal), the
 wallpaper's luminance picks light or dark, and an optional Gogh scheme
 (1247 vendored) clamps everything into its envelopes. Initialized from the
 live config on 2026-09-23; nothing under `~/.config` was deleted.
